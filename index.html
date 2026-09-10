@@ -440,6 +440,7 @@
 </div>
 
 <script>
+// 28岁 · 男 · 165cm · 63kg · 目标：六块腹肌 目前卧推单边 15kg 做组，引体拉 8 个，周一练胸，周二背，周三腿，周四练肩
 document.addEventListener('alpine:init', () => {
   Alpine.data('mealPlan', () => ({
     profile: '28岁 · 男 · 165cm · 63kg · 目标：六块腹肌 · 极速执行版',
@@ -958,6 +959,137 @@ document.addEventListener('alpine:init', () => {
           try { item.checked = localStorage.getItem(key) === 'true'; } catch (e) {}
         });
       });
+
+      // 暴露到全局，方便控制台调用
+      window.mealPlan = this;
+      // 页面加载后自动输出营养分析到控制台
+      this.logAnalysis();
+    },
+
+    // ---- 营养分析（对应 calc_nutrition.py L123-153） ----
+    generateAnalysis() {
+      const w = this.bodyWeightKg;
+      const maintain = this.maintenanceCalories;
+      const dayTotals = this.days.map(d => this.dayTotal(d));
+      const n = dayTotals.length;
+
+      // 每日汇总
+      const dayRows = dayTotals.map((t, i) => {
+        const c = t.kcal, p = t.protein, cb = t.carbs, f = t.fat;
+        return {
+          label: this.days[i].title,
+          kcal: c, protein: p, carbs: cb, fat: f,
+          pPerKg: p / w, fPerKg: f / w,
+          surplus: c - maintain,
+          pPct: p * 4 / c * 100,
+          cPct: cb * 4 / c * 100,
+          fPct: f * 9 / c * 100,
+        };
+      });
+
+      // 7日平均
+      const avg = this.averageDayTotals();
+      const avgC = avg.kcal, avgP = avg.protein, avgCb = avg.carbs, avgF = avg.fat;
+
+      // 训练日 (Mon-Thu, index 0-3) vs 休息日 (Fri-Sun, index 4-6)
+      const trainIdx = [0, 1, 2, 3];
+      const restIdx = [4, 5, 6];
+      const trainCals = trainIdx.reduce((s, i) => s + dayTotals[i].kcal, 0) / trainIdx.length;
+      const restCals = restIdx.reduce((s, i) => s + dayTotals[i].kcal, 0) / restIdx.length;
+      const trainPros = trainIdx.reduce((s, i) => s + dayTotals[i].protein, 0) / trainIdx.length;
+      const restPros = restIdx.reduce((s, i) => s + dayTotals[i].protein, 0) / restIdx.length;
+
+      // 蛋白质评估
+      const pRange = dayTotals.map(t => t.protein);
+      const pPerKgRange = pRange.map(p => p / w);
+      const inRange = dayTotals.every(t => t.protein / w >= 1.6 && t.protein / w <= 2.4);
+
+      // 脂肪范围
+      const fRange = dayTotals.map(t => t.fat);
+
+      // 热量盈余
+      const totalSurplus = dayTotals.reduce((s, t) => s + (t.kcal - maintain), 0);
+
+      return {
+        dayRows,
+        avg: { kcal: avgC, protein: avgP, carbs: avgCb, fat: avgF, pPerKg: avgP / w, fPerKg: avgF / w },
+        training: { avgCals: trainCals, avgProtein: trainPros },
+        rest: { avgCals: restCals, avgProtein: restPros },
+        protein: {
+          min: Math.min(...pRange), max: Math.max(...pRange),
+          minPerKg: Math.min(...pPerKgRange), maxPerKg: Math.max(...pPerKgRange),
+          avg: avgP, avgPerKg: avgP / w, inRange,
+        },
+        fat: {
+          min: Math.min(...fRange), max: Math.max(...fRange),
+          minPerKg: Math.min(...fRange) / w, maxPerKg: Math.max(...fRange) / w,
+          avg: avgF, avgPerKg: avgF / w,
+        },
+        macro: { pPct: avgP * 4 / avgC * 100, cPct: avgCb * 4 / avgC * 100, fPct: avgF * 9 / avgC * 100 },
+        surplus: { total: totalSurplus, daily: totalSurplus / n, weeklyFatKg: totalSurplus / 7700 },
+      };
+    },
+
+    logAnalysis() {
+      const a = this.generateAnalysis();
+      const w = this.bodyWeightKg;
+      const maintain = this.maintenanceCalories;
+
+      const hr = '='.repeat(80);
+      const hr2 = '-'.repeat(80);
+      const f1 = (v, d = 1) => v.toFixed(d);
+      const f2 = (v) => v.toFixed(2);
+
+      console.log(`%c${hr}`, 'color: #00d4aa; font-weight: bold;');
+      console.log(`%c  📊 七日餐单营养分析报告`, 'color: #00d4aa; font-size: 14px; font-weight: bold;');
+      console.log(`%c${hr}`, 'color: #00d4aa; font-weight: bold;');
+
+      // 每日明细
+      console.log(`%c\n📋 每日明细:`, 'color: #00a8e8; font-weight: bold;');
+      console.log(hr2);
+      console.log(`${'日期'.padEnd(14)} ${'热量'.padStart(8)} ${'蛋白质'.padStart(8)} ${'碳水'.padStart(7)} ${'脂肪'.padStart(6)} ${'P/kg'.padStart(7)} ${'盈余'.padStart(9)}`);
+      console.log(hr2);
+      a.dayRows.forEach(r => {
+        console.log(`${r.label.padEnd(14)} ${f1(r.kcal).padStart(8)} ${f1(r.protein).padStart(8)} ${f1(r.carbs).padStart(7)} ${f1(r.fat).padStart(6)} ${f2(r.pPerKg).padStart(5)}g ${('+' + f1(r.surplus)).padStart(9)}`);
+      });
+      console.log(hr2);
+      console.log(`${'七日平均'.padEnd(14)} ${f1(a.avg.kcal).padStart(8)} ${f1(a.avg.protein).padStart(8)} ${f1(a.avg.carbs).padStart(7)} ${f1(a.avg.fat).padStart(6)} ${f2(a.avg.pPerKg).padStart(5)}g ${('+' + f1(a.surplus.daily)).padStart(9)}`);
+
+      // 1. 热量分布
+      console.log(`%c\n1. 热量分布`, 'color: #f39c12; font-weight: bold;');
+      console.log(`   训练日（周一~周四）平均：  ${f1(a.training.avgCals)} kcal`);
+      console.log(`   休息日（周五~周日）平均：  ${f1(a.rest.avgCals)} kcal`);
+      console.log(`   训练日 vs 休息日差异：     +${f1(a.training.avgCals - a.rest.avgCals)} kcal`);
+      console.log(`   七日范围：                 ${f1(Math.min(...a.dayRows.map(r => r.kcal)))} ~ ${f1(Math.max(...a.dayRows.map(r => r.kcal)))} kcal`);
+
+      // 2. 蛋白质摄入
+      console.log(`%c\n2. 蛋白质摄入`, 'color: #f39c12; font-weight: bold;');
+      console.log(`   每日范围：                 ${f1(a.protein.min)} ~ ${f1(a.protein.max)} g`);
+      console.log(`   每公斤体重范围：           ${f2(a.protein.minPerKg)} ~ ${f2(a.protein.maxPerKg)} g/kg`);
+      console.log(`   七日平均：                 ${f1(a.protein.avg)}g（${f2(a.protein.avgPerKg)} g/kg）`);
+      console.log(`   推荐范围：                 1.6~2.2 g/kg（${f1(1.6 * w)}~${f1(2.2 * w)}g）`);
+      console.log(`   评估：                     ${a.protein.inRange ? '✅ 全部在理想范围内' : '⚠️ 部分超出理想范围'}`);
+
+      // 3. 脂肪摄入
+      console.log(`%c\n3. 脂肪摄入`, 'color: #f39c12; font-weight: bold;');
+      console.log(`   每日范围：                 ${f1(a.fat.min)} ~ ${f1(a.fat.max)} g`);
+      console.log(`   每公斤体重范围：           ${f2(a.fat.minPerKg)} ~ ${f2(a.fat.maxPerKg)} g/kg`);
+      console.log(`   七日平均：                 ${f1(a.fat.avg)}g（${f2(a.fat.avgPerKg)} g/kg）`);
+
+      // 4. 宏量营养素比例
+      console.log(`%c\n4. 宏量营养素热量占比`, 'color: #f39c12; font-weight: bold;');
+      console.log(`   七日平均：                 蛋白:${f1(a.macro.pPct)}% / 碳水:${f1(a.macro.cPct)}% / 脂肪:${f1(a.macro.fPct)}%`);
+      console.log(`   减脂/增肌参考：            蛋白:25-30% / 碳水:40-50% / 脂肪:20-30%`);
+
+      // 5. 热量盈余
+      console.log(`%c\n5. 热量盈余（维持热量 ${maintain} kcal）`, 'color: #f39c12; font-weight: bold;');
+      console.log(`   七日总盈余：               +${f1(a.surplus.total)} kcal`);
+      console.log(`   日均盈余：                 +${f1(a.surplus.daily)} kcal`);
+      console.log(`   预估每周增脂：             +${f2(a.surplus.weeklyFatKg)} kg（${f1(a.surplus.weeklyFatKg * 1000)}g）`);
+
+      console.log(`%c${hr}`, 'color: #00d4aa; font-weight: bold;');
+      console.log(`%c  💡 在控制台调用 mealPlan.generateAnalysis() 可获取原始分析数据`, 'color: #8892b0;');
+      console.log(`%c${hr}`, 'color: #00d4aa; font-weight: bold;');
     },
 
     saveShopState() {
