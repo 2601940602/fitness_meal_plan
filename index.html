@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>健身腹肌餐计划</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", sans-serif;
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+    min-height: 100vh;
+    color: #e8e8e8;
+    padding-bottom: 80px;
+  }
+  .header {
+    padding: 24px 20px 16px;
+    text-align: center;
+    background: rgba(255,255,255,0.03);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .header h1 {
+    font-size: 22px;
+    font-weight: 700;
+    background: linear-gradient(90deg, #00d4aa, #00a8e8);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 4px;
+  }
+  .header .sub {
+    font-size: 12px;
+    color: #8892b0;
+  }
+  .stats-bar {
+    display: flex;
+    justify-content: space-around;
+    padding: 16px 12px;
+    gap: 8px;
+  }
+  .stat-card {
+    flex: 1;
+    background: rgba(255,255,255,0.05);
+    border-radius: 14px;
+    padding: 12px 8px;
+    text-align: center;
+    border: 1px solid rgba(255,255,255,0.06);
+  }
+  .stat-card .num {
+    font-size: 20px;
+    font-weight: 700;
+    color: #00d4aa;
+  }
+  .stat-card .label {
+    font-size: 11px;
+    color: #8892b0;
+    margin-top: 2px;
+  }
+  .tabs {
+    display: flex;
+    overflow-x: auto;
+    padding: 0 16px;
+    gap: 8px;
+    margin-top: 8px;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  .tabs::-webkit-scrollbar { display: none; }
+  .tab {
+    flex-shrink: 0;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.08);
+    color: #8892b0;
+    user-select: none;
+  }
+  .tab.active {
+    background: linear-gradient(135deg, #00d4aa, #00a8e8);
+    color: #fff;
+    border-color: transparent;
+    box-shadow: 0 4px 15px rgba(0,212,170,0.3);
+  }
+  .content {
+    padding: 16px;
+  }
+  .day-card {
+    background: rgba(255,255,255,0.04);
+    border-radius: 20px;
+    padding: 20px;
+    margin-bottom: 16px;
+    border: 1px solid rgba(255,255,255,0.06);
+    display: none;
+  }
+  .day-card.active { display: block; animation: fadeIn 0.3s ease; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+  .day-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+  }
+  .day-title {
+    font-size: 18px;
+    font-weight: 700;
+  }
+  .day-tag {
+    font-size: 11px;
+    padding: 4px 10px;
+    border-radius: 10px;
+    font-weight: 600;
+  }
+  .tag-high { background: rgba(0,212,170,0.15); color: #00d4aa; }
+  .tag-mid { background: rgba(0,168,232,0.15); color: #00a8e8; }
+  .tag-low { background: rgba(233,69,96,0.15); color: #e94560; }
+  .day-stats {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    flex-wrap: wrap;
+  }
+  .day-stat {
+    font-size: 12px;
+    color: #8892b0;
+  }
+  .day-stat span { color: #e8e8e8; font-weight: 600; }
+  .meal {
+    background: rgba(255,255,255,0.03);
+    border-radius: 14px;
+    padding: 14px 16px;
+    margin-bottom: 10px;
+    border-left: 3px solid;
+  }
+  .meal-breakfast { border-left-color: #f39c12; }
+  .meal-snack { border-left-color: #9b59b6; }
+  .meal-lunch { border-left-color: #e74c3c; }
+  .meal-pre { border-left-color: #3498db; }
+  .meal-post { border-left-color: #00d4aa; }
+  .meal-dinner { border-left-color: #1abc9c; }
+  .meal-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: #8892b0;
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .meal-items {
+    font-size: 14px;
+    line-height: 1.7;
+    color: #e8e8e8;
+  }
+  .meal-items .note {
+    color: #8892b0;
+    font-size: 12px;
+    display: block;
+    margin-top: 4px;
+  }
+  .bottom-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(26,26,46,0.95);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-top: 1px solid rgba(255,255,255,0.08);
+    padding: 12px 16px;
+    display: flex;
+    justify-content: space-around;
+    z-index: 100;
+  }
+  .bottom-btn {
+    font-size: 12px;
+    color: #8892b0;
+    text-align: center;
+    cursor: pointer;
+    padding: 4px 12px;
+    border-radius: 10px;
+    transition: all 0.2s;
+    user-select: none;
+  }
+  .bottom-btn.active {
+    color: #00d4aa;
+    background: rgba(0,212,170,0.1);
+  }
+  .modal-overlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.7);
+    display: none;
+    justify-content: center;
+    align-items: flex-end;
+    z-index: 200;
+  }
+  .modal-overlay.show { display: flex; }
+  .modal {
+    background: #1a1a2e;
+    border-radius: 24px 24px 0 0;
+    width: 100%;
+    max-height: 80vh;
+    overflow-y: auto;
+    padding: 24px 20px 40px;
+    animation: slideUp 0.3s ease;
+    position: relative;
+  }
+  @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+  .modal h3 {
+    font-size: 18px;
+    margin-bottom: 16px;
+    color: #00d4aa;
+  }
+  .modal-section {
+    margin-bottom: 16px;
+  }
+  .modal-section h4 {
+    font-size: 14px;
+    color: #8892b0;
+    margin-bottom: 8px;
+  }
+  .modal-section p, .modal-section li {
+    font-size: 13px;
+    line-height: 1.8;
+    color: #c8c8c8;
+  }
+  .modal-section ul { padding-left: 18px; }
+  .close-btn {
+    position: absolute;
+    top: 16px;
+    right: 20px;
+    font-size: 24px;
+    color: #8892b0;
+    cursor: pointer;
+    z-index: 10;
+  }
+  .check-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+  }
+  .check-item input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    accent-color: #00d4aa;
+    flex-shrink: 0;
+  }
+  .check-item label {
+    font-size: 14px;
+    flex: 1;
+    color: #e8e8e8;
+  }
+  .check-item .qty {
+    font-size: 12px;
+    color: #8892b0;
+    flex-shrink: 0;
+  }
+  .highlight-protein {
+    color: #ff9f43;
+    font-weight: 600;
+    background: rgba(255,159,67,0.08);
+    padding: 1px 6px;
+    border-radius: 6px;
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>💪 健身腹肌餐计划</h1>
+  <div class="sub">28岁 · 男 · 165cm · 63kg · 目标：六块腹肌 · 极速执行版</div>
+</div>
+
+<div class="stats-bar">
+  <div class="stat-card">
+              <div class="num">1714</div>
+    <div class="label">日均热量</div>
+  </div>
+  <div class="stat-card">
+              <div class="num">136g</div>
+    <div class="label">日均蛋白质</div>
+  </div>
+  <div class="stat-card">
+              <div class="num">2.16g</div>
+    <div class="label">蛋白质/kg</div>
+  </div>
+  <div class="stat-card">
+              <div class="num">514</div>
+    <div class="label">热量缺口</div>
+  </div>
+</div>
+
+<div class="tabs" id="tabs">
+  <div class="tab active" data-day="0">周一 胸</div>
+  <div class="tab" data-day="1">周二 背</div>
+  <div class="tab" data-day="2">周三 腿</div>
+  <div class="tab" data-day="3">周四 肩</div>
+  <div class="tab" data-day="4">周五 恢复</div>
+  <div class="tab" data-day="5">周六 灵活</div>
+  <div class="tab" data-day="6">周日 休息</div>
+</div>
+
+<div class="content" id="content">
+      <!-- 周一 训练日（胸） -->
+  <div class="day-card active" data-day="0">
+    <div class="day-header">
+      <div class="day-title">周一 · 练胸日</div>
+          <div class="day-tag tag-high">💪 训练·高碳</div>
+    </div>
+    <div class="day-stats">
+              <div class="day-stat">🔥 <span>1845</span> kcal</div>
+              <div class="day-stat">🥩 <span>156g</span> 蛋白质</div>
+              <div class="day-stat">🍠 <span>196g</span> 碳水</div>
+              <div class="day-stat">🥑 <span>56g</span> 脂肪</div>
+    </div>
+    <div class="meal meal-breakfast">
+      <div class="meal-name">🌅 早餐</div>
+              <div class="meal-items">全麦面包 2 片｜全蛋 3 个｜纯牛奶 500ml</div>
+    </div>
+    <div class="meal meal-lunch">
+      <div class="meal-name">🍱 午餐</div>
+                          <div class="meal-items">蒸红薯 250g｜<span class="highlight-protein">牛排或去皮鸡腿（生）</span> 200g｜黄瓜条 150g</div>
+    </div>
+    <div class="meal meal-pre">
+      <div class="meal-name">⚡ 练前 60min</div>
+      <div class="meal-items">香蕉 1 根</div>
+    </div>
+    <div class="meal meal-dinner">
+          <div class="meal-name">🌙 晚餐（练后）</div>
+                          <div class="meal-items">蛋白粉 1 勺（加水，先喝）｜<span class="highlight-protein">牛排或去皮鸡腿（生）</span> 200g｜蒸红薯 300g</div>
+    </div>
+  </div>
+
+      <!-- 周二 训练日（背） -->
+  <div class="day-card" data-day="1">
+    <div class="day-header">
+      <div class="day-title">周二 · 练背日</div>
+          <div class="day-tag tag-high">💪 训练·高碳</div>
+    </div>
+    <div class="day-stats">
+              <div class="day-stat">🔥 <span>1865</span> kcal</div>
+              <div class="day-stat">🥩 <span>148g</span> 蛋白质</div>
+              <div class="day-stat">🍠 <span>196g</span> 碳水</div>
+              <div class="day-stat">🥑 <span>59g</span> 脂肪</div>
+    </div>
+    <div class="meal meal-breakfast">
+      <div class="meal-name">🌅 早餐</div>
+          <div class="meal-items">全麦面包 2 片｜全蛋 3 个｜纯牛奶 500ml</div>
+    </div>
+    <div class="meal meal-lunch">
+      <div class="meal-name">🍱 午餐</div>
+                          <div class="meal-items">蒸红薯 250g｜<span class="highlight-protein">牛排或去皮鸡腿（生）</span> 200g｜黄瓜条 150g</div>
+    </div>
+    <div class="meal meal-pre">
+      <div class="meal-name">⚡ 练前 60min</div>
+      <div class="meal-items">香蕉 1 根</div>
+    </div>
+    <div class="meal meal-dinner">
+          <div class="meal-name">🌙 晚餐（练后）</div>
+                          <div class="meal-items">蛋白粉 1 勺（加水，先喝）｜<span class="highlight-protein">牛排或去皮鸡腿（生）</span> 200g｜蒸红薯 300g</div>
+    </div>
+  </div>
+
+      <!-- 周三 训练日（腿） -->
+  <div class="day-card" data-day="2">
+    <div class="day-header">
+      <div class="day-title">周三 · 练腿日</div>
+          <div class="day-tag tag-high">💪 训练·最高碳</div>
+    </div>
+    <div class="day-stats">
+              <div class="day-stat">🔥 <span>2037</span> kcal</div>
+              <div class="day-stat">🥩 <span>156g</span> 蛋白质</div>
+              <div class="day-stat">🍠 <span>229g</span> 碳水</div>
+              <div class="day-stat">🥑 <span>62g</span> 脂肪</div>
+    </div>
+    <div class="meal meal-breakfast">
+      <div class="meal-name">🌅 早餐</div>
+              <div class="meal-items">全麦面包 3 片｜全蛋 3 个｜纯牛奶 500ml</div>
+    </div>
+    <div class="meal meal-lunch">
+      <div class="meal-name">🍱 午餐</div>
+                          <div class="meal-items">蒸红薯 300g｜<span class="highlight-protein">牛排或去皮鸡腿（生）</span> 220g｜黄瓜条 150g</div>
+    </div>
+    <div class="meal meal-pre">
+      <div class="meal-name">⚡ 练前 60min</div>
+      <div class="meal-items">香蕉 1 根</div>
+    </div>
+    <div class="meal meal-dinner">
+          <div class="meal-name">🌙 晚餐（练后）</div>
+                          <div class="meal-items">蛋白粉 1 勺（加水，先喝）｜<span class="highlight-protein">牛排或去皮鸡腿（生）</span> 200g｜蒸红薯 350g</div>
+    </div>
+  </div>
+
+      <!-- 周四 训练日（肩） -->
+  <div class="day-card" data-day="3">
+    <div class="day-header">
+      <div class="day-title">周四 · 练肩日</div>
+          <div class="day-tag tag-mid">💪 训练·中碳</div>
+    </div>
+    <div class="day-stats">
+              <div class="day-stat">🔥 <span>1802</span> kcal</div>
+              <div class="day-stat">🥩 <span>155g</span> 蛋白质</div>
+              <div class="day-stat">🍠 <span>184g</span> 碳水</div>
+              <div class="day-stat">🥑 <span>55g</span> 脂肪</div>
+    </div>
+    <div class="meal meal-breakfast">
+      <div class="meal-name">🌅 早餐</div>
+          <div class="meal-items">全麦面包 2 片｜全蛋 3 个｜纯牛奶 500ml</div>
+    </div>
+    <div class="meal meal-lunch">
+      <div class="meal-name">🍱 午餐</div>
+                          <div class="meal-items">蒸红薯 250g｜<span class="highlight-protein">牛排或去皮鸡腿（生）</span> 200g｜黄瓜条 150g</div>
+    </div>
+    <div class="meal meal-pre">
+      <div class="meal-name">⚡ 练前 60min</div>
+      <div class="meal-items">香蕉 1 根</div>
+    </div>
+    <div class="meal meal-dinner">
+          <div class="meal-name">🌙 晚餐（练后）</div>
+                          <div class="meal-items">蛋白粉 1 勺（加水，先喝）｜<span class="highlight-protein">牛排或去皮鸡腿（生）</span> 200g｜蒸红薯 250g</div>
+    </div>
+  </div>
+
+      <!-- 周五 恢复日 -->
+  <div class="day-card" data-day="4">
+    <div class="day-header">
+      <div class="day-title">周五 · 恢复日</div>
+          <div class="day-tag tag-low">🚶 恢复·中低碳</div>
+    </div>
+    <div class="day-stats">
+              <div class="day-stat">🔥 <span>1478</span> kcal</div>
+              <div class="day-stat">🥩 <span>111g</span> 蛋白质</div>
+              <div class="day-stat">🍠 <span>140g</span> 碳水</div>
+              <div class="day-stat">🥑 <span>53g</span> 脂肪</div>
+    </div>
+    <div class="meal meal-breakfast">
+      <div class="meal-name">🌅 早餐</div>
+          <div class="meal-items">全麦面包 2 片｜全蛋 3 个｜纯牛奶 400ml</div>
+    </div>
+    <div class="meal meal-lunch">
+      <div class="meal-name">🍱 午餐</div>
+                          <div class="meal-items">蒸红薯 250g｜<span class="highlight-protein">牛排或去皮鸡腿（生）</span> 200g｜黄瓜条 150g</div>
+    </div>
+    <div class="meal meal-dinner">
+      <div class="meal-name">🌙 晚餐</div>
+                      <div class="meal-items"><span class="highlight-protein">牛排或去皮鸡腿（生）</span> 180g｜蒸红薯 200g</div>
+    </div>
+    <div class="meal meal-pre">
+      <div class="meal-name">🚶 运动</div>
+      <div class="meal-items">快走 40 分钟</div>
+    </div>
+  </div>
+
+      <!-- 周六 灵活日 -->
+  <div class="day-card" data-day="5">
+    <div class="day-header">
+      <div class="day-title">周六 · 灵活日</div>
+          <div class="day-tag tag-low">� 灵活·中低碳</div>
+    </div>
+    <div class="day-stats">
+          <div class="day-stat">🔥 <span>1491</span> kcal</div>
+          <div class="day-stat">🥩 <span>116g</span> 蛋白质</div>
+          <div class="day-stat">🍠 <span>124g</span> 碳水</div>
+          <div class="day-stat">🥑 <span>57g</span> 脂肪</div>
+    </div>
+    <div class="meal meal-breakfast">
+      <div class="meal-name">🌅 早餐</div>
+          <div class="meal-items">全麦面包 2 片｜全蛋 3 个｜纯牛奶 400ml</div>
+    </div>
+    <div class="meal meal-lunch">
+      <div class="meal-name">🍱 午餐</div>
+                          <div class="meal-items">蒸红薯 200g｜<span class="highlight-protein">牛排或去皮鸡腿（生）</span> 180g｜黄瓜条 150g</div>
+    </div>
+    <div class="meal meal-dinner">
+      <div class="meal-name">🌙 晚餐</div>
+                      <div class="meal-items"><span class="highlight-protein">牛排或去皮鸡腿（生）</span> 180g｜嫩豆腐 150g｜蒸红薯 150g</div>
+    </div>
+    <div class="meal meal-pre">
+      <div class="meal-name">🚶 运动</div>
+      <div class="meal-items">快走 40 分钟 或 完全休息（二选一）</div>
+    </div>
+  </div>
+
+      <!-- 周日 休息日 -->
+  <div class="day-card" data-day="6">
+    <div class="day-header">
+      <div class="day-title">周日 · 休息日</div>
+          <div class="day-tag tag-low">😴 休息·中低碳</div>
+    </div>
+    <div class="day-stats">
+          <div class="day-stat">🔥 <span>1480</span> kcal</div>
+          <div class="day-stat">🥩 <span>111g</span> 蛋白质</div>
+          <div class="day-stat">🍠 <span>125g</span> 碳水</div>
+          <div class="day-stat">🥑 <span>57g</span> 脂肪</div>
+    </div>
+    <div class="meal meal-breakfast">
+      <div class="meal-name">🌅 早餐</div>
+          <div class="meal-items">全麦面包 2 片｜全蛋 3 个｜纯牛奶 400ml</div>
+    </div>
+    <div class="meal meal-lunch">
+      <div class="meal-name">🍱 午餐</div>
+                          <div class="meal-items">蒸红薯 200g｜<span class="highlight-protein">牛排或去皮鸡腿（生）</span> 180g｜黄瓜条 150g</div>
+    </div>
+    <div class="meal meal-dinner">
+      <div class="meal-name">🌙 晚餐</div>
+                      <div class="meal-items">嫩豆腐 200g｜<span class="highlight-protein">牛排或去皮鸡腿（生）</span> 150g｜蒸红薯 150g</div>
+    </div>
+  </div>
+</div>
+
+<!-- 底部导航 -->
+<div class="bottom-bar">
+  <div class="bottom-btn active" onclick="showPage('plan', this)">📋 餐单</div>
+  <div class="bottom-btn" onclick="showPage('shop', this)">🛒 采购</div>
+  <div class="bottom-btn" onclick="showPage('tips', this)">💡 贴士</div>
+</div>
+
+<!-- 采购清单弹窗 -->
+<div class="modal-overlay" id="shopModal">
+  <div class="modal">
+    <div class="close-btn" onclick="closeModal('shopModal')">✕</div>
+    <h3>🛒 一周采购清单</h3>
+    <div class="modal-section">
+      <h4>🥩 肉类/蛋白（周末批量备餐）</h4>
+              <div class="check-item"><input type="checkbox" id="s1"><label for="s1"><span class="highlight-protein">牛排或去皮鸡腿</span>肉（生）</label><span class="qty">总量约 3kg，按喜好买</span></div>
+              <div class="check-item"><input type="checkbox" id="s2"><label for="s2">蛋白选择建议</label><span class="qty">牛排和鸡腿任选搭配</span></div>
+          <div class="check-item"><input type="checkbox" id="s3"><label for="s3">鸡蛋</label><span class="qty">21 个</span></div>
+      <div class="check-item"><input type="checkbox" id="s4"><label for="s4">嫩豆腐</label><span class="qty">2 盒</span></div>
+              <div class="check-item"><input type="checkbox" id="s5"><label for="s5">蛋白粉</label><span class="qty">每周约 4 勺</span></div>
+    </div>
+    <div class="modal-section">
+      <h4>🍞 碳水/主食</h4>
+              <div class="check-item"><input type="checkbox" id="s6"><label for="s6">全麦面包</label><span class="qty">2 袋（约 700~800g）</span></div>
+                  <div class="check-item"><input type="checkbox" id="s7"><label for="s7">红薯</label><span class="qty">3.5kg</span></div>
+              <div class="check-item"><input type="checkbox" id="s9"><label for="s9">香蕉</label><span class="qty">4 根</span></div>
+    </div>
+    <div class="modal-section">
+      <h4>🥛 奶/饮品</h4>
+              <div class="check-item"><input type="checkbox" id="s10"><label for="s10">纯牛奶</label><span class="qty">4L（1L×4 盒）</span></div>
+    </div>
+    <div class="modal-section">
+          <h4>🥬 蔬菜/脂肪/调料</h4>
+                  <div class="check-item"><input type="checkbox" id="s11"><label for="s11">黄瓜</label><span class="qty">1.5kg</span></div>
+      <div class="check-item"><input type="checkbox" id="s13"><label for="s13">山茶油</label><span class="qty">现有</span></div>
+      <div class="check-item"><input type="checkbox" id="s14"><label for="s14">食用盐</label><span class="qty">现有</span></div>
+      <div class="check-item"><input type="checkbox" id="s15"><label for="s15">黑胡椒</label><span class="qty">1 小瓶</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- 贴士弹窗 -->
+<div class="modal-overlay" id="tipsModal">
+  <div class="modal">
+    <div class="close-btn" onclick="closeModal('tipsModal')">✕</div>
+    <h3>💡 执行贴士</h3>
+    <div class="modal-section">
+          <h4>⚖️ 生熟怎么称（先看这个）</h4>
+      <p>餐单上写的「牛排或去皮鸡腿（生）Xg」<strong>全部是生重</strong>，你周末备餐时直接按生肉称好分装即可，不用煮熟再称。</p>
+      <p>换算参考（出成率约 70%）：</p>
+      <ul>
+        <li>生 200g 牛排/去皮鸡腿 → 煮熟/烤熟后大约 <strong>130~140g</strong> 熟重</li>
+        <li>生 180g → 熟重约 120~130g；生 220g → 熟重约 150~160g</li>
+      </ul>
+      <p>⚠️ 如果你习惯只称熟重，就在上面的基础上 <strong>× 0.7</strong>，但推荐直接称生重，误差最小。</p>
+    </div>
+    <div class="modal-section">
+          <h4>🥩 牛排空气炸锅做法</h4>
+      <p>推荐部位：板腱 > 菲力 > 西冷（去肥边）> 上脑芯</p>
+      <p>做法：盐 + 黑胡椒腌 15min → 空气炸锅 200°C 烤 10~12min → 中途翻面</p>
+      <p>⚠️ 不用刷油，牛排自带脂肪会烤出来，倒掉即可</p>
+      <p>和生重口径对应：每块 <strong>生重 100g</strong>，每顿吃 2 块就是 200g 生，烤完约 130~140g 熟重</p>
+    </div>
+    <div class="modal-section">
+          <h4>🍗 鸡腿肉空气炸锅做法</h4>
+      <p>去皮 → 盐 + 黑胡椒腌 15min → 空气炸锅 180°C 烤 20~25min → 中途翻面</p>
+      <p>⚠️ 一定要去掉鸡皮和明显肥油，餐单里的热量和蛋白是按去皮鸡腿（生）算的</p>
+    </div>
+    <div class="modal-section">
+          <h4>🥬 极速蔬菜做法</h4>
+              <p>黄瓜直接洗好切条分盒，午餐打开就吃，基本不用额外烹饪</p>
+          <p>这版故意把蔬菜收成最低执行成本，优先解决“吃得快、带着走、别磨叽”</p>
+              <p>如果哪天不想吃蔬菜，至少把香蕉和黄瓜条留住一点，别整周完全没有纤维</p>
+    </div>
+    <div class="modal-section">
+              <h4>🍞 主食怎么选</h4>
+                  <p>主食只留红薯、全麦面包，餐次尽量收少，目标是最快解决吃饭</p>
+              <p>全麦面包买配料表第一位是「全麦粉」的，别买「小麦粉 + 焦糖色」的假全麦</p>
+                  <p>训练日就吃 4 次，休息日就吃 3 次；蛋白粉直接并进训练日晚餐，别额外拆一餐</p>
+                  <p>午餐和晚餐里的肉都写成“<span class="highlight-protein">牛排或去皮鸡腿（生）</span>”，你当天想吃哪个就换哪个</p>
+    </div>
+    <div class="modal-section">
+      <h4>📦 周末批量备餐</h4>
+      <ul>
+                    <li>牛排/鸡腿：周末先备一种，吃烦了再换另一种，不用按星期固定死；<strong>直接按餐单上的生重分装</strong>，最省事</li>
+                    <li>红薯：周末全部蒸熟，按 150~350g 一份分装冷藏，上班直接带</li>
+                    <li>黄瓜：周末洗好切条分盒，午餐抓一盒就走</li>
+                <li>鸡蛋：周末煮 21 个，早餐直接配面包和牛奶</li>
+                <li>蛋白粉：周一到周四训练日晚餐前先冲 1 勺加水，2 分钟解决</li>
+      </ul>
+    </div>
+    <div class="modal-section">
+          <h4>⚡ 2 周后观察</h4>
+                  <p>每周掉 >0.7kg、训练发软或没劲 → 周一到周四晚餐红薯各加 50g</p>
+              <p>体重和腰围 2 周都不动 → 先把周五到周日晚餐红薯各减 50g，别先砍肉</p>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.querySelectorAll('.tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      const day = tab.dataset.day;
+      document.querySelectorAll('.day-card').forEach(card => {
+        card.classList.toggle('active', card.dataset.day === day);
+      });
+    });
+  });
+
+  function showPage(page, el) {
+    document.querySelectorAll('.bottom-btn').forEach(btn => btn.classList.remove('active'));
+    if (el) el.classList.add('active');
+    if (page === 'shop') {
+      document.getElementById('shopModal').classList.add('show');
+    } else if (page === 'tips') {
+      document.getElementById('tipsModal').classList.add('show');
+    }
+  }
+
+  function closeModal(id) {
+    document.getElementById(id).classList.remove('show');
+    document.querySelectorAll('.bottom-btn').forEach(btn => btn.classList.remove('active'));
+    document.querySelector('.bottom-btn:first-child').classList.add('active');
+  }
+
+  document.querySelectorAll('.modal-overlay').forEach(overlay => {
+    overlay.addEventListener('click', (e) => {
+      if (e.target === overlay) closeModal(overlay.id);
+    });
+  });
+
+  document.querySelectorAll('.check-item input').forEach(cb => {
+    const key = 'shop_' + cb.id;
+    try {
+      cb.checked = localStorage.getItem(key) === 'true';
+    } catch(e) {}
+    cb.addEventListener('change', () => {
+      try {
+        localStorage.setItem(key, cb.checked);
+      } catch(e) {}
+    });
+  });
+
+</script>
+
+</body>
+</html>
