@@ -335,7 +335,7 @@
         <div class="day-tag" :class="currentDay.tagClass" x-text="currentDay.tag"></div>
       </div>
       <div class="day-stats">
-        <template x-for="st in currentDay.stats" :key="st.label">
+        <template x-for="st in currentDayStats" :key="st.label">
           <div class="day-stat"><span x-text="st.icon"></span> <span x-text="st.value"></span> <span x-text="st.label"></span></div>
         </template>
       </div>
@@ -344,20 +344,20 @@
       <template x-for="(meal, mi) in currentDay.meals" :key="mi">
         <div class="meal" :class="'meal-' + meal.type">
           <!-- 可点击的头部：餐名 + 食物列表 + 本餐合计 -->
-          <div class="meal-head" @click="toggleDetail($event, mi)">
+          <div class="meal-head" @click="toggleDetail($event, mi)" :style="hasMealDetails(meal) ? '' : 'cursor: default;'">
             <div class="meal-name" x-text="meal.name"></div>
-            <div class="meal-items" x-html="meal.summary"></div>
+            <div class="meal-items" x-html="mealSummaryText(meal)"></div>
             <div class="meal-summary">
-              <span>🔥 <span class="ms-num" x-text="meal.total.kcal"></span> kcal</span>
-              <span>🥩 <span class="ms-num" x-text="meal.total.protein + 'g'"></span> 蛋白</span>
-              <span>🍠 <span class="ms-num" x-text="meal.total.carbs + 'g'"></span> 碳水</span>
-              <span>🥑 <span class="ms-num" x-text="meal.total.fat + 'g'"></span> 脂肪</span>
+              <span>🔥 <span class="ms-num" x-text="formatKcal(mealTotal(meal).kcal)"></span> kcal</span>
+              <span>🥩 <span class="ms-num" x-text="formatMacro(mealTotal(meal).protein)"></span> 蛋白</span>
+              <span>🍠 <span class="ms-num" x-text="formatMacro(mealTotal(meal).carbs)"></span> 碳水</span>
+              <span>🥑 <span class="ms-num" x-text="formatMacro(mealTotal(meal).fat)"></span> 脂肪</span>
             </div>
-            <div class="expand-hint" x-text="isDetailOpen(mi) ? '▲ 收起' : '▼ 点击查看食物明细'"></div>
+            <div class="expand-hint" x-show="hasMealDetails(meal)" x-text="isDetailOpen(mi) ? '▲ 收起' : '▼ 点击查看食物明细'"></div>
           </div>
 
           <!-- 折叠明细表格 -->
-          <div class="meal-detail" :class="{ open: isDetailOpen(mi) }">
+          <div class="meal-detail" x-show="hasMealDetails(meal)" :class="{ open: isDetailOpen(mi) }">
             <table class="detail-table">
               <thead>
                 <tr>
@@ -369,7 +369,7 @@
                 </tr>
               </thead>
               <tbody>
-                <template x-for="(food, fi) in meal.foods" :key="fi">
+                <template x-for="(food, fi) in mealDetailRows(meal)" :key="fi">
                   <tr>
                     <td class="col-name" x-html="food.name"></td>
                     <td class="col-num" x-text="food.kcal + ' kcal'"></td>
@@ -382,10 +382,10 @@
               <tfoot>
                 <tr class="detail-total">
                   <td>本餐合计</td>
-                  <td class="col-num" x-text="meal.total.kcal + ' kcal'"></td>
-                  <td class="col-num" x-text="meal.total.protein + 'g'"></td>
-                  <td class="col-num" x-text="meal.total.carbs + 'g'"></td>
-                  <td class="col-num" x-text="meal.total.fat + 'g'"></td>
+                  <td class="col-num" x-text="formatKcal(mealTotal(meal).kcal) + ' kcal'"></td>
+                  <td class="col-num" x-text="formatMacro(mealTotal(meal).protein) + 'g'"></td>
+                  <td class="col-num" x-text="formatMacro(mealTotal(meal).carbs) + 'g'"></td>
+                  <td class="col-num" x-text="formatMacro(mealTotal(meal).fat) + 'g'"></td>
                 </tr>
               </tfoot>
             </table>
@@ -443,80 +443,183 @@
 document.addEventListener('alpine:init', () => {
   Alpine.data('mealPlan', () => ({
     profile: '28岁 · 男 · 165cm · 63kg · 目标：六块腹肌 · 极速执行版',
-
-    summaryStats: [
-      { value: '1714', label: '日均热量' },
-      { value: '136g', label: '日均蛋白质' },
-      { value: '2.16g', label: '蛋白质/kg' },
-      { value: '514', label: '热量缺口' },
-    ],
-
+    bodyWeightKg: 63,
+    maintenanceCalories: 2228,
     activeDay: 0,
     activePage: 'plan',
     openMeals: {},
 
+    foodBases: {
+      wholeWheatBread: { name: '全麦面包', basis: '每100g', baseAmount: 100, unit: 'g', kcal: 250, protein: 12, carbs: 43, fat: 4 },
+      wholeEgg: { name: '全蛋', basis: '每1个', baseAmount: 1, unit: '个', kcal: 72, protein: 6.3, carbs: 0.6, fat: 5 },
+      highProteinMilk: { name: '高蛋白低脂奶', basis: '每100ml', baseAmount: 100, unit: 'ml', kcal: 36, protein: 4.2, carbs: 2.8, fat: 0.8 },
+      chickenBreastRaw: { name: '鸡胸肉（生）', basis: '每100g', baseAmount: 100, unit: 'g', kcal: 120, protein: 23, carbs: 0, fat: 2.6 },
+      chickenThighRaw: { name: '去皮鸡腿（生）', basis: '每100g', baseAmount: 100, unit: 'g', kcal: 145, protein: 19, carbs: 0, fat: 8 },
+      sweetPotato: { name: '蒸红薯', basis: '每100g', baseAmount: 100, unit: 'g', kcal: 86, protein: 1.6, carbs: 20.1, fat: 0.1 },
+      cucumber: { name: '黄瓜条', basis: '每100g', baseAmount: 100, unit: 'g', kcal: 15, protein: 0.8, carbs: 2.9, fat: 0.2 },
+      banana: { name: '香蕉（可食部）', basis: '每100g', baseAmount: 100, unit: 'g', kcal: 89, protein: 1.1, carbs: 22.8, fat: 0.3 },
+      whey: { name: '蛋白粉', basis: '每30g（约1勺）', baseAmount: 30, unit: 'g', kcal: 120, protein: 24, carbs: 3, fat: 1.5 },
+      tofu: { name: '嫩豆腐', basis: '每100g', baseAmount: 100, unit: 'g', kcal: 55, protein: 5, carbs: 2, fat: 3 },
+    },
+
     toggleDetail(_e, mi) {
+      const meal = this.currentDay.meals[mi];
+      if (!this.hasMealDetails(meal)) return;
       this.openMeals[mi] = !this.openMeals[mi];
     },
     isDetailOpen(mi) {
       return !!this.openMeals[mi];
+    },
+    hasMealDetails(meal) {
+      return Array.isArray(meal.items) && meal.items.length > 0;
     },
 
     get currentDay() {
       return this.days[this.activeDay];
     },
 
-    // ---- 每日餐单（含食物明细） ----
+    get currentDayStats() {
+      return this.dayStats(this.currentDay);
+    },
+
+    get summaryStats() {
+      const avg = this.averageDayTotals();
+      return [
+        { value: this.formatKcal(avg.kcal), label: '日均热量' },
+        { value: this.formatMacro(avg.protein) + 'g', label: '日均蛋白质' },
+        { value: (avg.protein / this.bodyWeightKg).toFixed(2) + 'g', label: '蛋白质/kg' },
+        { value: this.formatKcal(this.maintenanceCalories - avg.kcal), label: '热量缺口' },
+      ];
+    },
+
+    calcFood(item) {
+      const base = this.foodBases[item.foodKey];
+      const ratio = item.amount / base.baseAmount;
+      return {
+        kcal: base.kcal * ratio,
+        protein: base.protein * ratio,
+        carbs: base.carbs * ratio,
+        fat: base.fat * ratio,
+      };
+    },
+
+    mealTotal(meal) {
+      return (meal.items || []).reduce((sum, item) => {
+        const values = this.calcFood(item);
+        sum.kcal += values.kcal;
+        sum.protein += values.protein;
+        sum.carbs += values.carbs;
+        sum.fat += values.fat;
+        return sum;
+      }, { kcal: 0, protein: 0, carbs: 0, fat: 0 });
+    },
+
+    dayTotal(day) {
+      return day.meals.reduce((sum, meal) => {
+        const totals = this.mealTotal(meal);
+        sum.kcal += totals.kcal;
+        sum.protein += totals.protein;
+        sum.carbs += totals.carbs;
+        sum.fat += totals.fat;
+        return sum;
+      }, { kcal: 0, protein: 0, carbs: 0, fat: 0 });
+    },
+
+    averageDayTotals() {
+      const totals = this.days.reduce((sum, day) => {
+        const dayTotals = this.dayTotal(day);
+        sum.kcal += dayTotals.kcal;
+        sum.protein += dayTotals.protein;
+        sum.carbs += dayTotals.carbs;
+        sum.fat += dayTotals.fat;
+        return sum;
+      }, { kcal: 0, protein: 0, carbs: 0, fat: 0 });
+      return {
+        kcal: totals.kcal / this.days.length,
+        protein: totals.protein / this.days.length,
+        carbs: totals.carbs / this.days.length,
+        fat: totals.fat / this.days.length,
+      };
+    },
+
+    dayStats(day) {
+      const total = this.dayTotal(day);
+      return [
+        { icon: '🔥', value: this.formatKcal(total.kcal), label: 'kcal' },
+        { icon: '🥩', value: this.formatMacro(total.protein) + 'g', label: '蛋白质' },
+        { icon: '🍠', value: this.formatMacro(total.carbs) + 'g', label: '碳水' },
+        { icon: '🥑', value: this.formatMacro(total.fat) + 'g', label: '脂肪' },
+      ];
+    },
+
+    formatKcal(value) {
+      return String(Math.round(value));
+    },
+
+    formatMacro(value) {
+      const rounded = Number(value.toFixed(1));
+      return Number.isInteger(rounded) ? String(rounded) : rounded.toFixed(1);
+    },
+
+    mealSummaryText(meal) {
+      if (meal.note) return meal.note;
+      return meal.items.map(item => item.summaryText).join('｜');
+    },
+
+    mealDetailRows(meal) {
+      return (meal.items || []).map(item => {
+        const base = this.foodBases[item.foodKey];
+        const values = this.calcFood(item);
+        const displayName = `${base.name} ${item.amountText || `${item.amount}${base.unit}`}`;
+        const name = item.highlight
+          ? `<span class="highlight-protein">${displayName}</span>`
+          : displayName;
+        return {
+          name,
+          kcal: this.formatKcal(values.kcal),
+          protein: this.formatMacro(values.protein),
+          carbs: this.formatMacro(values.carbs),
+          fat: this.formatMacro(values.fat),
+        };
+      });
+    },
+
+    // ---- 每日餐单（基于食物基准值自动计算） ----
     days: [
       {
         shortName: '周一 胸',
         title: '周一 · 练胸日',
         tag: '💪 训练·高碳',
         tagClass: 'tag-high',
-        stats: [
-          { icon: '🔥', value: '1845', label: 'kcal' },
-          { icon: '🥩', value: '156g', label: '蛋白质' },
-          { icon: '🍠', value: '196g', label: '碳水' },
-          { icon: '🥑', value: '56g', label: '脂肪' },
-        ],
         meals: [
           {
             type: 'breakfast', name: '🌅 早餐',
-            summary: '全麦面包 2 片｜全蛋 3 个｜高蛋白低脂奶 500ml',
-            total: { kcal: 501, protein: 38, carbs: 49, fat: 19 },
-            foods: [
-              { name: '全麦面包 2 片', kcal: 140, protein: 6, carbs: 24, fat: 2 },
-              { name: '全蛋 3 个', kcal: 216, protein: 18, carbs: 2, fat: 15 },
-              { name: '高蛋白低脂奶 500ml', kcal: 145, protein: 14, carbs: 23, fat: 2 },
+            items: [
+              { foodKey: 'wholeWheatBread', amount: 70, amountText: '70g（约2片）', summaryText: '全麦面包 2片（约70g）' },
+              { foodKey: 'wholeEgg', amount: 3, amountText: '3个', summaryText: '全蛋 3个' },
+              { foodKey: 'highProteinMilk', amount: 500, amountText: '500ml', summaryText: '高蛋白低脂奶 500ml' },
             ],
           },
           {
             type: 'lunch', name: '🍱 午餐',
-            summary: '蒸红薯 250g｜<span class="highlight-protein">鸡胸肉或去皮鸡腿（生）</span> 200g｜黄瓜条 150g',
-            total: { kcal: 489, protein: 50, carbs: 55, fat: 7 },
-            foods: [
-              { name: '蒸红薯 250g', kcal: 215, protein: 4, carbs: 50, fat: 0 },
-              { name: '<span class="highlight-protein">鸡胸肉或去皮鸡腿（生）</span> 200g', kcal: 240, protein: 44, carbs: 0, fat: 5 },
-              { name: '黄瓜条 150g', kcal: 34, protein: 2, carbs: 5, fat: 2 },
+            items: [
+              { foodKey: 'sweetPotato', amount: 250, amountText: '250g', summaryText: '蒸红薯 250g' },
+              { foodKey: 'chickenBreastRaw', amount: 200, amountText: '200g', summaryText: '鸡胸肉（生）200g', highlight: true },
+              { foodKey: 'cucumber', amount: 150, amountText: '150g', summaryText: '黄瓜条 150g' },
             ],
           },
           {
             type: 'pre', name: '⚡ 练前 60min',
-            summary: '香蕉 1 根',
-            total: { kcal: 93, protein: 1, carbs: 22, fat: 0 },
-            foods: [
-              { name: '香蕉 1 根（约 120g）', kcal: 93, protein: 1, carbs: 22, fat: 0 },
+            items: [
+              { foodKey: 'banana', amount: 120, amountText: '120g（约1根）', summaryText: '香蕉 1根（可食部约120g）' },
             ],
           },
           {
             type: 'dinner', name: '🌙 晚餐（练后）',
-            summary: '蛋白粉 1 勺（加水，先喝）｜<span class="highlight-protein">鸡胸肉或去皮鸡腿（生）</span> 200g｜蒸红薯 300g',
-            total: { kcal: 762, protein: 67, carbs: 70, fat: 30 },
-            foods: [
-              { name: '蛋白粉 1 勺', kcal: 120, protein: 24, carbs: 3, fat: 1 },
-              { name: '<span class="highlight-protein">鸡胸肉或去皮鸡腿（生）</span> 200g', kcal: 240, protein: 44, carbs: 0, fat: 5 },
-              { name: '蒸红薯 300g', kcal: 258, protein: 5, carbs: 60, fat: 0 },
-              { name: '（蛋白粉中的乳清脂肪）', kcal: 144, protein: -6, carbs: 7, fat: 24 },
+            items: [
+              { foodKey: 'whey', amount: 30, amountText: '30g（约1勺）', summaryText: '蛋白粉 1勺（约30g，加水，先喝）', highlight: true },
+              { foodKey: 'chickenBreastRaw', amount: 200, amountText: '200g', summaryText: '鸡胸肉（生）200g', highlight: true },
+              { foodKey: 'sweetPotato', amount: 300, amountText: '300g', summaryText: '蒸红薯 300g' },
             ],
           },
         ],
@@ -526,50 +629,35 @@ document.addEventListener('alpine:init', () => {
         title: '周二 · 练背日',
         tag: '💪 训练·高碳',
         tagClass: 'tag-high',
-        stats: [
-          { icon: '🔥', value: '1865', label: 'kcal' },
-          { icon: '🥩', value: '148g', label: '蛋白质' },
-          { icon: '🍠', value: '196g', label: '碳水' },
-          { icon: '🥑', value: '59g', label: '脂肪' },
-        ],
         meals: [
           {
             type: 'breakfast', name: '🌅 早餐',
-            summary: '全麦面包 2 片｜全蛋 3 个｜高蛋白低脂奶 500ml',
-            total: { kcal: 501, protein: 38, carbs: 49, fat: 19 },
-            foods: [
-              { name: '全麦面包 2 片', kcal: 140, protein: 6, carbs: 24, fat: 2 },
-              { name: '全蛋 3 个', kcal: 216, protein: 18, carbs: 2, fat: 15 },
-              { name: '高蛋白低脂奶 500ml', kcal: 145, protein: 14, carbs: 23, fat: 2 },
+            items: [
+              { foodKey: 'wholeWheatBread', amount: 70, amountText: '70g（约2片）', summaryText: '全麦面包 2片（约70g）' },
+              { foodKey: 'wholeEgg', amount: 3, amountText: '3个', summaryText: '全蛋 3个' },
+              { foodKey: 'highProteinMilk', amount: 500, amountText: '500ml', summaryText: '高蛋白低脂奶 500ml' },
             ],
           },
           {
             type: 'lunch', name: '🍱 午餐',
-            summary: '蒸红薯 250g｜<span class="highlight-protein">鸡胸肉或去皮鸡腿（生）</span> 200g｜黄瓜条 150g',
-            total: { kcal: 489, protein: 50, carbs: 55, fat: 7 },
-            foods: [
-              { name: '蒸红薯 250g', kcal: 215, protein: 4, carbs: 50, fat: 0 },
-              { name: '<span class="highlight-protein">鸡胸肉或去皮鸡腿（生）</span> 200g', kcal: 240, protein: 44, carbs: 0, fat: 5 },
-              { name: '黄瓜条 150g', kcal: 34, protein: 2, carbs: 5, fat: 2 },
+            items: [
+              { foodKey: 'sweetPotato', amount: 250, amountText: '250g', summaryText: '蒸红薯 250g' },
+              { foodKey: 'chickenBreastRaw', amount: 200, amountText: '200g', summaryText: '鸡胸肉（生）200g', highlight: true },
+              { foodKey: 'cucumber', amount: 150, amountText: '150g', summaryText: '黄瓜条 150g' },
             ],
           },
           {
             type: 'pre', name: '⚡ 练前 60min',
-            summary: '香蕉 1 根',
-            total: { kcal: 93, protein: 1, carbs: 22, fat: 0 },
-            foods: [
-              { name: '香蕉 1 根（约 120g）', kcal: 93, protein: 1, carbs: 22, fat: 0 },
+            items: [
+              { foodKey: 'banana', amount: 120, amountText: '120g（约1根）', summaryText: '香蕉 1根（可食部约120g）' },
             ],
           },
           {
             type: 'dinner', name: '🌙 晚餐（练后）',
-            summary: '蛋白粉 1 勺（加水，先喝）｜<span class="highlight-protein">鸡胸肉或去皮鸡腿（生）</span> 200g｜蒸红薯 300g',
-            total: { kcal: 782, protein: 59, carbs: 70, fat: 33 },
-            foods: [
-              { name: '蛋白粉 1 勺', kcal: 120, protein: 24, carbs: 3, fat: 1 },
-              { name: '<span class="highlight-protein">鸡胸肉或去皮鸡腿（生）</span> 200g', kcal: 240, protein: 44, carbs: 0, fat: 5 },
-              { name: '蒸红薯 300g', kcal: 258, protein: 5, carbs: 60, fat: 0 },
-              { name: '（蛋白粉中的乳清脂肪）', kcal: 164, protein: -14, carbs: 7, fat: 27 },
+            items: [
+              { foodKey: 'whey', amount: 30, amountText: '30g（约1勺）', summaryText: '蛋白粉 1勺（约30g，加水，先喝）', highlight: true },
+              { foodKey: 'chickenBreastRaw', amount: 200, amountText: '200g', summaryText: '鸡胸肉（生）200g', highlight: true },
+              { foodKey: 'sweetPotato', amount: 300, amountText: '300g', summaryText: '蒸红薯 300g' },
             ],
           },
         ],
@@ -579,50 +667,35 @@ document.addEventListener('alpine:init', () => {
         title: '周三 · 练腿日',
         tag: '💪 训练·最高碳',
         tagClass: 'tag-high',
-        stats: [
-          { icon: '🔥', value: '2037', label: 'kcal' },
-          { icon: '🥩', value: '156g', label: '蛋白质' },
-          { icon: '🍠', value: '229g', label: '碳水' },
-          { icon: '🥑', value: '62g', label: '脂肪' },
-        ],
         meals: [
           {
             type: 'breakfast', name: '🌅 早餐',
-            summary: '全麦面包 3 片｜全蛋 3 个｜高蛋白低脂奶 500ml',
-            total: { kcal: 571, protein: 41, carbs: 61, fat: 20 },
-            foods: [
-              { name: '全麦面包 3 片', kcal: 210, protein: 9, carbs: 36, fat: 3 },
-              { name: '全蛋 3 个', kcal: 216, protein: 18, carbs: 2, fat: 15 },
-              { name: '高蛋白低脂奶 500ml', kcal: 145, protein: 14, carbs: 23, fat: 2 },
+            items: [
+              { foodKey: 'wholeWheatBread', amount: 105, amountText: '105g（约3片）', summaryText: '全麦面包 3片（约105g）' },
+              { foodKey: 'wholeEgg', amount: 3, amountText: '3个', summaryText: '全蛋 3个' },
+              { foodKey: 'highProteinMilk', amount: 500, amountText: '500ml', summaryText: '高蛋白低脂奶 500ml' },
             ],
           },
           {
             type: 'lunch', name: '🍱 午餐',
-            summary: '蒸红薯 300g｜<span class="highlight-protein">鸡胸肉或去皮鸡腿（生）</span> 220g｜黄瓜条 150g',
-            total: { kcal: 557, protein: 55, carbs: 65, fat: 7 },
-            foods: [
-              { name: '蒸红薯 300g', kcal: 258, protein: 5, carbs: 60, fat: 0 },
-              { name: '<span class="highlight-protein">鸡胸肉或去皮鸡腿（生）</span> 220g', kcal: 265, protein: 48, carbs: 0, fat: 5 },
-              { name: '黄瓜条 150g', kcal: 34, protein: 2, carbs: 5, fat: 2 },
+            items: [
+              { foodKey: 'sweetPotato', amount: 300, amountText: '300g', summaryText: '蒸红薯 300g' },
+              { foodKey: 'chickenBreastRaw', amount: 220, amountText: '220g', summaryText: '鸡胸肉（生）220g', highlight: true },
+              { foodKey: 'cucumber', amount: 150, amountText: '150g', summaryText: '黄瓜条 150g' },
             ],
           },
           {
             type: 'pre', name: '⚡ 练前 60min',
-            summary: '香蕉 1 根',
-            total: { kcal: 93, protein: 1, carbs: 22, fat: 0 },
-            foods: [
-              { name: '香蕉 1 根（约 120g）', kcal: 93, protein: 1, carbs: 22, fat: 0 },
+            items: [
+              { foodKey: 'banana', amount: 120, amountText: '120g（约1根）', summaryText: '香蕉 1根（可食部约120g）' },
             ],
           },
           {
             type: 'dinner', name: '🌙 晚餐（练后）',
-            summary: '蛋白粉 1 勺（加水，先喝）｜<span class="highlight-protein">鸡胸肉或去皮鸡腿（生）</span> 200g｜蒸红薯 350g',
-            total: { kcal: 816, protein: 59, carbs: 81, fat: 35 },
-            foods: [
-              { name: '蛋白粉 1 勺', kcal: 120, protein: 24, carbs: 3, fat: 1 },
-              { name: '<span class="highlight-protein">鸡胸肉或去皮鸡腿（生）</span> 200g', kcal: 240, protein: 44, carbs: 0, fat: 5 },
-              { name: '蒸红薯 350g', kcal: 301, protein: 6, carbs: 70, fat: 0 },
-              { name: '（蛋白粉中的乳清脂肪）', kcal: 155, protein: -15, carbs: 8, fat: 29 },
+            items: [
+              { foodKey: 'whey', amount: 30, amountText: '30g（约1勺）', summaryText: '蛋白粉 1勺（约30g，加水，先喝）', highlight: true },
+              { foodKey: 'chickenBreastRaw', amount: 200, amountText: '200g', summaryText: '鸡胸肉（生）200g', highlight: true },
+              { foodKey: 'sweetPotato', amount: 350, amountText: '350g', summaryText: '蒸红薯 350g' },
             ],
           },
         ],
@@ -632,50 +705,35 @@ document.addEventListener('alpine:init', () => {
         title: '周四 · 练肩日',
         tag: '💪 训练·中碳',
         tagClass: 'tag-mid',
-        stats: [
-          { icon: '🔥', value: '1802', label: 'kcal' },
-          { icon: '🥩', value: '155g', label: '蛋白质' },
-          { icon: '🍠', value: '184g', label: '碳水' },
-          { icon: '🥑', value: '55g', label: '脂肪' },
-        ],
         meals: [
           {
             type: 'breakfast', name: '🌅 早餐',
-            summary: '全麦面包 2 片｜全蛋 3 个｜高蛋白低脂奶 500ml',
-            total: { kcal: 501, protein: 38, carbs: 49, fat: 19 },
-            foods: [
-              { name: '全麦面包 2 片', kcal: 140, protein: 6, carbs: 24, fat: 2 },
-              { name: '全蛋 3 个', kcal: 216, protein: 18, carbs: 2, fat: 15 },
-              { name: '高蛋白低脂奶 500ml', kcal: 145, protein: 14, carbs: 23, fat: 2 },
+            items: [
+              { foodKey: 'wholeWheatBread', amount: 70, amountText: '70g（约2片）', summaryText: '全麦面包 2片（约70g）' },
+              { foodKey: 'wholeEgg', amount: 3, amountText: '3个', summaryText: '全蛋 3个' },
+              { foodKey: 'highProteinMilk', amount: 500, amountText: '500ml', summaryText: '高蛋白低脂奶 500ml' },
             ],
           },
           {
             type: 'lunch', name: '🍱 午餐',
-            summary: '蒸红薯 250g｜<span class="highlight-protein">鸡胸肉或去皮鸡腿（生）</span> 200g｜黄瓜条 150g',
-            total: { kcal: 489, protein: 50, carbs: 55, fat: 7 },
-            foods: [
-              { name: '蒸红薯 250g', kcal: 215, protein: 4, carbs: 50, fat: 0 },
-              { name: '<span class="highlight-protein">鸡胸肉或去皮鸡腿（生）</span> 200g', kcal: 240, protein: 44, carbs: 0, fat: 5 },
-              { name: '黄瓜条 150g', kcal: 34, protein: 2, carbs: 5, fat: 2 },
+            items: [
+              { foodKey: 'sweetPotato', amount: 250, amountText: '250g', summaryText: '蒸红薯 250g' },
+              { foodKey: 'chickenBreastRaw', amount: 200, amountText: '200g', summaryText: '鸡胸肉（生）200g', highlight: true },
+              { foodKey: 'cucumber', amount: 150, amountText: '150g', summaryText: '黄瓜条 150g' },
             ],
           },
           {
             type: 'pre', name: '⚡ 练前 60min',
-            summary: '香蕉 1 根',
-            total: { kcal: 93, protein: 1, carbs: 22, fat: 0 },
-            foods: [
-              { name: '香蕉 1 根（约 120g）', kcal: 93, protein: 1, carbs: 22, fat: 0 },
+            items: [
+              { foodKey: 'banana', amount: 120, amountText: '120g（约1根）', summaryText: '香蕉 1根（可食部约120g）' },
             ],
           },
           {
             type: 'dinner', name: '🌙 晚餐（练后）',
-            summary: '蛋白粉 1 勺（加水，先喝）｜<span class="highlight-protein">鸡胸肉或去皮鸡腿（生）</span> 200g｜蒸红薯 250g',
-            total: { kcal: 719, protein: 66, carbs: 58, fat: 29 },
-            foods: [
-              { name: '蛋白粉 1 勺', kcal: 120, protein: 24, carbs: 3, fat: 1 },
-              { name: '<span class="highlight-protein">鸡胸肉或去皮鸡腿（生）</span> 200g', kcal: 240, protein: 44, carbs: 0, fat: 5 },
-              { name: '蒸红薯 250g', kcal: 215, protein: 4, carbs: 50, fat: 0 },
-              { name: '（蛋白粉中的乳清脂肪）', kcal: 144, protein: -6, carbs: 5, fat: 23 },
+            items: [
+              { foodKey: 'whey', amount: 30, amountText: '30g（约1勺）', summaryText: '蛋白粉 1勺（约30g，加水，先喝）', highlight: true },
+              { foodKey: 'chickenBreastRaw', amount: 200, amountText: '200g', summaryText: '鸡胸肉（生）200g', highlight: true },
+              { foodKey: 'sweetPotato', amount: 250, amountText: '250g', summaryText: '蒸红薯 250g' },
             ],
           },
         ],
@@ -685,49 +743,33 @@ document.addEventListener('alpine:init', () => {
         title: '周五 · 恢复日',
         tag: '🚶 恢复·中低碳',
         tagClass: 'tag-low',
-        stats: [
-          { icon: '🔥', value: '1478', label: 'kcal' },
-          { icon: '🥩', value: '111g', label: '蛋白质' },
-          { icon: '🍠', value: '140g', label: '碳水' },
-          { icon: '🥑', value: '53g', label: '脂肪' },
-        ],
         meals: [
           {
             type: 'breakfast', name: '🌅 早餐',
-            summary: '全麦面包 2 片｜全蛋 3 个｜高蛋白低脂奶 400ml',
-            total: { kcal: 472, protein: 35, carbs: 44, fat: 19 },
-            foods: [
-              { name: '全麦面包 2 片', kcal: 140, protein: 6, carbs: 24, fat: 2 },
-              { name: '全蛋 3 个', kcal: 216, protein: 18, carbs: 2, fat: 15 },
-              { name: '高蛋白低脂奶 400ml', kcal: 116, protein: 11, carbs: 18, fat: 2 },
+            items: [
+              { foodKey: 'wholeWheatBread', amount: 70, amountText: '70g（约2片）', summaryText: '全麦面包 2片（约70g）' },
+              { foodKey: 'wholeEgg', amount: 3, amountText: '3个', summaryText: '全蛋 3个' },
+              { foodKey: 'highProteinMilk', amount: 400, amountText: '400ml', summaryText: '高蛋白低脂奶 400ml' },
             ],
           },
           {
             type: 'lunch', name: '🍱 午餐',
-            summary: '蒸红薯 250g｜<span class="highlight-protein">鸡胸肉或去皮鸡腿（生）</span> 200g｜黄瓜条 150g',
-            total: { kcal: 489, protein: 50, carbs: 55, fat: 7 },
-            foods: [
-              { name: '蒸红薯 250g', kcal: 215, protein: 4, carbs: 50, fat: 0 },
-              { name: '<span class="highlight-protein">鸡胸肉或去皮鸡腿（生）</span> 200g', kcal: 240, protein: 44, carbs: 0, fat: 5 },
-              { name: '黄瓜条 150g', kcal: 34, protein: 2, carbs: 5, fat: 2 },
+            items: [
+              { foodKey: 'sweetPotato', amount: 250, amountText: '250g', summaryText: '蒸红薯 250g' },
+              { foodKey: 'chickenBreastRaw', amount: 200, amountText: '200g', summaryText: '鸡胸肉（生）200g', highlight: true },
+              { foodKey: 'cucumber', amount: 150, amountText: '150g', summaryText: '黄瓜条 150g' },
             ],
           },
           {
             type: 'dinner', name: '🌙 晚餐',
-            summary: '<span class="highlight-protein">鸡胸肉或去皮鸡腿（生）</span> 180g｜蒸红薯 200g',
-            total: { kcal: 388, protein: 26, carbs: 41, fat: 5 },
-            foods: [
-              { name: '<span class="highlight-protein">鸡胸肉或去皮鸡腿（生）</span> 180g', kcal: 216, protein: 40, carbs: 0, fat: 5 },
-              { name: '蒸红薯 200g', kcal: 172, protein: 3, carbs: 40, fat: 0 },
+            items: [
+              { foodKey: 'chickenBreastRaw', amount: 180, amountText: '180g', summaryText: '鸡胸肉（生）180g', highlight: true },
+              { foodKey: 'sweetPotato', amount: 200, amountText: '200g', summaryText: '蒸红薯 200g' },
             ],
           },
           {
             type: 'pre', name: '🚶 运动',
-            summary: '快走 40 分钟',
-            total: { kcal: 0, protein: 0, carbs: 0, fat: 0 },
-            foods: [
-              { name: '快走 40 分钟（消耗约 150kcal）', kcal: 0, protein: 0, carbs: 0, fat: 0 },
-            ],
+            note: '快走 40 分钟',
           },
         ],
       },
@@ -736,50 +778,34 @@ document.addEventListener('alpine:init', () => {
         title: '周六 · 灵活日',
         tag: '🤸 灵活·中低碳',
         tagClass: 'tag-low',
-        stats: [
-          { icon: '🔥', value: '1491', label: 'kcal' },
-          { icon: '🥩', value: '116g', label: '蛋白质' },
-          { icon: '🍠', value: '124g', label: '碳水' },
-          { icon: '🥑', value: '57g', label: '脂肪' },
-        ],
         meals: [
           {
             type: 'breakfast', name: '🌅 早餐',
-            summary: '全麦面包 2 片｜全蛋 3 个｜高蛋白低脂奶 400ml',
-            total: { kcal: 472, protein: 35, carbs: 44, fat: 19 },
-            foods: [
-              { name: '全麦面包 2 片', kcal: 140, protein: 6, carbs: 24, fat: 2 },
-              { name: '全蛋 3 个', kcal: 216, protein: 18, carbs: 2, fat: 15 },
-              { name: '高蛋白低脂奶 400ml', kcal: 116, protein: 11, carbs: 18, fat: 2 },
+            items: [
+              { foodKey: 'wholeWheatBread', amount: 70, amountText: '70g（约2片）', summaryText: '全麦面包 2片（约70g）' },
+              { foodKey: 'wholeEgg', amount: 3, amountText: '3个', summaryText: '全蛋 3个' },
+              { foodKey: 'highProteinMilk', amount: 400, amountText: '400ml', summaryText: '高蛋白低脂奶 400ml' },
             ],
           },
           {
             type: 'lunch', name: '🍱 午餐',
-            summary: '蒸红薯 200g｜<span class="highlight-protein">鸡胸肉或去皮鸡腿（生）</span> 180g｜黄瓜条 150g',
-            total: { kcal: 428, protein: 44, carbs: 45, fat: 5 },
-            foods: [
-              { name: '蒸红薯 200g', kcal: 172, protein: 3, carbs: 40, fat: 0 },
-              { name: '<span class="highlight-protein">鸡胸肉或去皮鸡腿（生）</span> 180g', kcal: 216, protein: 40, carbs: 0, fat: 5 },
-              { name: '黄瓜条 150g', kcal: 34, protein: 2, carbs: 5, fat: 2 },
+            items: [
+              { foodKey: 'sweetPotato', amount: 200, amountText: '200g', summaryText: '蒸红薯 200g' },
+              { foodKey: 'chickenBreastRaw', amount: 180, amountText: '180g', summaryText: '鸡胸肉（生）180g', highlight: true },
+              { foodKey: 'cucumber', amount: 150, amountText: '150g', summaryText: '黄瓜条 150g' },
             ],
           },
           {
             type: 'dinner', name: '🌙 晚餐',
-            summary: '<span class="highlight-protein">鸡胸肉或去皮鸡腿（生）</span> 180g｜嫩豆腐 150g｜蒸红薯 150g',
-            total: { kcal: 420, protein: 37, carbs: 35, fat: 11 },
-            foods: [
-              { name: '<span class="highlight-protein">鸡胸肉或去皮鸡腿（生）</span> 180g', kcal: 216, protein: 40, carbs: 0, fat: 5 },
-              { name: '嫩豆腐 150g', kcal: 75, protein: 6, carbs: 2, fat: 4 },
-              { name: '蒸红薯 150g', kcal: 129, protein: 2, carbs: 30, fat: 0 },
+            items: [
+              { foodKey: 'chickenBreastRaw', amount: 180, amountText: '180g', summaryText: '鸡胸肉（生）180g', highlight: true },
+              { foodKey: 'tofu', amount: 150, amountText: '150g', summaryText: '嫩豆腐 150g' },
+              { foodKey: 'sweetPotato', amount: 150, amountText: '150g', summaryText: '蒸红薯 150g' },
             ],
           },
           {
             type: 'pre', name: '🚶 运动',
-            summary: '快走 40 分钟 或 完全休息（二选一）',
-            total: { kcal: 0, protein: 0, carbs: 0, fat: 0 },
-            foods: [
-              { name: '快走 40 分钟 或 完全休息（二选一）', kcal: 0, protein: 0, carbs: 0, fat: 0 },
-            ],
+            note: '快走 40 分钟 或 完全休息（二选一）',
           },
         ],
       },
@@ -788,41 +814,29 @@ document.addEventListener('alpine:init', () => {
         title: '周日 · 休息日',
         tag: '😴 休息·中低碳',
         tagClass: 'tag-low',
-        stats: [
-          { icon: '🔥', value: '1480', label: 'kcal' },
-          { icon: '🥩', value: '111g', label: '蛋白质' },
-          { icon: '🍠', value: '125g', label: '碳水' },
-          { icon: '🥑', value: '57g', label: '脂肪' },
-        ],
         meals: [
           {
             type: 'breakfast', name: '🌅 早餐',
-            summary: '全麦面包 2 片｜全蛋 3 个｜高蛋白低脂奶 400ml',
-            total: { kcal: 472, protein: 35, carbs: 44, fat: 19 },
-            foods: [
-              { name: '全麦面包 2 片', kcal: 140, protein: 6, carbs: 24, fat: 2 },
-              { name: '全蛋 3 个', kcal: 216, protein: 18, carbs: 2, fat: 15 },
-              { name: '高蛋白低脂奶 400ml', kcal: 116, protein: 11, carbs: 18, fat: 2 },
+            items: [
+              { foodKey: 'wholeWheatBread', amount: 70, amountText: '70g（约2片）', summaryText: '全麦面包 2片（约70g）' },
+              { foodKey: 'wholeEgg', amount: 3, amountText: '3个', summaryText: '全蛋 3个' },
+              { foodKey: 'highProteinMilk', amount: 400, amountText: '400ml', summaryText: '高蛋白低脂奶 400ml' },
             ],
           },
           {
             type: 'lunch', name: '🍱 午餐',
-            summary: '蒸红薯 200g｜<span class="highlight-protein">鸡胸肉或去皮鸡腿（生）</span> 180g｜黄瓜条 150g',
-            total: { kcal: 422, protein: 45, carbs: 45, fat: 7 },
-            foods: [
-              { name: '蒸红薯 200g', kcal: 172, protein: 3, carbs: 40, fat: 0 },
-              { name: '<span class="highlight-protein">鸡胸肉或去皮鸡腿（生）</span> 180g', kcal: 216, protein: 40, carbs: 0, fat: 5 },
-              { name: '黄瓜条 150g', kcal: 34, protein: 2, carbs: 5, fat: 2 },
+            items: [
+              { foodKey: 'sweetPotato', amount: 200, amountText: '200g', summaryText: '蒸红薯 200g' },
+              { foodKey: 'chickenBreastRaw', amount: 180, amountText: '180g', summaryText: '鸡胸肉（生）180g', highlight: true },
+              { foodKey: 'cucumber', amount: 150, amountText: '150g', summaryText: '黄瓜条 150g' },
             ],
           },
           {
             type: 'dinner', name: '🌙 晚餐',
-            summary: '嫩豆腐 200g｜<span class="highlight-protein">鸡胸肉或去皮鸡腿（生）</span> 150g｜蒸红薯 150g',
-            total: { kcal: 417, protein: 37, carbs: 36, fat: 10 },
-            foods: [
-              { name: '嫩豆腐 200g', kcal: 100, protein: 8, carbs: 3, fat: 5 },
-              { name: '<span class="highlight-protein">鸡胸肉或去皮鸡腿（生）</span> 150g', kcal: 180, protein: 33, carbs: 0, fat: 4 },
-              { name: '蒸红薯 150g', kcal: 129, protein: 2, carbs: 30, fat: 0 },
+            items: [
+              { foodKey: 'tofu', amount: 200, amountText: '200g', summaryText: '嫩豆腐 200g' },
+              { foodKey: 'chickenBreastRaw', amount: 150, amountText: '150g', summaryText: '鸡胸肉（生）150g', highlight: true },
+              { foodKey: 'sweetPotato', amount: 150, amountText: '150g', summaryText: '蒸红薯 150g' },
             ],
           },
         ],
@@ -835,7 +849,7 @@ document.addEventListener('alpine:init', () => {
         key: 'meat', title: '🥩 肉类/蛋白（周末批量备餐）',
         items: [
           { name: '<span class="highlight-protein">鸡胸肉或去皮鸡腿</span>（生）', qty: '总量约 3kg，按喜好买', checked: false },
-          { name: '蛋白选择建议', qty: '鸡胸和鸡腿任选搭配', checked: false },
+          { name: '蛋白选择建议', qty: '当前餐单默认按鸡胸计算，换鸡腿就改对应 foodKey', checked: false },
           { name: '鸡蛋', qty: '21 个', checked: false },
           { name: '嫩豆腐', qty: '2 盒', checked: false },
           { name: '蛋白粉', qty: '每周约 4 勺', checked: false },
@@ -869,6 +883,16 @@ document.addEventListener('alpine:init', () => {
     // ---- 执行贴士 ----
     tips: [
       {
+        title: '📐 基准值怎么算',
+        content: `<p>现在这版餐单是按<strong>食物基准值 × 实际重量/数量</strong>自动计算的，不再手填每餐热量。</p>
+          <ul>
+            <li>例如：红薯按「每100g」的基准值去算，某餐吃 300g，就自动按 3 倍计算</li>
+            <li>鸡蛋按「每1个」计算，蛋白粉按「每30g（约1勺）」计算</li>
+            <li>全麦面包目前按 <strong>35g/片</strong> 估算；香蕉按<strong>可食部约120g/根</strong>估算</li>
+            <li>当前餐单默认按<strong>鸡胸肉（生）</strong>计算；如果某餐想换去皮鸡腿，把那条 foodKey 改成 <code>chickenThighRaw</code> 就行</li>
+          </ul>`,
+      },
+      {
         title: '⚖️ 生熟怎么称（先看这个）',
         content: `<p>餐单上写的「鸡胸肉或去皮鸡腿（生）Xg」<strong>全部是生重</strong>，你周末备餐时直接按生肉称好分装即可，不用煮熟再称。</p>
           <p>换算参考（出成率约 70%）：</p>
@@ -898,7 +922,7 @@ document.addEventListener('alpine:init', () => {
         content: `<p>主食只留红薯、全麦面包，餐次尽量收少，目标是最快解决吃饭</p>
           <p>全麦面包买配料表第一位是「全麦粉」的，别买「小麦粉 + 焦糖色」的假全麦</p>
           <p>训练日就吃 4 次，休息日就吃 3 次；蛋白粉直接并进训练日晚餐，别额外拆一餐</p>
-          <p>午餐和晚餐里的肉都写成"<span class="highlight-protein">鸡胸肉或去皮鸡腿（生）</span>"，你当天想吃哪个就换哪个</p>`,
+          <p>当前页面里的计算默认先按"<span class="highlight-protein">鸡胸肉（生）</span>"走；你当天想换去皮鸡腿，就把对应 meal item 的 <code>foodKey</code> 改成 <code>chickenThighRaw</code></p>`,
       },
       {
         title: '📦 周末批量备餐',
@@ -906,7 +930,7 @@ document.addEventListener('alpine:init', () => {
           <li>鸡胸/鸡腿：周末先备一种，吃烦了再换另一种，不用按星期固定死；<strong>直接按餐单上的生重分装</strong>，最省事</li>
           <li>红薯：周末全部蒸熟，按 150~350g 一份分装冷藏，上班直接带</li>
           <li>黄瓜：周末洗好切条分盒，午餐抓一盒就走</li>
-          <li>鸡蛋：周末煮 21 个，早餐直接配面包和牛奶</li>
+          <li>鸡蛋：周末煮 21 个，早餐直接配面包和高蛋白低脂奶</li>
           <li>蛋白粉：周一到周四训练日晚餐前先冲 1 勺加水，2 分钟解决</li>
         </ul>`,
       },
@@ -918,6 +942,9 @@ document.addEventListener('alpine:init', () => {
     ],
 
     init() {
+      const dayOfWeek = new Date().getDay();
+      this.activeDay = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
+
       this.shopList.forEach(section => {
         section.items.forEach((item, idx) => {
           const key = 'shop_' + section.key + idx;
