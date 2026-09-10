@@ -453,6 +453,7 @@ document.addEventListener('alpine:init', () => {
       wholeWheatBread: { name: '全麦面包', basis: '每100g', baseAmount: 100, unit: 'g', kcal: 250, protein: 12, carbs: 43, fat: 4 },
       wholeEgg: { name: '全蛋', basis: '每1个', baseAmount: 1, unit: '个', kcal: 72, protein: 6.3, carbs: 0.6, fat: 5 },
       highProteinMilk: { name: '高蛋白低脂奶', basis: '每100ml', baseAmount: 100, unit: 'ml', kcal: 36, protein: 4.2, carbs: 2.8, fat: 0.8 },
+      pasteurizedWholeMilk: { name: '鲜牛奶（巴氏全脂）', basis: '每100ml', baseAmount: 100, unit: 'ml', kcal: 67, protein: 3.3, carbs: 4.8, fat: 3.9 },
       chickenBreastRaw: { name: '鸡胸肉（生）', basis: '每100g', baseAmount: 100, unit: 'g', kcal: 120, protein: 23, carbs: 0, fat: 2.6 },
       chickenThighRaw: { name: '去皮鸡腿（生）', basis: '每100g', baseAmount: 100, unit: 'g', kcal: 145, protein: 19, carbs: 0, fat: 8 },
       sweetPotato: { name: '蒸红薯', basis: '每100g', baseAmount: 100, unit: 'g', kcal: 86, protein: 1.6, carbs: 20.1, fat: 0.1 },
@@ -461,7 +462,6 @@ document.addEventListener('alpine:init', () => {
       whey: { name: '蛋白粉', basis: '每30g（约1勺）', baseAmount: 30, unit: 'g', kcal: 120, protein: 24, carbs: 3, fat: 1.5 },
       tofu: { name: '嫩豆腐', basis: '每100g', baseAmount: 100, unit: 'g', kcal: 55, protein: 5, carbs: 2, fat: 3 },
     },
-
     toggleDetail(_e, mi) {
       const meal = this.currentDay.meals[mi];
       if (!this.hasMealDetails(meal)) return;
@@ -597,7 +597,8 @@ document.addEventListener('alpine:init', () => {
             items: [
               { foodKey: 'wholeWheatBread', amount: 70, amountText: '70g（约2片）', summaryText: '全麦面包 2片（约70g）' },
               { foodKey: 'wholeEgg', amount: 3, amountText: '3个', summaryText: '全蛋 3个' },
-              { foodKey: 'highProteinMilk', amount: 500, amountText: '500ml', summaryText: '高蛋白低脂奶 500ml' },
+              { foodKey: 'pasteurizedWholeMilk', amount: 250, amountText: '250ml', summaryText: '鲜牛奶 250ml' },
+              { foodKey: 'whey', amount: 15, amountText: '半勺（约15g）', summaryText: '蛋白粉 半勺（约15g）' },
             ],
           },
           {
@@ -635,7 +636,8 @@ document.addEventListener('alpine:init', () => {
             items: [
               { foodKey: 'wholeWheatBread', amount: 70, amountText: '70g（约2片）', summaryText: '全麦面包 2片（约70g）' },
               { foodKey: 'wholeEgg', amount: 3, amountText: '3个', summaryText: '全蛋 3个' },
-              { foodKey: 'highProteinMilk', amount: 500, amountText: '500ml', summaryText: '高蛋白低脂奶 500ml' },
+              { foodKey: 'pasteurizedWholeMilk', amount: 250, amountText: '250ml', summaryText: '鲜牛奶 250ml' },
+              { foodKey: 'whey', amount: 15, amountText: '半勺（约15g）', summaryText: '蛋白粉 半勺（约15g）' },
             ],
           },
           {
@@ -673,7 +675,8 @@ document.addEventListener('alpine:init', () => {
             items: [
               { foodKey: 'wholeWheatBread', amount: 105, amountText: '105g（约3片）', summaryText: '全麦面包 3片（约105g）' },
               { foodKey: 'wholeEgg', amount: 3, amountText: '3个', summaryText: '全蛋 3个' },
-              { foodKey: 'highProteinMilk', amount: 500, amountText: '500ml', summaryText: '高蛋白低脂奶 500ml' },
+              { foodKey: 'pasteurizedWholeMilk', amount: 250, amountText: '250ml', summaryText: '鲜牛奶 250ml' },
+              { foodKey: 'whey', amount: 15, amountText: '半勺（约15g）', summaryText: '蛋白粉 半勺（约15g）' },
             ],
           },
           {
@@ -711,7 +714,8 @@ document.addEventListener('alpine:init', () => {
             items: [
               { foodKey: 'wholeWheatBread', amount: 70, amountText: '70g（约2片）', summaryText: '全麦面包 2片（约70g）' },
               { foodKey: 'wholeEgg', amount: 3, amountText: '3个', summaryText: '全蛋 3个' },
-              { foodKey: 'highProteinMilk', amount: 500, amountText: '500ml', summaryText: '高蛋白低脂奶 500ml' },
+              { foodKey: 'pasteurizedWholeMilk', amount: 250, amountText: '250ml', summaryText: '鲜牛奶 250ml' },
+              { foodKey: 'whey', amount: 15, amountText: '半勺（约15g）', summaryText: '蛋白粉 半勺（约15g）' },
             ],
           },
           {
@@ -749,7 +753,8 @@ document.addEventListener('alpine:init', () => {
             items: [
               { foodKey: 'wholeWheatBread', amount: 70, amountText: '70g（约2片）', summaryText: '全麦面包 2片（约70g）' },
               { foodKey: 'wholeEgg', amount: 3, amountText: '3个', summaryText: '全蛋 3个' },
-              { foodKey: 'highProteinMilk', amount: 400, amountText: '400ml', summaryText: '高蛋白低脂奶 400ml' },
+              { foodKey: 'pasteurizedWholeMilk', amount: 200, amountText: '200ml', summaryText: '鲜牛奶 200ml' },
+              { foodKey: 'whey', amount: 15, amountText: '半勺（约15g）', summaryText: '蛋白粉 半勺（约15g）' },
             ],
           },
           {
@@ -784,7 +789,8 @@ document.addEventListener('alpine:init', () => {
             items: [
               { foodKey: 'wholeWheatBread', amount: 70, amountText: '70g（约2片）', summaryText: '全麦面包 2片（约70g）' },
               { foodKey: 'wholeEgg', amount: 3, amountText: '3个', summaryText: '全蛋 3个' },
-              { foodKey: 'highProteinMilk', amount: 400, amountText: '400ml', summaryText: '高蛋白低脂奶 400ml' },
+              { foodKey: 'pasteurizedWholeMilk', amount: 200, amountText: '200ml', summaryText: '鲜牛奶 200ml' },
+              { foodKey: 'whey', amount: 15, amountText: '半勺（约15g）', summaryText: '蛋白粉 半勺（约15g）' },
             ],
           },
           {
@@ -820,7 +826,8 @@ document.addEventListener('alpine:init', () => {
             items: [
               { foodKey: 'wholeWheatBread', amount: 70, amountText: '70g（约2片）', summaryText: '全麦面包 2片（约70g）' },
               { foodKey: 'wholeEgg', amount: 3, amountText: '3个', summaryText: '全蛋 3个' },
-              { foodKey: 'highProteinMilk', amount: 400, amountText: '400ml', summaryText: '高蛋白低脂奶 400ml' },
+              { foodKey: 'pasteurizedWholeMilk', amount: 200, amountText: '200ml', summaryText: '鲜牛奶 200ml' },
+              { foodKey: 'whey', amount: 15, amountText: '半勺（约15g）', summaryText: '蛋白粉 半勺（约15g）' },
             ],
           },
           {
