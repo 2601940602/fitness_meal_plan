@@ -452,6 +452,7 @@ document.addEventListener('alpine:init', () => {
 
     foodBases: {
       wholeWheatBread: { name: '全麦面包', basis: '每100g', baseAmount: 100, unit: 'g', kcal: 250, protein: 12, carbs: 43, fat: 4 },
+      corn: { name: '玉米（真空包装）', basis: '每根（约200g）', baseAmount: 200, unit: 'g', kcal: 212, protein: 6.6, carbs: 41.4, fat: 2.4 },
       wholeEgg: { name: '全蛋', basis: '每1个', baseAmount: 1, unit: '个', kcal: 72, protein: 6.3, carbs: 0.6, fat: 5 },
       highProteinMilk: { name: '高蛋白低脂奶', basis: '每100ml', baseAmount: 100, unit: 'ml', kcal: 36, protein: 4.2, carbs: 2.8, fat: 0.8 },
       pasteurizedWholeMilk: { name: '鲜牛奶（巴氏全脂）', basis: '每100ml', baseAmount: 100, unit: 'ml', kcal: 67, protein: 3.3, carbs: 4.8, fat: 3.9 },
@@ -597,17 +598,19 @@ document.addEventListener('alpine:init', () => {
           {
             type: 'breakfast', name: '🌅 早餐',
             items: [
-              { foodKey: 'wholeWheatBread', amount: 70, amountText: '70g（约2片）', summaryText: '全麦面包 2片（约70g）' },
-              { foodKey: 'wholeEgg', amount: 3, amountText: '3个', summaryText: '全蛋 3个' },
+              { foodKey: 'corn', amount: 200, amountText: '1根（约200g）', summaryText: '玉米 1根（约200g）' },
+              { foodKey: 'wholeEgg', amount: 2, amountText: '2个', summaryText: '全蛋 2个' },
               { foodKey: 'pasteurizedWholeMilk', amount: 250, amountText: '250ml', summaryText: '鲜牛奶 250ml' },
-              { foodKey: 'whey', amount: 15, amountText: '半勺（约15g）', summaryText: '蛋白粉 半勺（约15g）' },
+
             ],
           },
           {
             type: 'lunch', name: '🍱 午餐',
             items: [
-              { foodKey: 'sweetPotato', amount: 350, amountText: '350g', summaryText: '蒸红薯 350g' },
-              { foodKey: 'chickenBreastRaw', amount: 200, amountText: '200g', summaryText: '鸡胸肉（生）200g', highlight: true },
+              { foodKey: 'sweetPotato', amount: 300, amountText: '300g', summaryText: '蒸红薯 300g' },
+              { foodKey: 'wholeWheatBread', amount: 70, amountText: '70g（约2片）', summaryText: '全麦面包 2片（约70g）' },
+              { foodKey: 'chickenBreastRaw', amount: 150, amountText: '150g', summaryText: '鸡胸肉（生）150g', highlight: true },
+              { foodKey: 'whey', amount: 15, amountText: '半勺（约15g）', summaryText: '蛋白粉 半勺（约15g）' },
               { foodKey: 'cucumber', amount: 150, amountText: '150g', summaryText: '黄瓜条 150g' },
             ],
           },
@@ -620,10 +623,10 @@ document.addEventListener('alpine:init', () => {
           {
             type: 'dinner', name: '🌙 晚餐（练后）',
             items: [
-              { foodKey: 'whey', amount: 15, amountText: '半勺（约15g）', summaryText: '蛋白粉 半勺（约15g，加水，先喝）', highlight: true },
-              { foodKey: 'chickenBreastRaw', amount: 100, amountText: '100g', summaryText: '鸡胸肉（生）100g', highlight: true },
-              { foodKey: 'almonds', amount: 15, amountText: '约10粒', summaryText: '巴旦木 约10粒（15g）' },
-              { foodKey: 'sweetPotato', amount: 450, amountText: '450g', summaryText: '蒸红薯 450g' },
+              { foodKey: 'chickenBreastRaw', amount: 50, amountText: '50g', summaryText: '鸡胸肉（生）50g', highlight: true },
+              { foodKey: 'whey', amount: 15, amountText: '半勺（约15g）', summaryText: '蛋白粉 半勺（约15g）' },
+              { foodKey: 'almonds', amount: 20, amountText: '约14粒', summaryText: '巴旦木 约14粒（20g）' },
+              { foodKey: 'sweetPotato', amount: 550, amountText: '550g', summaryText: '蒸红薯 550g' },
             ],
           },
         ],
@@ -637,17 +640,19 @@ document.addEventListener('alpine:init', () => {
           {
             type: 'breakfast', name: '🌅 早餐',
             items: [
-              { foodKey: 'wholeWheatBread', amount: 70, amountText: '70g（约2片）', summaryText: '全麦面包 2片（约70g）' },
-              { foodKey: 'wholeEgg', amount: 3, amountText: '3个', summaryText: '全蛋 3个' },
+              { foodKey: 'corn', amount: 200, amountText: '1根（约200g）', summaryText: '玉米 1根（约200g）' },
+              { foodKey: 'wholeEgg', amount: 2, amountText: '2个', summaryText: '全蛋 2个' },
               { foodKey: 'pasteurizedWholeMilk', amount: 250, amountText: '250ml', summaryText: '鲜牛奶 250ml' },
-              { foodKey: 'whey', amount: 15, amountText: '半勺（约15g）', summaryText: '蛋白粉 半勺（约15g）' },
+
             ],
           },
           {
             type: 'lunch', name: '🍱 午餐',
             items: [
-              { foodKey: 'sweetPotato', amount: 350, amountText: '350g', summaryText: '蒸红薯 350g' },
-              { foodKey: 'chickenBreastRaw', amount: 200, amountText: '200g', summaryText: '鸡胸肉（生）200g', highlight: true },
+              { foodKey: 'sweetPotato', amount: 300, amountText: '300g', summaryText: '蒸红薯 300g' },
+              { foodKey: 'wholeWheatBread', amount: 70, amountText: '70g（约2片）', summaryText: '全麦面包 2片（约70g）' },
+              { foodKey: 'chickenBreastRaw', amount: 150, amountText: '150g', summaryText: '鸡胸肉（生）150g', highlight: true },
+              { foodKey: 'whey', amount: 15, amountText: '半勺（约15g）', summaryText: '蛋白粉 半勺（约15g）' },
               { foodKey: 'cucumber', amount: 150, amountText: '150g', summaryText: '黄瓜条 150g' },
             ],
           },
@@ -660,10 +665,10 @@ document.addEventListener('alpine:init', () => {
           {
             type: 'dinner', name: '🌙 晚餐（练后）',
             items: [
-              { foodKey: 'whey', amount: 15, amountText: '半勺（约15g）', summaryText: '蛋白粉 半勺（约15g，加水，先喝）', highlight: true },
-              { foodKey: 'chickenBreastRaw', amount: 100, amountText: '100g', summaryText: '鸡胸肉（生）100g', highlight: true },
-              { foodKey: 'almonds', amount: 15, amountText: '约10粒', summaryText: '巴旦木 约10粒（15g）' },
-              { foodKey: 'sweetPotato', amount: 450, amountText: '450g', summaryText: '蒸红薯 450g' },
+              { foodKey: 'chickenBreastRaw', amount: 50, amountText: '50g', summaryText: '鸡胸肉（生）50g', highlight: true },
+              { foodKey: 'whey', amount: 15, amountText: '半勺（约15g）', summaryText: '蛋白粉 半勺（约15g）' },
+              { foodKey: 'almonds', amount: 20, amountText: '约14粒', summaryText: '巴旦木 约14粒（20g）' },
+              { foodKey: 'sweetPotato', amount: 550, amountText: '550g', summaryText: '蒸红薯 550g' },
             ],
           },
         ],
@@ -677,17 +682,19 @@ document.addEventListener('alpine:init', () => {
           {
             type: 'breakfast', name: '🌅 早餐',
             items: [
-              { foodKey: 'wholeWheatBread', amount: 105, amountText: '105g（约3片）', summaryText: '全麦面包 3片（约105g）' },
-              { foodKey: 'wholeEgg', amount: 3, amountText: '3个', summaryText: '全蛋 3个' },
+              { foodKey: 'corn', amount: 200, amountText: '1根（约200g）', summaryText: '玉米 1根（约200g）' },
+              { foodKey: 'wholeEgg', amount: 2, amountText: '2个', summaryText: '全蛋 2个' },
               { foodKey: 'pasteurizedWholeMilk', amount: 250, amountText: '250ml', summaryText: '鲜牛奶 250ml' },
-              { foodKey: 'whey', amount: 15, amountText: '半勺（约15g）', summaryText: '蛋白粉 半勺（约15g）' },
+
             ],
           },
           {
             type: 'lunch', name: '🍱 午餐',
             items: [
-              { foodKey: 'sweetPotato', amount: 430, amountText: '430g', summaryText: '蒸红薯 430g' },
-              { foodKey: 'chickenBreastRaw', amount: 170, amountText: '170g', summaryText: '鸡胸肉（生）170g', highlight: true },
+              { foodKey: 'sweetPotato', amount: 380, amountText: '380g', summaryText: '蒸红薯 380g' },
+              { foodKey: 'wholeWheatBread', amount: 70, amountText: '70g（约2片）', summaryText: '全麦面包 2片（约70g）' },
+              { foodKey: 'chickenBreastRaw', amount: 120, amountText: '120g', summaryText: '鸡胸肉（生）120g', highlight: true },
+              { foodKey: 'whey', amount: 15, amountText: '半勺（约15g）', summaryText: '蛋白粉 半勺（约15g）' },
               { foodKey: 'cucumber', amount: 150, amountText: '150g', summaryText: '黄瓜条 150g' },
             ],
           },
@@ -700,10 +707,10 @@ document.addEventListener('alpine:init', () => {
           {
             type: 'dinner', name: '🌙 晚餐（练后）',
             items: [
-              { foodKey: 'whey', amount: 15, amountText: '半勺（约15g）', summaryText: '蛋白粉 半勺（约15g，加水，先喝）', highlight: true },
-              { foodKey: 'chickenBreastRaw', amount: 120, amountText: '120g', summaryText: '鸡胸肉（生）120g', highlight: true },
-              { foodKey: 'almonds', amount: 15, amountText: '约10粒', summaryText: '巴旦木 约10粒（15g）' },
-              { foodKey: 'sweetPotato', amount: 450, amountText: '450g', summaryText: '蒸红薯 450g' },
+              { foodKey: 'chickenBreastRaw', amount: 70, amountText: '70g', summaryText: '鸡胸肉（生）70g', highlight: true },
+              { foodKey: 'whey', amount: 15, amountText: '半勺（约15g）', summaryText: '蛋白粉 半勺（约15g）' },
+              { foodKey: 'almonds', amount: 20, amountText: '约14粒', summaryText: '巴旦木 约14粒（20g）' },
+              { foodKey: 'sweetPotato', amount: 550, amountText: '550g', summaryText: '蒸红薯 550g' },
             ],
           },
         ],
@@ -717,17 +724,19 @@ document.addEventListener('alpine:init', () => {
           {
             type: 'breakfast', name: '🌅 早餐',
             items: [
-              { foodKey: 'wholeWheatBread', amount: 70, amountText: '70g（约2片）', summaryText: '全麦面包 2片（约70g）' },
-              { foodKey: 'wholeEgg', amount: 3, amountText: '3个', summaryText: '全蛋 3个' },
+              { foodKey: 'corn', amount: 200, amountText: '1根（约200g）', summaryText: '玉米 1根（约200g）' },
+              { foodKey: 'wholeEgg', amount: 2, amountText: '2个', summaryText: '全蛋 2个' },
               { foodKey: 'pasteurizedWholeMilk', amount: 250, amountText: '250ml', summaryText: '鲜牛奶 250ml' },
-              { foodKey: 'whey', amount: 15, amountText: '半勺（约15g）', summaryText: '蛋白粉 半勺（约15g）' },
+
             ],
           },
           {
             type: 'lunch', name: '🍱 午餐',
             items: [
-              { foodKey: 'sweetPotato', amount: 350, amountText: '350g', summaryText: '蒸红薯 350g' },
-              { foodKey: 'chickenBreastRaw', amount: 200, amountText: '200g', summaryText: '鸡胸肉（生）200g', highlight: true },
+              { foodKey: 'sweetPotato', amount: 300, amountText: '300g', summaryText: '蒸红薯 300g' },
+              { foodKey: 'wholeWheatBread', amount: 70, amountText: '70g（约2片）', summaryText: '全麦面包 2片（约70g）' },
+              { foodKey: 'chickenBreastRaw', amount: 150, amountText: '150g', summaryText: '鸡胸肉（生）150g', highlight: true },
+              { foodKey: 'whey', amount: 15, amountText: '半勺（约15g）', summaryText: '蛋白粉 半勺（约15g）' },
               { foodKey: 'cucumber', amount: 150, amountText: '150g', summaryText: '黄瓜条 150g' },
             ],
           },
@@ -740,10 +749,10 @@ document.addEventListener('alpine:init', () => {
           {
             type: 'dinner', name: '🌙 晚餐（练后）',
             items: [
-              { foodKey: 'whey', amount: 15, amountText: '半勺（约15g）', summaryText: '蛋白粉 半勺（约15g，加水，先喝）', highlight: true },
-              { foodKey: 'chickenBreastRaw', amount: 100, amountText: '100g', summaryText: '鸡胸肉（生）100g', highlight: true },
-              { foodKey: 'almonds', amount: 15, amountText: '约10粒', summaryText: '巴旦木 约10粒（15g）' },
-              { foodKey: 'sweetPotato', amount: 400, amountText: '400g', summaryText: '蒸红薯 400g' },
+              { foodKey: 'chickenBreastRaw', amount: 50, amountText: '50g', summaryText: '鸡胸肉（生）50g', highlight: true },
+              { foodKey: 'whey', amount: 15, amountText: '半勺（约15g）', summaryText: '蛋白粉 半勺（约15g）' },
+              { foodKey: 'almonds', amount: 20, amountText: '约14粒', summaryText: '巴旦木 约14粒（20g）' },
+              { foodKey: 'sweetPotato', amount: 500, amountText: '500g', summaryText: '蒸红薯 500g' },
             ],
           },
         ],
@@ -757,26 +766,29 @@ document.addEventListener('alpine:init', () => {
           {
             type: 'breakfast', name: '🌅 早餐',
             items: [
-              { foodKey: 'wholeWheatBread', amount: 70, amountText: '70g（约2片）', summaryText: '全麦面包 2片（约70g）' },
-              { foodKey: 'wholeEgg', amount: 3, amountText: '3个', summaryText: '全蛋 3个' },
+              { foodKey: 'corn', amount: 200, amountText: '1根（约200g）', summaryText: '玉米 1根（约200g）' },
+              { foodKey: 'wholeEgg', amount: 2, amountText: '2个', summaryText: '全蛋 2个' },
               { foodKey: 'pasteurizedWholeMilk', amount: 200, amountText: '200ml', summaryText: '鲜牛奶 200ml' },
-              { foodKey: 'whey', amount: 15, amountText: '半勺（约15g）', summaryText: '蛋白粉 半勺（约15g）' },
+
             ],
           },
           {
             type: 'lunch', name: '🍱 午餐',
             items: [
-              { foodKey: 'sweetPotato', amount: 380, amountText: '380g', summaryText: '蒸红薯 380g' },
-              { foodKey: 'chickenBreastRaw', amount: 200, amountText: '200g', summaryText: '鸡胸肉（生）200g', highlight: true },
+              { foodKey: 'sweetPotato', amount: 300, amountText: '300g', summaryText: '蒸红薯 300g' },
+              { foodKey: 'wholeWheatBread', amount: 70, amountText: '70g（约2片）', summaryText: '全麦面包 2片（约70g）' },
+              { foodKey: 'chickenBreastRaw', amount: 150, amountText: '150g', summaryText: '鸡胸肉（生）150g', highlight: true },
+              { foodKey: 'whey', amount: 15, amountText: '半勺（约15g）', summaryText: '蛋白粉 半勺（约15g）' },
               { foodKey: 'cucumber', amount: 150, amountText: '150g', summaryText: '黄瓜条 150g' },
             ],
           },
           {
             type: 'dinner', name: '🌙 晚餐',
             items: [
-              { foodKey: 'chickenBreastRaw', amount: 130, amountText: '130g', summaryText: '鸡胸肉（生）130g', highlight: true },
-              { foodKey: 'almonds', amount: 10, amountText: '约7粒', summaryText: '巴旦木 约7粒（10g）' },
-              { foodKey: 'sweetPotato', amount: 410, amountText: '410g', summaryText: '蒸红薯 410g' },
+              { foodKey: 'chickenBreastRaw', amount: 80, amountText: '80g', summaryText: '鸡胸肉（生）80g', highlight: true },
+              { foodKey: 'whey', amount: 15, amountText: '半勺（约15g）', summaryText: '蛋白粉 半勺（约15g）' },
+              { foodKey: 'almonds', amount: 20, amountText: '约14粒', summaryText: '巴旦木 约14粒（20g）' },
+              { foodKey: 'sweetPotato', amount: 480, amountText: '480g', summaryText: '蒸红薯 480g' },
             ],
           },
           {
@@ -794,27 +806,30 @@ document.addEventListener('alpine:init', () => {
           {
             type: 'breakfast', name: '🌅 早餐',
             items: [
-              { foodKey: 'wholeWheatBread', amount: 70, amountText: '70g（约2片）', summaryText: '全麦面包 2片（约70g）' },
-              { foodKey: 'wholeEgg', amount: 3, amountText: '3个', summaryText: '全蛋 3个' },
+              { foodKey: 'corn', amount: 200, amountText: '1根（约200g）', summaryText: '玉米 1根（约200g）' },
+              { foodKey: 'wholeEgg', amount: 2, amountText: '2个', summaryText: '全蛋 2个' },
               { foodKey: 'pasteurizedWholeMilk', amount: 200, amountText: '200ml', summaryText: '鲜牛奶 200ml' },
-              { foodKey: 'whey', amount: 15, amountText: '半勺（约15g）', summaryText: '蛋白粉 半勺（约15g）' },
+
             ],
           },
           {
             type: 'lunch', name: '🍱 午餐',
             items: [
-              { foodKey: 'sweetPotato', amount: 330, amountText: '330g', summaryText: '蒸红薯 330g' },
-              { foodKey: 'chickenBreastRaw', amount: 180, amountText: '180g', summaryText: '鸡胸肉（生）180g', highlight: true },
+              { foodKey: 'sweetPotato', amount: 250, amountText: '250g', summaryText: '蒸红薯 250g' },
+              { foodKey: 'wholeWheatBread', amount: 70, amountText: '70g（约2片）', summaryText: '全麦面包 2片（约70g）' },
+              { foodKey: 'chickenBreastRaw', amount: 130, amountText: '130g', summaryText: '鸡胸肉（生）130g', highlight: true },
+              { foodKey: 'whey', amount: 15, amountText: '半勺（约15g）', summaryText: '蛋白粉 半勺（约15g）' },
               { foodKey: 'cucumber', amount: 150, amountText: '150g', summaryText: '黄瓜条 150g' },
             ],
           },
           {
             type: 'dinner', name: '🌙 晚餐',
             items: [
-              { foodKey: 'chickenBreastRaw', amount: 130, amountText: '130g', summaryText: '鸡胸肉（生）130g', highlight: true },
+              { foodKey: 'chickenBreastRaw', amount: 80, amountText: '80g', summaryText: '鸡胸肉（生）80g', highlight: true },
+              { foodKey: 'whey', amount: 15, amountText: '半勺（约15g）', summaryText: '蛋白粉 半勺（约15g）' },
               { foodKey: 'tofu', amount: 150, amountText: '150g', summaryText: '嫩豆腐 150g' },
-              { foodKey: 'almonds', amount: 10, amountText: '约7粒', summaryText: '巴旦木 约7粒（10g）' },
-              { foodKey: 'sweetPotato', amount: 360, amountText: '360g', summaryText: '蒸红薯 360g' },
+              { foodKey: 'almonds', amount: 20, amountText: '约14粒', summaryText: '巴旦木 约14粒（20g）' },
+              { foodKey: 'sweetPotato', amount: 430, amountText: '430g', summaryText: '蒸红薯 430g' },
             ],
           },
           {
@@ -832,17 +847,19 @@ document.addEventListener('alpine:init', () => {
           {
             type: 'breakfast', name: '🌅 早餐',
             items: [
-              { foodKey: 'wholeWheatBread', amount: 70, amountText: '70g（约2片）', summaryText: '全麦面包 2片（约70g）' },
-              { foodKey: 'wholeEgg', amount: 3, amountText: '3个', summaryText: '全蛋 3个' },
+              { foodKey: 'corn', amount: 200, amountText: '1根（约200g）', summaryText: '玉米 1根（约200g）' },
+              { foodKey: 'wholeEgg', amount: 2, amountText: '2个', summaryText: '全蛋 2个' },
               { foodKey: 'pasteurizedWholeMilk', amount: 200, amountText: '200ml', summaryText: '鲜牛奶 200ml' },
-              { foodKey: 'whey', amount: 15, amountText: '半勺（约15g）', summaryText: '蛋白粉 半勺（约15g）' },
+
             ],
           },
           {
             type: 'lunch', name: '🍱 午餐',
             items: [
-              { foodKey: 'sweetPotato', amount: 330, amountText: '330g', summaryText: '蒸红薯 330g' },
-              { foodKey: 'chickenBreastRaw', amount: 180, amountText: '180g', summaryText: '鸡胸肉（生）180g', highlight: true },
+              { foodKey: 'sweetPotato', amount: 250, amountText: '250g', summaryText: '蒸红薯 250g' },
+              { foodKey: 'wholeWheatBread', amount: 70, amountText: '70g（约2片）', summaryText: '全麦面包 2片（约70g）' },
+              { foodKey: 'chickenBreastRaw', amount: 130, amountText: '130g', summaryText: '鸡胸肉（生）130g', highlight: true },
+              { foodKey: 'whey', amount: 15, amountText: '半勺（约15g）', summaryText: '蛋白粉 半勺（约15g）' },
               { foodKey: 'cucumber', amount: 150, amountText: '150g', summaryText: '黄瓜条 150g' },
             ],
           },
@@ -850,9 +867,10 @@ document.addEventListener('alpine:init', () => {
             type: 'dinner', name: '🌙 晚餐',
             items: [
               { foodKey: 'tofu', amount: 200, amountText: '200g', summaryText: '嫩豆腐 200g' },
-              { foodKey: 'chickenBreastRaw', amount: 150, amountText: '150g', summaryText: '鸡胸肉（生）150g', highlight: true },
-              { foodKey: 'almonds', amount: 10, amountText: '约7粒', summaryText: '巴旦木 约7粒（10g）' },
-              { foodKey: 'sweetPotato', amount: 310, amountText: '310g', summaryText: '蒸红薯 310g' },
+              { foodKey: 'chickenBreastRaw', amount: 100, amountText: '100g', summaryText: '鸡胸肉（生）100g', highlight: true },
+              { foodKey: 'whey', amount: 15, amountText: '半勺（约15g）', summaryText: '蛋白粉 半勺（约15g）' },
+              { foodKey: 'almonds', amount: 20, amountText: '约14粒', summaryText: '巴旦木 约14粒（20g）' },
+              { foodKey: 'sweetPotato', amount: 380, amountText: '380g', summaryText: '蒸红薯 380g' },
             ],
           },
         ],
@@ -864,18 +882,19 @@ document.addEventListener('alpine:init', () => {
       {
         key: 'meat', title: '🥩 肉类/蛋白（周末批量备餐）',
         items: [
-          { name: '<span class="highlight-protein">鸡胸肉或去皮鸡腿</span>（生）', qty: '总量约 2.2kg，按喜好买', checked: false },
+          { name: '<span class="highlight-protein">鸡胸肉或去皮鸡腿</span>（生）', qty: '总量约 1.5kg，按喜好买', checked: false },
           { name: '蛋白选择建议', qty: '当前餐单默认按鸡胸计算，换鸡腿就改对应 foodKey', checked: false },
-          { name: '鸡蛋', qty: '21 个', checked: false },
+          { name: '鸡蛋', qty: '14 个', checked: false },
           { name: '嫩豆腐', qty: '2 盒', checked: false },
-          { name: '蛋白粉', qty: '每周约 3 勺（训练日晚餐各半勺）', checked: false },
+          { name: '蛋白粉', qty: '每周约 15 勺（午餐+晚餐各半勺）', checked: false },
         ],
       },
       {
         key: 'carb', title: '🍞 碳水/主食',
         items: [
-          { name: '全麦面包', qty: '2 袋（约 700~800g）', checked: false },
+          { name: '全麦面包', qty: '2 袋（约 700g）', checked: false },
           { name: '红薯', qty: '约5.5kg', checked: false },
+          { name: '玉米（真空包装或冷冻）', qty: '7 根（约1.4kg）', checked: false },
           { name: '香蕉', qty: '4 根', checked: false },
         ],
       },
@@ -889,7 +908,7 @@ document.addEventListener('alpine:init', () => {
         key: 'veg', title: '🥬 蔬菜/脂肪/调料',
         items: [
           { name: '黄瓜', qty: '1.5kg', checked: false },
-          { name: '<span class="highlight-protein">巴旦木（杏仁）</span>', qty: '约 100g 小袋装', checked: false },
+          { name: '<span class="highlight-protein">巴旦木（杏仁）</span>', qty: '约 150g 小袋装', checked: false },
           { name: '山茶油', qty: '现有', checked: false },
           { name: '食用盐', qty: '现有', checked: false },
           { name: '黑胡椒', qty: '1 小瓶', checked: false },
@@ -904,7 +923,7 @@ document.addEventListener('alpine:init', () => {
         content: `<p>现在这版餐单是按<strong>食物基准值 × 实际重量/数量</strong>自动计算的，不再手填每餐热量。</p>
           <ul>
             <li>例如：红薯按「每100g」的基准值去算，某餐吃 300g，就自动按 3 倍计算</li>
-            <li>鸡蛋按「每1个」计算，蛋白粉按「每30g（约1勺）」计算</li>
+            <li>鸡蛋按「每1个」计算</li>
             <li>全麦面包目前按 <strong>35g/片</strong> 估算；香蕉按<strong>可食部约120g/根</strong>估算</li>
             <li>当前餐单默认按<strong>鸡胸肉（生）</strong>计算；如果某餐想换去皮鸡腿，把那条 foodKey 改成 <code>chickenThighRaw</code> 就行</li>
           </ul>`,
@@ -938,7 +957,7 @@ document.addEventListener('alpine:init', () => {
         title: '🍞 主食怎么选',
         content: `<p>主食只留红薯、全麦面包，餐次尽量收少，目标是最快解决吃饭</p>
           <p>全麦面包买配料表第一位是「全麦粉」的，别买「小麦粉 + 焦糖色」的假全麦</p>
-          <p>训练日就吃 4 次，休息日就吃 3 次；蛋白粉直接并进训练日晚餐，别额外拆一餐</p>
+          <p>训练日就吃 4 次，休息日就吃 3 次</p>
           <p>当前页面里的计算默认先按"<span class="highlight-protein">鸡胸肉（生）</span>"走；你当天想换去皮鸡腿，就把对应 meal item 的 <code>foodKey</code> 改成 <code>chickenThighRaw</code></p>`,
       },
       {
@@ -948,7 +967,7 @@ document.addEventListener('alpine:init', () => {
           <li>红薯：周末全部蒸熟，按 150~350g 一份分装冷藏，上班直接带</li>
           <li>黄瓜：周末洗好切条分盒，午餐抓一盒就走</li>
           <li>鸡蛋：周末煮 21 个，早餐直接配面包和高蛋白低脂奶</li>
-          <li>蛋白粉：周一到周四训练日晚餐前先冲 1 勺加水，2 分钟解决</li>
+          <li>蛋白粉：已移除，蛋白质全部从鸡蛋、鸡胸肉、牛奶中获取</li>
         </ul>`,
       },
       {
