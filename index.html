@@ -456,14 +456,17 @@ document.addEventListener('alpine:init', () => {
       wholeEgg: { name: '全蛋', basis: '每1个', baseAmount: 1, unit: '个', kcal: 72, protein: 6.3, carbs: 0.6, fat: 5 },
       highProteinMilk: { name: '高蛋白低脂奶', basis: '每100ml', baseAmount: 100, unit: 'ml', kcal: 36, protein: 4.2, carbs: 2.8, fat: 0.8 },
       pasteurizedWholeMilk: { name: '鲜牛奶（巴氏全脂）', basis: '每100ml', baseAmount: 100, unit: 'ml', kcal: 67, protein: 3.3, carbs: 4.8, fat: 3.9 },
+      filetSteakRaw: { name: '菲力牛排（生）', basis: '每100g', baseAmount: 100, unit: 'g', kcal: 130, protein: 21, carbs: 0, fat: 5 },
       chickenBreastRaw: { name: '鸡胸肉（生）', basis: '每100g', baseAmount: 100, unit: 'g', kcal: 120, protein: 23, carbs: 0, fat: 2.6 },
       chickenThighRaw: { name: '去皮鸡腿（生）', basis: '每100g', baseAmount: 100, unit: 'g', kcal: 145, protein: 19, carbs: 0, fat: 8 },
       sweetPotato: { name: '蒸红薯', basis: '每100g', baseAmount: 100, unit: 'g', kcal: 86, protein: 1.6, carbs: 20.1, fat: 0.1 },
       cucumber: { name: '黄瓜条', basis: '每100g', baseAmount: 100, unit: 'g', kcal: 15, protein: 0.8, carbs: 2.9, fat: 0.2 },
+      whiteMushroom: { name: '白蘑菇（生）', basis: '每100g', baseAmount: 100, unit: 'g', kcal: 22, protein: 3.1, carbs: 3.3, fat: 0.3 },
       banana: { name: '香蕉（可食部）', basis: '每100g', baseAmount: 100, unit: 'g', kcal: 89, protein: 1.1, carbs: 22.8, fat: 0.3 },
       whey: { name: '蛋白粉', basis: '每30g（约1勺）', baseAmount: 30, unit: 'g', kcal: 120, protein: 24, carbs: 3, fat: 1.5 },
-      tofu: { name: '嫩豆腐', basis: '每100g', baseAmount: 100, unit: 'g', kcal: 55, protein: 5, carbs: 2, fat: 3 },
       almonds: { name: '巴旦木（杏仁）', basis: '每10g', baseAmount: 10, unit: 'g', kcal: 58, protein: 2.1, carbs: 2.0, fat: 5.0 },
+      camelliaOil: { name: '山茶油（烹饪）', basis: '每5ml（1茶匙）', baseAmount: 5, unit: 'ml', kcal: 45, protein: 0, carbs: 0, fat: 5 },
+      butter: { name: '黄油（烹饪）', basis: '每10g', baseAmount: 10, unit: 'g', kcal: 72, protein: 0.1, carbs: 0, fat: 8.1 },
     },
     toggleDetail(_e, mi) {
       const meal = this.currentDay.meals[mi];
@@ -609,7 +612,7 @@ document.addEventListener('alpine:init', () => {
             items: [
               { foodKey: 'sweetPotato', amount: 300, amountText: '300g', summaryText: '蒸红薯 300g' },
               { foodKey: 'wholeWheatBread', amount: 70, amountText: '70g（约2片）', summaryText: '全麦面包 2片（约70g）' },
-              { foodKey: 'chickenBreastRaw', amount: 150, amountText: '150g', summaryText: '鸡胸肉（生）150g', highlight: true },
+              { foodKey: 'filetSteakRaw', amount: 130, amountText: '1块（130g）', summaryText: '菲力牛排（生）1块 130g', highlight: true },
               { foodKey: 'whey', amount: 15, amountText: '半勺（约15g）', summaryText: '蛋白粉 半勺（约15g）' },
               { foodKey: 'cucumber', amount: 150, amountText: '150g', summaryText: '黄瓜条 150g' },
             ],
@@ -623,7 +626,7 @@ document.addEventListener('alpine:init', () => {
           {
             type: 'dinner', name: '🌙 晚餐（练后）',
             items: [
-              { foodKey: 'chickenBreastRaw', amount: 50, amountText: '50g', summaryText: '鸡胸肉（生）50g', highlight: true },
+              { foodKey: 'filetSteakRaw', amount: 65, amountText: '半块（65g）', summaryText: '菲力牛排（生）半块 65g', highlight: true },
               { foodKey: 'whey', amount: 15, amountText: '半勺（约15g）', summaryText: '蛋白粉 半勺（约15g）' },
               { foodKey: 'almonds', amount: 20, amountText: '约14粒', summaryText: '巴旦木 约14粒（20g）' },
               { foodKey: 'sweetPotato', amount: 550, amountText: '550g', summaryText: '蒸红薯 550g' },
@@ -651,7 +654,7 @@ document.addEventListener('alpine:init', () => {
             items: [
               { foodKey: 'sweetPotato', amount: 300, amountText: '300g', summaryText: '蒸红薯 300g' },
               { foodKey: 'wholeWheatBread', amount: 70, amountText: '70g（约2片）', summaryText: '全麦面包 2片（约70g）' },
-              { foodKey: 'chickenBreastRaw', amount: 150, amountText: '150g', summaryText: '鸡胸肉（生）150g', highlight: true },
+              { foodKey: 'filetSteakRaw', amount: 130, amountText: '1块（130g）', summaryText: '菲力牛排（生）1块 130g', highlight: true },
               { foodKey: 'whey', amount: 15, amountText: '半勺（约15g）', summaryText: '蛋白粉 半勺（约15g）' },
               { foodKey: 'cucumber', amount: 150, amountText: '150g', summaryText: '黄瓜条 150g' },
             ],
@@ -665,7 +668,7 @@ document.addEventListener('alpine:init', () => {
           {
             type: 'dinner', name: '🌙 晚餐（练后）',
             items: [
-              { foodKey: 'chickenBreastRaw', amount: 50, amountText: '50g', summaryText: '鸡胸肉（生）50g', highlight: true },
+              { foodKey: 'filetSteakRaw', amount: 65, amountText: '半块（65g）', summaryText: '菲力牛排（生）半块 65g', highlight: true },
               { foodKey: 'whey', amount: 15, amountText: '半勺（约15g）', summaryText: '蛋白粉 半勺（约15g）' },
               { foodKey: 'almonds', amount: 20, amountText: '约14粒', summaryText: '巴旦木 约14粒（20g）' },
               { foodKey: 'sweetPotato', amount: 550, amountText: '550g', summaryText: '蒸红薯 550g' },
@@ -693,7 +696,7 @@ document.addEventListener('alpine:init', () => {
             items: [
               { foodKey: 'sweetPotato', amount: 380, amountText: '380g', summaryText: '蒸红薯 380g' },
               { foodKey: 'wholeWheatBread', amount: 70, amountText: '70g（约2片）', summaryText: '全麦面包 2片（约70g）' },
-              { foodKey: 'chickenBreastRaw', amount: 120, amountText: '120g', summaryText: '鸡胸肉（生）120g', highlight: true },
+              { foodKey: 'filetSteakRaw', amount: 130, amountText: '1块（130g）', summaryText: '菲力牛排（生）1块 130g', highlight: true },
               { foodKey: 'whey', amount: 15, amountText: '半勺（约15g）', summaryText: '蛋白粉 半勺（约15g）' },
               { foodKey: 'cucumber', amount: 150, amountText: '150g', summaryText: '黄瓜条 150g' },
             ],
@@ -707,7 +710,7 @@ document.addEventListener('alpine:init', () => {
           {
             type: 'dinner', name: '🌙 晚餐（练后）',
             items: [
-              { foodKey: 'chickenBreastRaw', amount: 70, amountText: '70g', summaryText: '鸡胸肉（生）70g', highlight: true },
+              { foodKey: 'filetSteakRaw', amount: 65, amountText: '半块（65g）', summaryText: '菲力牛排（生）半块 65g', highlight: true },
               { foodKey: 'whey', amount: 15, amountText: '半勺（约15g）', summaryText: '蛋白粉 半勺（约15g）' },
               { foodKey: 'almonds', amount: 20, amountText: '约14粒', summaryText: '巴旦木 约14粒（20g）' },
               { foodKey: 'sweetPotato', amount: 550, amountText: '550g', summaryText: '蒸红薯 550g' },
@@ -735,7 +738,7 @@ document.addEventListener('alpine:init', () => {
             items: [
               { foodKey: 'sweetPotato', amount: 300, amountText: '300g', summaryText: '蒸红薯 300g' },
               { foodKey: 'wholeWheatBread', amount: 70, amountText: '70g（约2片）', summaryText: '全麦面包 2片（约70g）' },
-              { foodKey: 'chickenBreastRaw', amount: 150, amountText: '150g', summaryText: '鸡胸肉（生）150g', highlight: true },
+              { foodKey: 'filetSteakRaw', amount: 130, amountText: '1块（130g）', summaryText: '菲力牛排（生）1块 130g', highlight: true },
               { foodKey: 'whey', amount: 15, amountText: '半勺（约15g）', summaryText: '蛋白粉 半勺（约15g）' },
               { foodKey: 'cucumber', amount: 150, amountText: '150g', summaryText: '黄瓜条 150g' },
             ],
@@ -749,7 +752,7 @@ document.addEventListener('alpine:init', () => {
           {
             type: 'dinner', name: '🌙 晚餐（练后）',
             items: [
-              { foodKey: 'chickenBreastRaw', amount: 50, amountText: '50g', summaryText: '鸡胸肉（生）50g', highlight: true },
+              { foodKey: 'filetSteakRaw', amount: 65, amountText: '半块（65g）', summaryText: '菲力牛排（生）半块 65g', highlight: true },
               { foodKey: 'whey', amount: 15, amountText: '半勺（约15g）', summaryText: '蛋白粉 半勺（约15g）' },
               { foodKey: 'almonds', amount: 20, amountText: '约14粒', summaryText: '巴旦木 约14粒（20g）' },
               { foodKey: 'sweetPotato', amount: 500, amountText: '500g', summaryText: '蒸红薯 500g' },
@@ -777,7 +780,7 @@ document.addEventListener('alpine:init', () => {
             items: [
               { foodKey: 'sweetPotato', amount: 300, amountText: '300g', summaryText: '蒸红薯 300g' },
               { foodKey: 'wholeWheatBread', amount: 70, amountText: '70g（约2片）', summaryText: '全麦面包 2片（约70g）' },
-              { foodKey: 'chickenBreastRaw', amount: 150, amountText: '150g', summaryText: '鸡胸肉（生）150g', highlight: true },
+              { foodKey: 'filetSteakRaw', amount: 130, amountText: '1块（130g）', summaryText: '菲力牛排（生）1块 130g', highlight: true },
               { foodKey: 'whey', amount: 15, amountText: '半勺（约15g）', summaryText: '蛋白粉 半勺（约15g）' },
               { foodKey: 'cucumber', amount: 150, amountText: '150g', summaryText: '黄瓜条 150g' },
             ],
@@ -785,7 +788,7 @@ document.addEventListener('alpine:init', () => {
           {
             type: 'dinner', name: '🌙 晚餐',
             items: [
-              { foodKey: 'chickenBreastRaw', amount: 80, amountText: '80g', summaryText: '鸡胸肉（生）80g', highlight: true },
+              { foodKey: 'filetSteakRaw', amount: 65, amountText: '半块（65g）', summaryText: '菲力牛排（生）半块 65g', highlight: true },
               { foodKey: 'whey', amount: 15, amountText: '半勺（约15g）', summaryText: '蛋白粉 半勺（约15g）' },
               { foodKey: 'almonds', amount: 20, amountText: '约14粒', summaryText: '巴旦木 约14粒（20g）' },
               { foodKey: 'sweetPotato', amount: 480, amountText: '480g', summaryText: '蒸红薯 480g' },
@@ -817,7 +820,7 @@ document.addEventListener('alpine:init', () => {
             items: [
               { foodKey: 'sweetPotato', amount: 250, amountText: '250g', summaryText: '蒸红薯 250g' },
               { foodKey: 'wholeWheatBread', amount: 70, amountText: '70g（约2片）', summaryText: '全麦面包 2片（约70g）' },
-              { foodKey: 'chickenBreastRaw', amount: 130, amountText: '130g', summaryText: '鸡胸肉（生）130g', highlight: true },
+              { foodKey: 'filetSteakRaw', amount: 130, amountText: '1块（130g）', summaryText: '菲力牛排（生）1块 130g', highlight: true },
               { foodKey: 'whey', amount: 15, amountText: '半勺（约15g）', summaryText: '蛋白粉 半勺（约15g）' },
               { foodKey: 'cucumber', amount: 150, amountText: '150g', summaryText: '黄瓜条 150g' },
             ],
@@ -825,9 +828,8 @@ document.addEventListener('alpine:init', () => {
           {
             type: 'dinner', name: '🌙 晚餐',
             items: [
-              { foodKey: 'chickenBreastRaw', amount: 80, amountText: '80g', summaryText: '鸡胸肉（生）80g', highlight: true },
+              { foodKey: 'filetSteakRaw', amount: 65, amountText: '半块（65g）', summaryText: '菲力牛排（生）半块 65g', highlight: true },
               { foodKey: 'whey', amount: 15, amountText: '半勺（约15g）', summaryText: '蛋白粉 半勺（约15g）' },
-              { foodKey: 'tofu', amount: 150, amountText: '150g', summaryText: '嫩豆腐 150g' },
               { foodKey: 'almonds', amount: 20, amountText: '约14粒', summaryText: '巴旦木 约14粒（20g）' },
               { foodKey: 'sweetPotato', amount: 430, amountText: '430g', summaryText: '蒸红薯 430g' },
             ],
@@ -858,7 +860,7 @@ document.addEventListener('alpine:init', () => {
             items: [
               { foodKey: 'sweetPotato', amount: 250, amountText: '250g', summaryText: '蒸红薯 250g' },
               { foodKey: 'wholeWheatBread', amount: 70, amountText: '70g（约2片）', summaryText: '全麦面包 2片（约70g）' },
-              { foodKey: 'chickenBreastRaw', amount: 130, amountText: '130g', summaryText: '鸡胸肉（生）130g', highlight: true },
+              { foodKey: 'filetSteakRaw', amount: 130, amountText: '1块（130g）', summaryText: '菲力牛排（生）1块 130g', highlight: true },
               { foodKey: 'whey', amount: 15, amountText: '半勺（约15g）', summaryText: '蛋白粉 半勺（约15g）' },
               { foodKey: 'cucumber', amount: 150, amountText: '150g', summaryText: '黄瓜条 150g' },
             ],
@@ -866,8 +868,7 @@ document.addEventListener('alpine:init', () => {
           {
             type: 'dinner', name: '🌙 晚餐',
             items: [
-              { foodKey: 'tofu', amount: 200, amountText: '200g', summaryText: '嫩豆腐 200g' },
-              { foodKey: 'chickenBreastRaw', amount: 100, amountText: '100g', summaryText: '鸡胸肉（生）100g', highlight: true },
+              { foodKey: 'filetSteakRaw', amount: 65, amountText: '半块（65g）', summaryText: '菲力牛排（生）半块 65g', highlight: true },
               { foodKey: 'whey', amount: 15, amountText: '半勺（约15g）', summaryText: '蛋白粉 半勺（约15g）' },
               { foodKey: 'almonds', amount: 20, amountText: '约14粒', summaryText: '巴旦木 约14粒（20g）' },
               { foodKey: 'sweetPotato', amount: 380, amountText: '380g', summaryText: '蒸红薯 380g' },
@@ -882,10 +883,9 @@ document.addEventListener('alpine:init', () => {
       {
         key: 'meat', title: '🥩 肉类/蛋白（周末批量备餐）',
         items: [
-          { name: '<span class="highlight-protein">鸡胸肉或去皮鸡腿</span>（生）', qty: '总量约 1.5kg，按喜好买', checked: false },
-          { name: '蛋白选择建议', qty: '当前餐单默认按鸡胸计算，换鸡腿就改对应 foodKey', checked: false },
+          { name: '<span class="highlight-protein">菲力牛排</span>（生）', qty: '约 11 块 × 130g ≈ 1.4kg', checked: false },
+          { name: '蛋白选择建议', qty: '当前餐单默认按菲力牛排计算，想换去皮鸡腿就把对应 foodKey 改成 chickenThighRaw', checked: false },
           { name: '鸡蛋', qty: '14 个', checked: false },
-          { name: '嫩豆腐', qty: '2 盒', checked: false },
           { name: '蛋白粉', qty: '每周约 15 勺（午餐+晚餐各半勺）', checked: false },
         ],
       },
@@ -925,27 +925,27 @@ document.addEventListener('alpine:init', () => {
             <li>例如：红薯按「每100g」的基准值去算，某餐吃 300g，就自动按 3 倍计算</li>
             <li>鸡蛋按「每1个」计算</li>
             <li>全麦面包目前按 <strong>35g/片</strong> 估算；香蕉按<strong>可食部约120g/根</strong>估算</li>
-            <li>当前餐单默认按<strong>鸡胸肉（生）</strong>计算；如果某餐想换去皮鸡腿，把那条 foodKey 改成 <code>chickenThighRaw</code> 就行</li>
+            <li>当前餐单默认按<strong>菲力牛排（生）</strong>计算；如果某餐想换去皮鸡腿，把那条 foodKey 改成 <code>chickenThighRaw</code> 就行</li>
           </ul>`,
       },
       {
         title: '⚖️ 生熟怎么称（先看这个）',
-        content: `<p>餐单上写的「鸡胸肉或去皮鸡腿（生）Xg」<strong>全部是生重</strong>，你周末备餐时直接按生肉称好分装即可，不用煮熟再称。</p>
+        content: `<p>餐单上写的「菲力牛排（生）Xg」<strong>全部是生重</strong>，你周末备餐时直接按生肉称好分装即可，不用煮熟再称。</p>
           <p>换算参考（出成率约 70%）：</p>
-          <ul><li>生 200g 鸡胸肉/去皮鸡腿 → 煮熟/烤熟后大约 <strong>130~140g</strong> 熟重</li>
+          <ul><li>生 200g 菲力牛排 → 煎熟后大约 <strong>130~140g</strong> 熟重</li>
           <li>生 180g → 熟重约 120~130g；生 220g → 熟重约 150~160g</li></ul>
           <p>⚠️ 如果你习惯只称熟重，就在上面的基础上 <strong>× 0.7</strong>，但推荐直接称生重，误差最小。</p>`,
       },
       {
-        title: '🐔 鸡胸肉空气炸锅做法',
-        content: `<p>做法：切厚片或整块拍松 → 盐 + 黑胡椒腌 15min → 空气炸锅 180°C 烤 12~15min → 中途翻面</p>
-          <p>⚠️ 鸡胸更瘦、更稳，适合你现在这版偏减脂保肌的执行路线；别烤太久，避免太柴</p>
-          <p>和生重口径对应：每份 <strong>生重 200g</strong>，烤完约 130~140g 熟重</p>`,
+        title: '🥩 菲力牛排做法',
+        content: `<p>做法：提前从冷藏取出回温 20min → 厨房纸吸干表面 → 盐 + 黑胡椒腌 10min → 平底锅大火每面煎 1.5~2min（或空气炸锅 200°C 烤 8~10min）</p>
+          <p>⚠️ 菲力瘦而嫩，别煎过头，七分熟以内口感最好；煎完静置 3min 再切，肉汁不流失</p>
+          <p>和生重口径对应：每份 <strong>生重 200g</strong>，煎完约 140~150g 熟重</p>`,
       },
       {
         title: '🍗 鸡腿肉空气炸锅做法',
         content: `<p>去皮 → 盐 + 黑胡椒腌 15min → 空气炸锅 180°C 烤 20~25min → 中途翻面</p>
-          <p>⚠️ 一定要去掉鸡皮和明显肥油，餐单里的热量和蛋白是按去皮鸡腿（生）或鸡胸肉（生）估算的</p>`,
+          <p>⚠️ 一定要去掉鸡皮和明显肥油，餐单里的热量和蛋白是按菲力牛排（生）或去皮鸡腿（生）估算的</p>`,
       },
       {
         title: '🥬 极速蔬菜做法',
@@ -958,16 +958,16 @@ document.addEventListener('alpine:init', () => {
         content: `<p>主食只留红薯、全麦面包，餐次尽量收少，目标是最快解决吃饭</p>
           <p>全麦面包买配料表第一位是「全麦粉」的，别买「小麦粉 + 焦糖色」的假全麦</p>
           <p>训练日就吃 4 次，休息日就吃 3 次</p>
-          <p>当前页面里的计算默认先按"<span class="highlight-protein">鸡胸肉（生）</span>"走；你当天想换去皮鸡腿，就把对应 meal item 的 <code>foodKey</code> 改成 <code>chickenThighRaw</code></p>`,
+          <p>当前页面里的计算默认先按"<span class="highlight-protein">菲力牛排（生）</span>"走；你当天想换去皮鸡腿，就把对应 meal item 的 <code>foodKey</code> 改成 <code>chickenThighRaw</code></p>`,
       },
       {
         title: '📦 周末批量备餐',
         content: `<ul>
-          <li>鸡胸/鸡腿：周末先备一种，吃烦了再换另一种，不用按星期固定死；<strong>直接按餐单上的生重分装</strong>，最省事</li>
+          <li>菲力牛排/去皮鸡腿：周末先备一种，吃烦了再换另一种，不用按星期固定死；<strong>直接按餐单上的生重分装</strong>，最省事</li>
           <li>红薯：周末全部蒸熟，按 150~350g 一份分装冷藏，上班直接带</li>
           <li>黄瓜：周末洗好切条分盒，午餐抓一盒就走</li>
           <li>鸡蛋：周末煮 21 个，早餐直接配面包和高蛋白低脂奶</li>
-          <li>蛋白粉：已移除，蛋白质全部从鸡蛋、鸡胸肉、牛奶中获取</li>
+          <li>蛋白粉：已移除，蛋白质全部从鸡蛋、菲力牛排、牛奶中获取</li>
         </ul>`,
       },
       {
