@@ -217,7 +217,7 @@
     padding-top: 8px;
   }
 
-  /* ---- 底部 & 弹窗 ---- */
+  /* ---- 底部导航 ---- */
   .bottom-bar {
     position: fixed;
     bottom: 0; left: 0; right: 0;
@@ -239,106 +239,12 @@
     border-radius: 10px;
     transition: all 0.2s;
     user-select: none;
+    text-decoration: none;
   }
   .bottom-btn.active {
     color: #00d4aa;
     background: rgba(0,212,170,0.1);
   }
-  .modal-overlay {
-    position: fixed;
-    top: 0; left: 0; right: 0; bottom: 0;
-    background: rgba(0,0,0,0.7);
-    display: flex;
-    justify-content: center;
-    align-items: flex-end;
-    z-index: 200;
-  }
-  .modal {
-    background: #1a1a2e;
-    border-radius: 24px 24px 0 0;
-    width: 100%;
-    max-height: 80vh;
-    overflow-y: auto;
-    padding: 24px 20px 40px;
-    animation: slideUp 0.3s ease;
-    position: relative;
-  }
-  @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
-  .modal h3 { font-size: 18px; margin-bottom: 16px; color: #00d4aa; }
-  .modal-section { margin-bottom: 16px; }
-  .modal-section h4 { font-size: 14px; color: #8892b0; margin-bottom: 8px; }
-
-  /* ---- 贴士折叠分组 ---- */
-  .tip-group {
-    background: rgba(255,255,255,0.04);
-    border: 1px solid rgba(255,255,255,0.08);
-    border-radius: 14px;
-    margin-bottom: 10px;
-    overflow: hidden;
-  }
-  .tip-group-head {
-    padding: 14px 16px;
-    cursor: pointer;
-    user-select: none;
-    -webkit-tap-highlight-transparent: transparent;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 15px;
-    font-weight: 600;
-    color: #e8e8e8;
-  }
-  .tip-group-head .arrow {
-    font-size: 11px;
-    color: #556;
-    transition: transform 0.3s;
-  }
-  .tip-group.open .arrow { transform: rotate(180deg); color: #00d4aa; }
-  .tip-group-body {
-    max-height: 0;
-    overflow: hidden;
-    transition: max-height 0.35s ease, padding 0.35s ease;
-  }
-  .tip-group.open .tip-group-body {
-    max-height: 800px;
-    padding: 0 16px 16px;
-  }
-  .tip-item {
-    padding: 12px 0;
-    border-top: 1px solid rgba(255,255,255,0.06);
-  }
-  .tip-item:first-child { border-top: none; padding-top: 4px; }
-  .tip-item h5 {
-    font-size: 13px;
-    color: #00d4aa;
-    margin-bottom: 6px;
-  }
-  .tip-item p, .tip-item li { font-size: 13px; line-height: 1.8; color: #c8c8c8; }
-  .tip-item ul { padding-left: 18px; }
-  .modal-section p, .modal-section li { font-size: 13px; line-height: 1.8; color: #c8c8c8; }
-  .modal-section ul { padding-left: 18px; }
-  .close-btn {
-    position: absolute;
-    top: 16px; right: 20px;
-    font-size: 24px;
-    color: #8892b0;
-    cursor: pointer;
-    z-index: 10;
-  }
-  .check-item {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 10px 0;
-    border-bottom: 1px solid rgba(255,255,255,0.05);
-  }
-  .check-item input[type="checkbox"] {
-    width: 20px; height: 20px;
-    accent-color: #00d4aa;
-    flex-shrink: 0;
-  }
-  .check-item label { font-size: 14px; flex: 1; color: #e8e8e8; }
-  .check-item .qty { font-size: 12px; color: #8892b0; flex-shrink: 0; }
   .highlight-protein {
     color: #ff9f43;
     font-weight: 600;
@@ -445,54 +351,9 @@
 
   <!-- 底部导航 -->
   <div class="bottom-bar">
-    <div class="bottom-btn" :class="{ active: activePage === 'plan' }" @click="activePage = 'plan'">📋 餐单</div>
-    <div class="bottom-btn" :class="{ active: activePage === 'shop' }" @click="activePage = 'shop'">🛒 采购</div>
-    <div class="bottom-btn" :class="{ active: activePage === 'tips' }" @click="activePage = 'tips'">💡 贴士</div>
-  </div>
-
-  <!-- 采购清单弹窗 -->
-  <div class="modal-overlay" x-show="activePage === 'shop'" x-transition @click.self="activePage = 'plan'">
-    <div class="modal" @click.stop>
-      <div class="close-btn" @click="activePage = 'plan'">✕</div>
-      <h3>🛒 一周采购清单</h3>
-      <template x-for="section in shopList" :key="section.title">
-        <div class="modal-section">
-          <h4 x-text="section.title"></h4>
-          <template x-for="(item, idx) in section.items" :key="section.title + idx">
-            <div class="check-item">
-              <input type="checkbox" :id="'shop_' + section.key + idx" x-model="item.checked"
-                     @change="saveShopState()">
-              <label :for="'shop_' + section.key + idx" x-html="item.name"></label>
-              <span class="qty" x-text="item.qty"></span>
-            </div>
-          </template>
-        </div>
-      </template>
-    </div>
-  </div>
-
-  <!-- 贴士弹窗 -->
-  <div class="modal-overlay" x-show="activePage === 'tips'" x-transition @click.self="activePage = 'plan'">
-    <div class="modal" @click.stop>
-      <div class="close-btn" @click="activePage = 'plan'">✕</div>
-      <h3>💡 执行贴士</h3>
-      <template x-for="(group, gi) in tipGroups" :key="gi">
-        <div class="tip-group" :class="{ open: openTips[gi] }">
-          <div class="tip-group-head" @click="toggleTip(gi)">
-            <span x-text="group.title"></span>
-            <span class="arrow">▼</span>
-          </div>
-          <div class="tip-group-body">
-            <template x-for="tip in group.items" :key="tip.title">
-              <div class="tip-item">
-                <h5 x-text="tip.title"></h5>
-                <div x-html="tip.content"></div>
-              </div>
-            </template>
-          </div>
-        </div>
-      </template>
-    </div>
+    <a class="bottom-btn active" href="index.html">📋 餐单</a>
+    <a class="bottom-btn" href="shop.html">🛒 采购</a>
+    <a class="bottom-btn" href="tips.html">💡 贴士</a>
   </div>
 
 </div>
@@ -505,7 +366,6 @@ document.addEventListener('alpine:init', () => {
     bodyWeightKg: 62,
     maintenanceCalories: 2195,
     activeDay: 0,
-    activePage: 'plan',
     openMeals: {},
 
     foodBases: {
@@ -923,184 +783,12 @@ document.addEventListener('alpine:init', () => {
       },
     ],
 
-    // ---- 采购清单 ----
-    shopList: [
-      {
-        key: 'meat', title: '🥩 肉类/蛋白（周末批量备餐）',
-        items: [
-          { name: '<span class="highlight-protein">板腱牛排</span>（生）', qty: '库存 7 块共 1131g，用到周日；<strong>周六补货</strong>（117g 切剩的 52g 记得先冷冻）', checked: false },
-          { name: '蛋白选择建议', qty: '当前餐单默认按板腱牛排计算，想换去皮鸡腿就把对应 foodKey 改成 chickenThighRaw', checked: false },
-          { name: '鸡蛋', qty: '14 个', checked: false },
-          { name: '蛋白粉', qty: '每周约 14 勺（午餐+晚餐各1勺）', checked: false },
-        ],
-      },
-      {
-        key: 'carb', title: '🍞 碳水/主食',
-        items: [
-          { name: '红薯', qty: '约2.6kg', checked: false },
-          { name: '土豆', qty: '约2.6kg', checked: false },
-          { name: '玉米（真空包装或冷冻）', qty: '7 根（约1.4kg）', checked: false },
-          { name: '香蕉', qty: '4 根', checked: false },
-        ],
-      },
-      {
-        key: 'dairy', title: '🥛 奶/饮品',
-        items: [
-          { name: '高蛋白低脂奶', qty: '4L（1L×4 盒）', checked: false },
-        ],
-      },
-      {
-        key: 'veg', title: '🥬 蔬菜/脂肪/调料',
-        items: [
-          { name: '黄瓜', qty: '1.5kg', checked: false },
-          { name: '<span class="highlight-protein">巴旦木（杏仁）</span>', qty: '约 150g 小袋装', checked: false },
-          { name: '山茶油', qty: '现有', checked: false },
-          { name: '食用盐', qty: '现有', checked: false },
-          { name: '黑胡椒', qty: '1 小瓶', checked: false },
-        ],
-      },
-    ],
-
-    // ---- 执行贴士 ----
-    openTips: {},
-
-    toggleTip(gi) {
-      this.openTips[gi] = !this.openTips[gi];
-    },
-
-    tipGroups: [
-      {
-        title: '🥩 肉类',
-        items: [
-          {
-            title: '⚖️ 生熟怎么称',
-            content: `<p>餐单上写的肉类克数<strong>全部是生重</strong>，备餐时直接按生肉称好分装，不用煮熟再称。</p>
-              <p>换算参考（出成率约 70%）：</p>
-              <ul><li>生 200g → 熟重约 130~140g</li><li>生 180g → 熟重约 120~130g；生 220g → 熟重约 150~160g</li></ul>
-              <p>⚠️ 如果你习惯只称熟重，就在基础上 <strong>× 0.7</strong>，但推荐直接称生重，误差最小。</p>`,
-          },
-          {
-            title: '🥩 板腱牛排做法（不放油也不焦的秘诀）',
-            content: `<p><strong>关键：中大火，别用最大火。</strong>锅烧到微微冒烟（约 200°C）就下肉，比冒浓烟再下好控制得多</p>
-              <p>步骤：回温 20min → 厨房纸<strong>吸干表面水分</strong>（很重要！湿了必粘锅）→ 盐 + 黑胡椒腌 10min → <strong>中大火</strong>每面煎 2~3min → 煎完<strong>静置 3min</strong>再切</p>
-              <p><strong>防焦 3 个技巧：</strong></p>
-              <ul>
-                <li>用<strong>不粘锅</strong>或铸铁锅，别用不锈钢锅干煎</li>
-                <li>下肉后<strong>别急着翻面</strong>，等它自然脱锅再翻（约 2min），硬翻必粘</li>
-                <li>实在怕焦就刷<strong>薄薄一层油</strong>（半茶匙），热量几乎可以忽略</li>
-              </ul>
-              <p>⚠️ 板腱中间有一根嫩筋，煎到七~八分熟最嫩；切之前逆纹下刀，把筋切断</p>
-              <p>大块的（如 225g）当天生切两半分装，切面保鲜膜贴紧，冷藏别超过 2 天</p>`,
-          },
-          {
-            title: '🍗 鸡腿肉做法（空气炸锅）',
-            content: `<p>去皮去肥油 → 盐 + 黑胡椒腌 15min 以上 → 空气炸锅 200°C 烤 15min → 中途翻面</p>
-              <p><strong>早上腌更入味：</strong>早上把盐 + 黑胡椒（可加少许生抽/料酒）抹匀，<strong>装袋丢冷藏</strong>，中午直接丢空气炸锅。腌半天是完全 OK 的，比只腌 15min 入味得多</p>
-              <p>⚠️ 一定要去掉鸡皮和明显肥油；鸡腿肉别切太厚，<strong>厚的对半片开</strong>，保证 15min 内能熟透（中心温度 75°C 以上）</p>`,
-          },
-        ],
-      },
-      {
-        title: '🍠 薯类 / 主食',
-        items: [
-          {
-            title: '🍠 红薯做法（和土豆一起蒸，吃时一起炸）',
-            content: `<p><strong>红薯土豆一锅蒸（备餐推荐）：</strong>两种都切滚刀块 → 混一起上锅蒸 10~12min → 筷子能插透就好 → 晾凉 → 真空按天分份</p>
-              <p><strong>吃的时候一起炸：</strong>空气炸锅 <strong>200°C 炸 8~10min</strong>（刷半茶匙油 + 盐胡椒更香）。红薯表面会焦糖化，外脆里糯，比单纯蒸的好吃很多</p>
-              <p><strong>赶时间版：</strong>180°C 热 5~6min 就能吃，省 3~5 分钟</p>
-              <p>⚠️ 红薯糖分高，<strong>蒸后晾凉再真空</strong>，热的封不紧会出水蒸气</p>`,
-          },
-          {
-            title: '🥔 土豆做法（蒸完再炸最好吃）',
-            content: `<p><strong>先蒸后炸薯角（推荐）：</strong>切滚刀块 → 蒸 10~12min（蒸透）→ 晾凉 → 真空按天分份。吃的时候空气炸锅 200°C 炸 8~10min（刷半茶匙油 + 盐胡椒更香），外酥里糯</p>
-              <p><strong>备餐时偷懒版：</strong>蒸好直接真空冷藏，吃的时候空气炸锅 180°C 热 5~6min 就行，省油也好吃</p>
-              <p><strong>高压锅·最快：</strong>切大块 → 加少许水上汽后压 8~10min → 自然泄压 → 沥干撒盐胡椒</p>
-              <p>⚠️ 蒸后<strong>晾凉再真空</strong>，热的封不紧会出水蒸气</p>`,
-          },
-          {
-            title: '🍞 主食怎么选',
-            content: `<p>主食轮换红薯、土豆和玉米，餐次尽量收少，目标是最快解决吃饭</p>
-              <p>训练日就吃 4 次，休息日就吃 3 次</p>
-              <p>⚠️ 土豆是<strong>快碳</strong>（GI ~78），适合午餐/练前吃；红薯是<strong>慢碳</strong>（GI ~54~70），适合晚餐练后吃</p>
-              <p>⚠️ 红薯含<strong>寡糖</strong>，一餐超过 300g 容易胀气。当前餐单晚餐已做<strong>红薯土豆各一半</strong>，分散寡糖摄入，肠胃更舒服</p>`,
-          },
-        ],
-      },
-      {
-        title: '🥬 蔬菜 / 其他',
-        items: [
-          {
-            title: '🥬 极速蔬菜做法',
-            content: `<p>黄瓜直接洗好切条分盒，午餐打开就吃，基本不用额外烹饪</p>
-              <p>如果哪天不想吃蔬菜，至少把香蕉和黄瓜条留住一点，别整周完全没有纤维</p>`,
-          },
-        ],
-      },
-      {
-        title: '📋 备餐 / 通用',
-        items: [
-          {
-            title: '📐 基准值怎么算',
-            content: `<p>餐单是按<strong>食物基准值 × 实际重量/数量</strong>自动计算的。</p>
-              <ul>
-                <li>红薯/土豆按「每100g」计算，吃 300g 就自动 ×3</li>
-                <li>鸡蛋按「每1个」计算，香蕉按<strong>可食部约120g/根</strong>估算</li>
-                <li>想换去皮鸡腿就把 <code>foodKey</code> 改成 <code>chickenThighRaw</code></li>
-              </ul>`,
-          },
-          {
-            title: '📦 上班族备餐方案（每周 2 次）',
-            content: `<p><strong>你有冰箱 + 真空机，推荐每周备 2 次：周日晚 + 周三晚。</strong></p>
-              <p><strong>🗓️ 周日晚（备周一～周三）：</strong></p>
-              <ul>
-                <li><strong>🥩 肉类分装：</strong>按餐单生重称好，<strong>真空包装</strong>丢冷藏。周一牛排130+95g、周二鸡腿170+140g、周三牛排106+65g。真空后冷藏可放 3~4 天不变味</li>
-                <li><strong>🍠🥔 薯类（红薯+土豆一起）：</strong>两种都切滚刀块 → 混一起蒸 10~12min（筷子能插透）→ 晾凉 → <strong>装一个真空袋</strong>按天分份。吃的时候空气炸锅 180°C 热 5~6min，想脆一点就 200°C 多炸 2min</li>
-                <li><strong>🥚 鸡蛋：</strong>冷水下锅煮 12 个（周一～三每天 2 个早餐 + 备 6 个灵活用），带壳冷藏</li>
-                <li><strong>🥒 黄瓜：</strong>洗好切条，分 3 盒冷藏</li>
-                <li><strong>🌽 玉米：</strong>真空装本身就好，直接拿</li>
-              </ul>
-              <p><strong>🗓️ 周三晚（备周四～周日）：</strong></p>
-              <ul>
-                <li>同样流程：称肉真空分装、土豆薯角真空、红薯烤好真空、煮 8 个蛋、切黄瓜</li>
-                <li>周日量少（2 餐），可以偷懒周四～周五一起备</li>
-              </ul>
-              <p><strong>💡 真空机用法：</strong></p>
-              <ul>
-                <li><strong>生肉</strong>：按餐分装真空 → 冷藏 3~4 天；如果备 4 天以上，丢<strong>冷冻</strong>，前一晚转冷藏解冻</li>
-                <li><strong>熟红薯+土豆</strong>：两种切块混一起蒸熟 → <strong>晾凉再真空</strong>（热的会出水蒸气封不紧）→ 按天一袋，冷藏 4~5 天</li>
-                <li><strong>鸡蛋不用真空</strong>：带壳放冰箱就行，剥壳后口感反而变差</li>
-                <li><strong>黄瓜不用真空</strong>：切条后普通保鲜盒就好</li>
-              </ul>
-              <p><strong>⏱️ 总耗时：每次约 1 小时</strong>（称肉 15min + 真空 10min + 蒸/烤薯类 30min 同步进行 + 煮蛋切菜 10min）</p>`,
-          },
-          {
-            title: '📦 备餐 3 次的懒人版（可选）',
-            content: `<p>如果想更省事，也可以拆成 <strong>周日 + 周三 + 周五</strong>，每次只备 2~3 天：</p>
-              <ul>
-                <li>每次只需要称 2 天的肉 + 蒸一次薯类，单次 30min 搞定</li>
-                <li>食物更新鲜，但多跑一次厨房</li>
-                <li>适合周末不想花 1 小时集中备餐的人</li>
-              </ul>`,
-          },
-          {
-            title: '⚡ 2 周后观察',
-            content: `<p>每周掉 >0.7kg、训练发软或没劲 → 周一到周四晚餐红薯各加 50g</p>
-              <p>体重和腰围 2 周都不动 → 先把周五到周日晚餐红薯各减 50g，别先砍肉</p>`,
-          },
-        ],
-      },
-    ],
+    // ---- 采购清单已移至 shop.html ----
+    // ---- 执行贴士已移至 tips.html ----
 
     init() {
       const dayOfWeek = new Date().getDay();
       this.activeDay = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
-
-      this.shopList.forEach(section => {
-        section.items.forEach((item, idx) => {
-          const key = 'shop_' + section.key + idx;
-          try { item.checked = localStorage.getItem(key) === 'true'; } catch (e) {}
-        });
-      });
 
       // 暴露到全局，方便控制台调用
       window.mealPlan = this;
@@ -1232,15 +920,6 @@ document.addEventListener('alpine:init', () => {
       console.log(`%c${hr}`, 'color: #00d4aa; font-weight: bold;');
       console.log(`%c  💡 在控制台调用 mealPlan.generateAnalysis() 可获取原始分析数据`, 'color: #8892b0;');
       console.log(`%c${hr}`, 'color: #00d4aa; font-weight: bold;');
-    },
-
-    saveShopState() {
-      this.shopList.forEach(section => {
-        section.items.forEach((item, idx) => {
-          const key = 'shop_' + section.key + idx;
-          try { localStorage.setItem(key, item.checked); } catch (e) {}
-        });
-      });
     },
   }));
 });
