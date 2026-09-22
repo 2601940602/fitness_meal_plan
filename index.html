@@ -267,6 +267,54 @@
   .modal h3 { font-size: 18px; margin-bottom: 16px; color: #00d4aa; }
   .modal-section { margin-bottom: 16px; }
   .modal-section h4 { font-size: 14px; color: #8892b0; margin-bottom: 8px; }
+
+  /* ---- 贴士折叠分组 ---- */
+  .tip-group {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 14px;
+    margin-bottom: 10px;
+    overflow: hidden;
+  }
+  .tip-group-head {
+    padding: 14px 16px;
+    cursor: pointer;
+    user-select: none;
+    -webkit-tap-highlight-transparent: transparent;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 15px;
+    font-weight: 600;
+    color: #e8e8e8;
+  }
+  .tip-group-head .arrow {
+    font-size: 11px;
+    color: #556;
+    transition: transform 0.3s;
+  }
+  .tip-group.open .arrow { transform: rotate(180deg); color: #00d4aa; }
+  .tip-group-body {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.35s ease, padding 0.35s ease;
+  }
+  .tip-group.open .tip-group-body {
+    max-height: 800px;
+    padding: 0 16px 16px;
+  }
+  .tip-item {
+    padding: 12px 0;
+    border-top: 1px solid rgba(255,255,255,0.06);
+  }
+  .tip-item:first-child { border-top: none; padding-top: 4px; }
+  .tip-item h5 {
+    font-size: 13px;
+    color: #00d4aa;
+    margin-bottom: 6px;
+  }
+  .tip-item p, .tip-item li { font-size: 13px; line-height: 1.8; color: #c8c8c8; }
+  .tip-item ul { padding-left: 18px; }
   .modal-section p, .modal-section li { font-size: 13px; line-height: 1.8; color: #c8c8c8; }
   .modal-section ul { padding-left: 18px; }
   .close-btn {
@@ -428,10 +476,20 @@
     <div class="modal" @click.stop>
       <div class="close-btn" @click="activePage = 'plan'">✕</div>
       <h3>💡 执行贴士</h3>
-      <template x-for="tip in tips" :key="tip.title">
-        <div class="modal-section">
-          <h4 x-text="tip.title"></h4>
-          <div x-html="tip.content"></div>
+      <template x-for="(group, gi) in tipGroups" :key="gi">
+        <div class="tip-group" :class="{ open: openTips[gi] }">
+          <div class="tip-group-head" @click="toggleTip(gi)">
+            <span x-text="group.title"></span>
+            <span class="arrow">▼</span>
+          </div>
+          <div class="tip-group-body">
+            <template x-for="tip in group.items" :key="tip.title">
+              <div class="tip-item">
+                <h5 x-text="tip.title"></h5>
+                <div x-html="tip.content"></div>
+              </div>
+            </template>
+          </div>
         </div>
       </template>
     </div>
@@ -611,7 +669,8 @@ document.addEventListener('alpine:init', () => {
           {
             type: 'lunch', name: '🍱 午餐',
             items: [
-              { foodKey: 'potato', amount: 300, amountText: '300g', summaryText: '土豆（生）300g' },
+              { foodKey: 'sweetPotato', amount: 150, amountText: '150g', summaryText: '红薯（生）150g' },
+              { foodKey: 'potato', amount: 150, amountText: '150g', summaryText: '土豆（生）150g' },
               { foodKey: 'oysterBladeSteak', amount: 130, amountText: '1块（130g）', summaryText: '板腱牛排（生）1块（130g）', highlight: true },
               { foodKey: 'whey', amount: 31, amountText: '1勺（约31g）', summaryText: '蛋白粉 1勺（约31g）' },
               { foodKey: 'cucumber', amount: 150, amountText: '150g', summaryText: '黄瓜条 150g' },
@@ -629,7 +688,8 @@ document.addEventListener('alpine:init', () => {
               { foodKey: 'oysterBladeSteak', amount: 95, amountText: '切块（95g）', summaryText: '板腱牛排（生）切块（95g）', highlight: true },
               { foodKey: 'whey', amount: 31, amountText: '1勺（约31g）', summaryText: '蛋白粉 1勺（约31g）' },
               { foodKey: 'almonds', amount: 20, amountText: '约14粒', summaryText: '巴旦木 约14粒（20g）' },
-              { foodKey: 'sweetPotato', amount: 550, amountText: '550g', summaryText: '红薯（生）550g' },
+              { foodKey: 'sweetPotato', amount: 275, amountText: '275g', summaryText: '红薯（生）275g' },
+              { foodKey: 'potato', amount: 275, amountText: '275g', summaryText: '土豆（生）275g' },
             ],
           },
         ],
@@ -652,7 +712,8 @@ document.addEventListener('alpine:init', () => {
           {
             type: 'lunch', name: '🍱 午餐',
             items: [
-              { foodKey: 'sweetPotato', amount: 300, amountText: '300g', summaryText: '红薯（生）300g' },
+              { foodKey: 'sweetPotato', amount: 150, amountText: '150g', summaryText: '红薯（生）150g' },
+              { foodKey: 'potato', amount: 150, amountText: '150g', summaryText: '土豆（生）150g' },
               { foodKey: 'chickenThighRaw', amount: 170, amountText: '1份（170g）', summaryText: '去皮鸡腿（生）170g', highlight: true },
               { foodKey: 'whey', amount: 31, amountText: '1勺（约31g）', summaryText: '蛋白粉 1勺（约31g）' },
               { foodKey: 'cucumber', amount: 150, amountText: '150g', summaryText: '黄瓜条 150g' },
@@ -669,7 +730,8 @@ document.addEventListener('alpine:init', () => {
             items: [
               { foodKey: 'chickenThighRaw', amount: 140, amountText: '1份（140g）', summaryText: '去皮鸡腿（生）140g', highlight: true },
               { foodKey: 'almonds', amount: 20, amountText: '约14粒', summaryText: '巴旦木 约14粒（20g）' },
-              { foodKey: 'sweetPotato', amount: 550, amountText: '550g', summaryText: '红薯（生）550g' },
+              { foodKey: 'sweetPotato', amount: 275, amountText: '275g', summaryText: '红薯（生）275g' },
+              { foodKey: 'potato', amount: 275, amountText: '275g', summaryText: '土豆（生）275g' },
             ],
           },
         ],
@@ -692,7 +754,8 @@ document.addEventListener('alpine:init', () => {
           {
             type: 'lunch', name: '🍱 午餐',
             items: [
-              { foodKey: 'potato', amount: 380, amountText: '380g', summaryText: '土豆（生）380g' },
+              { foodKey: 'sweetPotato', amount: 190, amountText: '190g', summaryText: '红薯（生）190g' },
+              { foodKey: 'potato', amount: 190, amountText: '190g', summaryText: '土豆（生）190g' },
               { foodKey: 'oysterBladeSteak', amount: 106, amountText: '切块（106g）', summaryText: '板腱牛排（生）切块（106g）', highlight: true },
               { foodKey: 'whey', amount: 31, amountText: '1勺（约31g）', summaryText: '蛋白粉 1勺（约31g）' },
               { foodKey: 'cucumber', amount: 150, amountText: '150g', summaryText: '黄瓜条 150g' },
@@ -710,7 +773,8 @@ document.addEventListener('alpine:init', () => {
               { foodKey: 'oysterBladeSteak', amount: 65, amountText: '切块（65g）', summaryText: '板腱牛排（生）切块（65g）', highlight: true },
               { foodKey: 'whey', amount: 31, amountText: '1勺（约31g）', summaryText: '蛋白粉 1勺（约31g）' },
               { foodKey: 'almonds', amount: 20, amountText: '约14粒', summaryText: '巴旦木 约14粒（20g）' },
-              { foodKey: 'sweetPotato', amount: 550, amountText: '550g', summaryText: '红薯（生）550g' },
+              { foodKey: 'sweetPotato', amount: 275, amountText: '275g', summaryText: '红薯（生）275g' },
+              { foodKey: 'potato', amount: 275, amountText: '275g', summaryText: '土豆（生）275g' },
             ],
           },
         ],
@@ -733,25 +797,9 @@ document.addEventListener('alpine:init', () => {
           {
             type: 'lunch', name: '🍱 午餐',
             items: [
-              { foodKey: 'sweetPotato', amount: 300, amountText: '300g', summaryText: '红薯（生）300g' },
+              { foodKey: 'sweetPotato', amount: 150, amountText: '150g', summaryText: '红薯（生）150g' },
+              { foodKey: 'potato', amount: 150, amountText: '150g', summaryText: '土豆（生）150g' },
               { foodKey: 'oysterBladeSteak', amount: 105, amountText: '切块（105g）', summaryText: '板腱牛排（生）切块（105g）', highlight: true },
-              { foodKey: 'whey', amount: 31, amountText: '1勺（约31g）', summaryText: '蛋白粉 1勺（约31g）' },
-              { foodKey: 'cucumber', amount: 150, amountText: '150g', summaryText: '黄瓜条 150g' },
-            ],
-          },
-          {
-            type: 'pre', name: '⚡ 练前 60min',
-            items: [
-              { foodKey: 'banana', amount: 120, amountText: '120g（约1根）', summaryText: '香蕉 1根（可食部约120g）' },
-            ],
-          },
-          {
-            type: 'dinner', name: '🌙 晚餐（练后）',
-            items: [
-              { foodKey: 'oysterBladeSteak', amount: 65, amountText: '切块（65g）', summaryText: '板腱牛排（生）切块（65g）', highlight: true },
-              { foodKey: 'whey', amount: 31, amountText: '1勺（约31g）', summaryText: '蛋白粉 1勺（约31g）' },
-              { foodKey: 'almonds', amount: 20, amountText: '约14粒', summaryText: '巴旦木 约14粒（20g）' },
-              { foodKey: 'sweetPotato', amount: 500, amountText: '500g', summaryText: '红薯（生）500g' },
             ],
           },
         ],
@@ -774,7 +822,8 @@ document.addEventListener('alpine:init', () => {
           {
             type: 'lunch', name: '🍱 午餐',
             items: [
-              { foodKey: 'potato', amount: 300, amountText: '300g', summaryText: '土豆（生）300g' },
+              { foodKey: 'sweetPotato', amount: 150, amountText: '150g', summaryText: '红薯（生）150g' },
+              { foodKey: 'potato', amount: 150, amountText: '150g', summaryText: '土豆（生）150g' },
               { foodKey: 'oysterBladeSteak', amount: 138, amountText: '1块（138g）', summaryText: '板腱牛排（生）1块（138g）', highlight: true },
               { foodKey: 'whey', amount: 31, amountText: '1勺（约31g）', summaryText: '蛋白粉 1勺（约31g）' },
               { foodKey: 'cucumber', amount: 150, amountText: '150g', summaryText: '黄瓜条 150g' },
@@ -786,7 +835,8 @@ document.addEventListener('alpine:init', () => {
               { foodKey: 'oysterBladeSteak', amount: 65, amountText: '切块（65g）', summaryText: '板腱牛排（生）切块（65g）', highlight: true },
               { foodKey: 'whey', amount: 31, amountText: '1勺（约31g）', summaryText: '蛋白粉 1勺（约31g）' },
               { foodKey: 'almonds', amount: 20, amountText: '约14粒', summaryText: '巴旦木 约14粒（20g）' },
-              { foodKey: 'sweetPotato', amount: 480, amountText: '480g', summaryText: '红薯（生）480g' },
+              { foodKey: 'sweetPotato', amount: 240, amountText: '240g', summaryText: '红薯（生）240g' },
+              { foodKey: 'potato', amount: 240, amountText: '240g', summaryText: '土豆（生）240g' },
             ],
           },
           {
@@ -813,7 +863,8 @@ document.addEventListener('alpine:init', () => {
           {
             type: 'lunch', name: '🍱 午餐',
             items: [
-              { foodKey: 'sweetPotato', amount: 250, amountText: '250g', summaryText: '红薯（生）250g' },
+              { foodKey: 'sweetPotato', amount: 125, amountText: '125g', summaryText: '红薯（生）125g' },
+              { foodKey: 'potato', amount: 125, amountText: '125g', summaryText: '土豆（生）125g' },
               { foodKey: 'whey', amount: 31, amountText: '1勺（约31g）', summaryText: '蛋白粉 1勺（约31g）' },
               { foodKey: 'cucumber', amount: 150, amountText: '150g', summaryText: '黄瓜条 150g' },
             ],
@@ -823,7 +874,8 @@ document.addEventListener('alpine:init', () => {
             items: [
               { foodKey: 'whey', amount: 31, amountText: '1勺（约31g）', summaryText: '蛋白粉 1勺（约31g）' },
               { foodKey: 'almonds', amount: 20, amountText: '约14粒', summaryText: '巴旦木 约14粒（20g）' },
-              { foodKey: 'sweetPotato', amount: 430, amountText: '430g', summaryText: '红薯（生）430g' },
+              { foodKey: 'sweetPotato', amount: 215, amountText: '215g', summaryText: '红薯（生）215g' },
+              { foodKey: 'potato', amount: 215, amountText: '215g', summaryText: '土豆（生）215g' },
             ],
           },
           {
@@ -850,7 +902,8 @@ document.addEventListener('alpine:init', () => {
           {
             type: 'lunch', name: '🍱 午餐',
             items: [
-              { foodKey: 'potato', amount: 250, amountText: '250g', summaryText: '土豆（生）250g' },
+              { foodKey: 'sweetPotato', amount: 125, amountText: '125g', summaryText: '红薯（生）125g' },
+              { foodKey: 'potato', amount: 125, amountText: '125g', summaryText: '土豆（生）125g' },
               { foodKey: 'oysterBladeSteak', amount: 105, amountText: '切块（105g）', summaryText: '板腱牛排（生）切块（105g）', highlight: true },
               { foodKey: 'whey', amount: 31, amountText: '1勺（约31g）', summaryText: '蛋白粉 1勺（约31g）' },
               { foodKey: 'cucumber', amount: 150, amountText: '150g', summaryText: '黄瓜条 150g' },
@@ -862,7 +915,8 @@ document.addEventListener('alpine:init', () => {
               { foodKey: 'oysterBladeSteak', amount: 65, amountText: '切块（65g）', summaryText: '板腱牛排（生）切块（65g）', highlight: true },
               { foodKey: 'whey', amount: 31, amountText: '1勺（约31g）', summaryText: '蛋白粉 1勺（约31g）' },
               { foodKey: 'almonds', amount: 20, amountText: '约14粒', summaryText: '巴旦木 约14粒（20g）' },
-              { foodKey: 'sweetPotato', amount: 380, amountText: '380g', summaryText: '红薯（生）380g' },
+              { foodKey: 'sweetPotato', amount: 190, amountText: '190g', summaryText: '红薯（生）190g' },
+              { foodKey: 'potato', amount: 190, amountText: '190g', summaryText: '土豆（生）190g' },
             ],
           },
         ],
@@ -883,8 +937,8 @@ document.addEventListener('alpine:init', () => {
       {
         key: 'carb', title: '🍞 碳水/主食',
         items: [
-          { name: '红薯', qty: '约3.4kg', checked: false },
-          { name: '土豆', qty: '约1.3kg', checked: false },
+          { name: '红薯', qty: '约2.6kg', checked: false },
+          { name: '土豆', qty: '约2.6kg', checked: false },
           { name: '玉米（真空包装或冷冻）', qty: '7 根（约1.4kg）', checked: false },
           { name: '香蕉', qty: '4 根', checked: false },
         ],
@@ -908,79 +962,132 @@ document.addEventListener('alpine:init', () => {
     ],
 
     // ---- 执行贴士 ----
-    tips: [
+    openTips: {},
+
+    toggleTip(gi) {
+      this.openTips[gi] = !this.openTips[gi];
+    },
+
+    tipGroups: [
       {
-        title: '📐 基准值怎么算',
-        content: `<p>现在这版餐单是按<strong>食物基准值 × 实际重量/数量</strong>自动计算的，不再手填每餐热量。</p>
-          <ul>
-            <li>例如：红薯按「每100g」的基准值去算，某餐吃 300g，就自动按 3 倍计算</li>
-            <li>鸡蛋按「每1个」计算</li>
-            <li>香蕉按<strong>可食部约120g/根</strong>估算</li>
-            <li>当前餐单默认按<strong>板腱牛排（生）</strong>计算；如果某餐想换去皮鸡腿，把那条 foodKey 改成 <code>chickenThighRaw</code> 就行</li>
-          </ul>`,
+        title: '🥩 肉类',
+        items: [
+          {
+            title: '⚖️ 生熟怎么称',
+            content: `<p>餐单上写的肉类克数<strong>全部是生重</strong>，备餐时直接按生肉称好分装，不用煮熟再称。</p>
+              <p>换算参考（出成率约 70%）：</p>
+              <ul><li>生 200g → 熟重约 130~140g</li><li>生 180g → 熟重约 120~130g；生 220g → 熟重约 150~160g</li></ul>
+              <p>⚠️ 如果你习惯只称熟重，就在基础上 <strong>× 0.7</strong>，但推荐直接称生重，误差最小。</p>`,
+          },
+          {
+            title: '🥩 板腱牛排做法（不放油也不焦的秘诀）',
+            content: `<p><strong>关键：中大火，别用最大火。</strong>锅烧到微微冒烟（约 200°C）就下肉，比冒浓烟再下好控制得多</p>
+              <p>步骤：回温 20min → 厨房纸<strong>吸干表面水分</strong>（很重要！湿了必粘锅）→ 盐 + 黑胡椒腌 10min → <strong>中大火</strong>每面煎 2~3min → 煎完<strong>静置 3min</strong>再切</p>
+              <p><strong>防焦 3 个技巧：</strong></p>
+              <ul>
+                <li>用<strong>不粘锅</strong>或铸铁锅，别用不锈钢锅干煎</li>
+                <li>下肉后<strong>别急着翻面</strong>，等它自然脱锅再翻（约 2min），硬翻必粘</li>
+                <li>实在怕焦就刷<strong>薄薄一层油</strong>（半茶匙），热量几乎可以忽略</li>
+              </ul>
+              <p>⚠️ 板腱中间有一根嫩筋，煎到七~八分熟最嫩；切之前逆纹下刀，把筋切断</p>
+              <p>大块的（如 225g）当天生切两半分装，切面保鲜膜贴紧，冷藏别超过 2 天</p>`,
+          },
+          {
+            title: '🍗 鸡腿肉做法（空气炸锅）',
+            content: `<p>去皮去肥油 → 盐 + 黑胡椒腌 15min 以上 → 空气炸锅 200°C 烤 15min → 中途翻面</p>
+              <p><strong>早上腌更入味：</strong>早上把盐 + 黑胡椒（可加少许生抽/料酒）抹匀，<strong>装袋丢冷藏</strong>，中午直接丢空气炸锅。腌半天是完全 OK 的，比只腌 15min 入味得多</p>
+              <p>⚠️ 一定要去掉鸡皮和明显肥油；鸡腿肉别切太厚，<strong>厚的对半片开</strong>，保证 15min 内能熟透（中心温度 75°C 以上）</p>`,
+          },
+        ],
       },
       {
-        title: '⚖️ 生熟怎么称（先看这个）',
-        content: `<p>餐单上写的「板腱牛排（生）Xg」<strong>全部是生重</strong>，你周末备餐时直接按生肉称好分装即可，不用煮熟再称。</p>
-          <p>换算参考（出成率约 70%）：</p>
-          <ul><li>生 200g 板腱牛排 → 煎熟后大约 <strong>130~140g</strong> 熟重</li>
-          <li>生 180g → 熟重约 120~130g；生 220g → 熟重约 150~160g</li></ul>
-          <p>⚠️ 如果你习惯只称熟重，就在上面的基础上 <strong>× 0.7</strong>，但推荐直接称生重，误差最小。</p>`,
+        title: '🍠 薯类 / 主食',
+        items: [
+          {
+            title: '🍠 红薯做法（和土豆一起蒸，吃时一起炸）',
+            content: `<p><strong>红薯土豆一锅蒸（备餐推荐）：</strong>两种都切滚刀块 → 混一起上锅蒸 10~12min → 筷子能插透就好 → 晾凉 → 真空按天分份</p>
+              <p><strong>吃的时候一起炸：</strong>空气炸锅 <strong>200°C 炸 8~10min</strong>（刷半茶匙油 + 盐胡椒更香）。红薯表面会焦糖化，外脆里糯，比单纯蒸的好吃很多</p>
+              <p><strong>赶时间版：</strong>180°C 热 5~6min 就能吃，省 3~5 分钟</p>
+              <p>⚠️ 红薯糖分高，<strong>蒸后晾凉再真空</strong>，热的封不紧会出水蒸气</p>`,
+          },
+          {
+            title: '🥔 土豆做法（蒸完再炸最好吃）',
+            content: `<p><strong>先蒸后炸薯角（推荐）：</strong>切滚刀块 → 蒸 10~12min（蒸透）→ 晾凉 → 真空按天分份。吃的时候空气炸锅 200°C 炸 8~10min（刷半茶匙油 + 盐胡椒更香），外酥里糯</p>
+              <p><strong>备餐时偷懒版：</strong>蒸好直接真空冷藏，吃的时候空气炸锅 180°C 热 5~6min 就行，省油也好吃</p>
+              <p><strong>高压锅·最快：</strong>切大块 → 加少许水上汽后压 8~10min → 自然泄压 → 沥干撒盐胡椒</p>
+              <p>⚠️ 蒸后<strong>晾凉再真空</strong>，热的封不紧会出水蒸气</p>`,
+          },
+          {
+            title: '🍞 主食怎么选',
+            content: `<p>主食轮换红薯、土豆和玉米，餐次尽量收少，目标是最快解决吃饭</p>
+              <p>训练日就吃 4 次，休息日就吃 3 次</p>
+              <p>⚠️ 土豆是<strong>快碳</strong>（GI ~78），适合午餐/练前吃；红薯是<strong>慢碳</strong>（GI ~54~70），适合晚餐练后吃</p>
+              <p>⚠️ 红薯含<strong>寡糖</strong>，一餐超过 300g 容易胀气。当前餐单晚餐已做<strong>红薯土豆各一半</strong>，分散寡糖摄入，肠胃更舒服</p>`,
+          },
+        ],
       },
       {
-        title: '🥩 板腱牛排做法',
-        content: `<p>做法：提前从冷藏取出回温 20min → 厨房纸吸干表面 → 盐 + 黑胡椒腌 10min → 平底锅大火每面煎 1.5~2.5min（或空气炸锅 200°C 烤 8~10min）</p>
-          <p>⚠️ 板腱中间有一根嫩筋，煎到七~八分熟最嫩；切之前逆纹下刀，把筋切断，嚼起来不费劲</p>
-          <p>大块的（如 225g）当天生切两半分装，切面保鲜膜贴紧，冷藏别超过 2 天</p>`,
+        title: '🥬 蔬菜 / 其他',
+        items: [
+          {
+            title: '🥬 极速蔬菜做法',
+            content: `<p>黄瓜直接洗好切条分盒，午餐打开就吃，基本不用额外烹饪</p>
+              <p>如果哪天不想吃蔬菜，至少把香蕉和黄瓜条留住一点，别整周完全没有纤维</p>`,
+          },
+        ],
       },
       {
-        title: '🍠 红薯做法（空气炸锅 / 高压锅 / 水煮）',
-        content: `<p><strong>空气炸锅·整根烤（强烈推荐）：</strong>洗净不用去皮 → 整根 200°C 烤 30~40min（筷子能插透就行），焦香流蜜，不用看火</p>
-          <p><strong>滚刀块蒸（省事推荐）：</strong>去皮切滚刀块 → 上锅蒸 15~18min → 筷子能插透就好，软糯香甜，晾到不烫手就能装盒带走</p>
-          <p><strong>高压锅：</strong>洗净切大块 → 加少许水上汽后压 15~20min → 自然泄压，口感软糯</p>
-          <p><strong>水煮：</strong>整根或切块冷水下锅煮 20~25min，简单但甜度会流失一些</p>
-          <p>⚠️ <strong>红薯不建议先蒸再炸</strong>——糖分高，蒸过带水汽反而炸不出焦壳，直接整根烤才能焦糖化出"流蜜"口感</p>
-          <p>💡 <strong>红薯土豆一锅出：</strong>红薯整根丢空气炸锅先烤着，土豆切块去蒸，时间差不多刚好一起出</p>`,
-      },
-      {
-        title: '🥔 土豆做法（先蒸后炸最香）',
-        content: `<p><strong>空气炸锅·先蒸后炸薯角（强烈推荐）：</strong>切滚刀块 → 蒸 8~10min（半熟，有点硬芯）→ 晾 3~5min 散掉表面水汽 → 拌半茶匙油 + 盐 + 黑胡椒 → 200°C 炸 10~12min，中途翻面。外酥里糯，接近餐厅薯角口感</p>
-          <p><strong>空气炸锅·直接生炸：</strong>切滚刀块 → 拌油盐胡椒 → 200°C 炸 15~20min，中途翻面。也行，但容易外干内硬</p>
-          <p><strong>高压锅·最快：</strong>切大块 → 加少许水上汽后压 8~10min → 自然泄压 → 沥干撒盐胡椒</p>
-          <p>⚠️ <strong>蒸后一定要晾一下再炸</strong>，表面太湿炸不脆；按<strong>生重</strong>称量备餐；减脂期少放油，半茶匙就够</p>`,
-      },
-      {
-        title: '🍗 鸡腿肉空气炸锅做法',
-        content: `<p>去皮去肥油 → 盐 + 黑胡椒腌 15min 以上 → 空气炸锅 200°C 烤 15min → 中途翻面</p>
-          <p><strong>早上腌更入味：</strong>早上把盐 + 黑胡椒（可加少许生抽/料酒）抹匀，<strong>装袋丢冷藏</strong>，中午直接丢空气炸锅。腌半天是完全 OK 的，比只腌 15min 入味得多</p>
-          <p>⚠️ 一定要去掉鸡皮和明显肥油；鸡腿肉别切太厚，<strong>厚的对半片开</strong>，保证 15min 内能熟透（中心温度 75°C 以上）</p>`,
-      },
-      {
-        title: '🥬 极速蔬菜做法',
-        content: `<p>黄瓜直接洗好切条分盒，午餐打开就吃，基本不用额外烹饪</p>
-          <p>这版故意把蔬菜收成最低执行成本，优先解决"吃得快、带着走、别磨叽"</p>
-          <p>如果哪天不想吃蔬菜，至少把香蕉和黄瓜条留住一点，别整周完全没有纤维</p>`,
-      },
-      {
-        title: '🍞 主食怎么选',
-        content: `<p>主食轮换红薯、土豆和玉米，餐次尽量收少，目标是最快解决吃饭</p>
-          <p>训练日就吃 4 次，休息日就吃 3 次</p>
-          <p>当前页面里的计算默认先按"<span class="highlight-protein">板腱牛排（生）</span>"走；你当天想换去皮鸡腿，就把对应 meal item 的 <code>foodKey</code> 改成 <code>chickenThighRaw</code></p>`,
-      },
-      {
-        title: '📦 周末批量备餐',
-        content: `<ul>
-          <li>板腱牛排/去皮鸡腿：周末先备一种，吃烦了再换另一种，不用按星期固定死；<strong>直接按餐单上的生重分装</strong>，最省事</li>
-          <li>红薯/土豆：餐单上的克数就是生重，周末按份称好再统一做熟；红薯推荐空气炸锅整根烤好，土豆切块空气炸锅做薯角，冷藏 2~3 天没问题</li>
-          <li>黄瓜：周末洗好切条分盒，午餐抓一盒就走</li>
-          <li>鸡蛋：周末煮 21 个，早餐直接配玉米和高蛋白低脂奶</li>
-          <li>蛋白粉：每天午餐 1 勺兜底，其余蛋白质从鸡蛋、牛排/鸡腿、牛奶中获取</li>
-        </ul>`,
-      },
-      {
-        title: '⚡ 2 周后观察',
-        content: `<p>每周掉 >0.7kg、训练发软或没劲 → 周一到周四晚餐红薯各加 50g</p>
-          <p>体重和腰围 2 周都不动 → 先把周五到周日晚餐红薯各减 50g，别先砍肉</p>`,
+        title: '📋 备餐 / 通用',
+        items: [
+          {
+            title: '📐 基准值怎么算',
+            content: `<p>餐单是按<strong>食物基准值 × 实际重量/数量</strong>自动计算的。</p>
+              <ul>
+                <li>红薯/土豆按「每100g」计算，吃 300g 就自动 ×3</li>
+                <li>鸡蛋按「每1个」计算，香蕉按<strong>可食部约120g/根</strong>估算</li>
+                <li>想换去皮鸡腿就把 <code>foodKey</code> 改成 <code>chickenThighRaw</code></li>
+              </ul>`,
+          },
+          {
+            title: '📦 上班族备餐方案（每周 2 次）',
+            content: `<p><strong>你有冰箱 + 真空机，推荐每周备 2 次：周日晚 + 周三晚。</strong></p>
+              <p><strong>🗓️ 周日晚（备周一～周三）：</strong></p>
+              <ul>
+                <li><strong>🥩 肉类分装：</strong>按餐单生重称好，<strong>真空包装</strong>丢冷藏。周一牛排130+95g、周二鸡腿170+140g、周三牛排106+65g。真空后冷藏可放 3~4 天不变味</li>
+                <li><strong>🍠🥔 薯类（红薯+土豆一起）：</strong>两种都切滚刀块 → 混一起蒸 10~12min（筷子能插透）→ 晾凉 → <strong>装一个真空袋</strong>按天分份。吃的时候空气炸锅 180°C 热 5~6min，想脆一点就 200°C 多炸 2min</li>
+                <li><strong>🥚 鸡蛋：</strong>冷水下锅煮 12 个（周一～三每天 2 个早餐 + 备 6 个灵活用），带壳冷藏</li>
+                <li><strong>🥒 黄瓜：</strong>洗好切条，分 3 盒冷藏</li>
+                <li><strong>🌽 玉米：</strong>真空装本身就好，直接拿</li>
+              </ul>
+              <p><strong>🗓️ 周三晚（备周四～周日）：</strong></p>
+              <ul>
+                <li>同样流程：称肉真空分装、土豆薯角真空、红薯烤好真空、煮 8 个蛋、切黄瓜</li>
+                <li>周日量少（2 餐），可以偷懒周四～周五一起备</li>
+              </ul>
+              <p><strong>💡 真空机用法：</strong></p>
+              <ul>
+                <li><strong>生肉</strong>：按餐分装真空 → 冷藏 3~4 天；如果备 4 天以上，丢<strong>冷冻</strong>，前一晚转冷藏解冻</li>
+                <li><strong>熟红薯+土豆</strong>：两种切块混一起蒸熟 → <strong>晾凉再真空</strong>（热的会出水蒸气封不紧）→ 按天一袋，冷藏 4~5 天</li>
+                <li><strong>鸡蛋不用真空</strong>：带壳放冰箱就行，剥壳后口感反而变差</li>
+                <li><strong>黄瓜不用真空</strong>：切条后普通保鲜盒就好</li>
+              </ul>
+              <p><strong>⏱️ 总耗时：每次约 1 小时</strong>（称肉 15min + 真空 10min + 蒸/烤薯类 30min 同步进行 + 煮蛋切菜 10min）</p>`,
+          },
+          {
+            title: '📦 备餐 3 次的懒人版（可选）',
+            content: `<p>如果想更省事，也可以拆成 <strong>周日 + 周三 + 周五</strong>，每次只备 2~3 天：</p>
+              <ul>
+                <li>每次只需要称 2 天的肉 + 蒸一次薯类，单次 30min 搞定</li>
+                <li>食物更新鲜，但多跑一次厨房</li>
+                <li>适合周末不想花 1 小时集中备餐的人</li>
+              </ul>`,
+          },
+          {
+            title: '⚡ 2 周后观察',
+            content: `<p>每周掉 >0.7kg、训练发软或没劲 → 周一到周四晚餐红薯各加 50g</p>
+              <p>体重和腰围 2 周都不动 → 先把周五到周日晚餐红薯各减 50g，别先砍肉</p>`,
+          },
+        ],
       },
     ],
 
