@@ -116,6 +116,19 @@
   .day-stat { font-size: 12px; color: #8892b0; }
   .day-stat span { color: #e8e8e8; font-weight: 600; }
 
+  .day-prep {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+  .day-prep-label { font-size: 12px; color: #8892b0; font-weight: 600; }
+  .day-prep-item { font-size: 12px; color: #8892b0; }
+  .day-prep-item strong { color: #e8e8e8; font-weight: 600; }
+
   /* ---- 餐卡片 ---- */
   .meal {
     background: rgba(255,255,255,0.03);
@@ -293,6 +306,12 @@
           <div class="day-stat"><span x-text="st.icon"></span> <span x-text="st.value"></span> <span x-text="st.label"></span></div>
         </template>
       </div>
+      <div class="day-prep" x-show="currentDayPrep.length > 0">
+        <span class="day-prep-label">📦 当日备料：</span>
+        <template x-for="p in currentDayPrep" :key="p.label">
+          <span class="day-prep-item"><span x-text="p.icon"></span> <span x-text="p.label"></span> <strong x-text="p.value"></strong></span>
+        </template>
+      </div>
 
       <!-- 每餐 -->
       <template x-for="(meal, mi) in currentDay.meals" :key="mi">
@@ -407,6 +426,10 @@ document.addEventListener('alpine:init', () => {
       return this.dayStats(this.currentDay);
     },
 
+    get currentDayPrep() {
+      return this.dayPrep(this.currentDay);
+    },
+
     get summaryStats() {
       const avg = this.averageDayTotals();
       return [
@@ -475,6 +498,33 @@ document.addEventListener('alpine:init', () => {
         { icon: '🍠', value: this.formatMacro(total.carbs) + 'g', label: '碳水' },
         { icon: '🥑', value: this.formatMacro(total.fat) + 'g', label: '脂肪' },
       ];
+    },
+
+    dayPrep(day) {
+      const prepKeys = ['sweetPotato', 'potato', 'corn', 'banana', 'oysterBladeSteak', 'chickenThighRaw', 'wholeEgg', 'highProteinMilk'];
+      const totals = {};
+      (day.meals || []).forEach(meal => {
+        (meal.items || []).forEach(item => {
+          if (prepKeys.includes(item.foodKey)) {
+            totals[item.foodKey] = (totals[item.foodKey] || 0) + item.amount;
+          }
+        });
+      });
+      const labels = {
+        sweetPotato: { icon: '🍠', label: '红薯（生）' },
+        potato: { icon: '🥔', label: '土豆（生）' },
+        corn: { icon: '🌽', label: '玉米' },
+        banana: { icon: '🍌', label: '香蕉' },
+        oysterBladeSteak: { icon: '🥩', label: '板腱牛排' },
+        chickenThighRaw: { icon: '🍗', label: '去皮鸡腿' },
+        wholeEgg: { icon: '🥚', label: '鸡蛋' },
+        highProteinMilk: { icon: '🥛', label: '高蛋白奶' },
+      };
+      return Object.entries(totals).map(([key, amount]) => ({
+        icon: labels[key].icon,
+        label: labels[key].label,
+        value: key === 'wholeEgg' ? amount + '个' : amount + 'g',
+      }));
     },
 
     formatKcal(value) {
@@ -665,11 +715,19 @@ document.addEventListener('alpine:init', () => {
             ],
           },
           {
-            type: 'dinner', name: '🌙 晚餐',
+            type: 'pre', name: '⚡ 练前 60min',
+            items: [
+              { foodKey: 'banana', amount: 120, amountText: '120g（约1根）', summaryText: '香蕉 1根（可食部约120g）' },
+            ],
+          },
+          {
+            type: 'dinner', name: '🌙 晚餐（练后）',
             items: [
               { foodKey: 'oysterBladeSteak', amount: 95, amountText: '切块（95g）', summaryText: '板腱牛排（生）切块（95g）', highlight: true },
+              { foodKey: 'whey', amount: 31, amountText: '1勺（约31g）', summaryText: '蛋白粉 1勺（约31g）' },
               { foodKey: 'almonds', amount: 20, amountText: '约14粒', summaryText: '巴旦木 约14粒（20g）' },
               { foodKey: 'sweetPotato', amount: 240, amountText: '240g', summaryText: '红薯（生）240g' },
+              { foodKey: 'potato', amount: 240, amountText: '240g', summaryText: '土豆（生）240g' },
             ],
           },
         ],
