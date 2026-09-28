@@ -401,7 +401,7 @@ document.addEventListener('alpine:init', () => {
       cucumber: { name: '黄瓜条', basis: '每100g', baseAmount: 100, unit: 'g', kcal: 15, protein: 0.8, carbs: 2.9, fat: 0.2 },
       whiteMushroom: { name: '白蘑菇（生）', basis: '每100g', baseAmount: 100, unit: 'g', kcal: 22, protein: 3.1, carbs: 3.3, fat: 0.3 },
       banana: { name: '香蕉（可食部）', basis: '每100g', baseAmount: 100, unit: 'g', kcal: 89, protein: 1.1, carbs: 22.8, fat: 0.3 },
-      whey: { name: '蛋白粉', basis: '每31g（约1勺）', baseAmount: 31, unit: 'g', kcal: 120, protein: 24, carbs: 4, fat: 1.5 },
+      whey: { name: '蛋白粉', basis: '每31g（约1勺）', baseAmount: 31, unit: 'g', kcal: 121, protein: 23.6, carbs: 3.8, fat: 1.1 },
       almonds: { name: '巴旦木（杏仁）', basis: '每10g', baseAmount: 10, unit: 'g', kcal: 58, protein: 2.1, carbs: 2.0, fat: 5.0 },
       camelliaOil: { name: '山茶油（烹饪）', basis: '每5ml（1茶匙）', baseAmount: 5, unit: 'ml', kcal: 45, protein: 0, carbs: 0, fat: 5 },
       butter: { name: '黄油（烹饪）', basis: '每10g', baseAmount: 10, unit: 'g', kcal: 72, protein: 0.1, carbs: 0, fat: 8.1 },
@@ -501,7 +501,7 @@ document.addEventListener('alpine:init', () => {
     },
 
     dayPrep(day) {
-      const prepKeys = ['sweetPotato', 'potato', 'corn', 'banana', 'oysterBladeSteak', 'chickenThighRaw', 'wholeEgg', 'highProteinMilk'];
+      const prepKeys = ['sweetPotato', 'potato', 'corn', 'banana', 'chickenThighRaw', 'wholeEgg', 'highProteinMilk'];
       const totals = {};
       (day.meals || []).forEach(meal => {
         (meal.items || []).forEach(item => {
@@ -581,7 +581,7 @@ document.addEventListener('alpine:init', () => {
             items: [
               { foodKey: 'sweetPotato', amount: 150, amountText: '150g', summaryText: '红薯（生）150g' },
               { foodKey: 'potato', amount: 150, amountText: '150g', summaryText: '土豆（生）150g' },
-              { foodKey: 'oysterBladeSteak', amount: 130, amountText: '1块（130g）', summaryText: '板腱牛排（生）1块（130g）', highlight: true },
+              { foodKey: 'chickenThighRaw', amount: 130, amountText: '1份（130g）', summaryText: '去皮鸡腿（生）130g', highlight: true },
               { foodKey: 'whey', amount: 31, amountText: '1勺（约31g）', summaryText: '蛋白粉 1勺（约31g）' },
               { foodKey: 'cucumber', amount: 150, amountText: '150g', summaryText: '黄瓜条 150g' },
             ],
@@ -595,7 +595,7 @@ document.addEventListener('alpine:init', () => {
           {
             type: 'dinner', name: '🌙 晚餐（练后）',
             items: [
-              { foodKey: 'oysterBladeSteak', amount: 95, amountText: '切块（95g）', summaryText: '板腱牛排（生）切块（95g）', highlight: true },
+              { foodKey: 'chickenThighRaw', amount: 95, amountText: '1份（95g）', summaryText: '去皮鸡腿（生）95g', highlight: true },
               { foodKey: 'whey', amount: 31, amountText: '1勺（约31g）', summaryText: '蛋白粉 1勺（约31g）' },
               { foodKey: 'almonds', amount: 20, amountText: '约14粒', summaryText: '巴旦木 约14粒（20g）' },
               { foodKey: 'sweetPotato', amount: 275, amountText: '275g', summaryText: '红薯（生）275g' },
@@ -666,7 +666,7 @@ document.addEventListener('alpine:init', () => {
             items: [
               { foodKey: 'sweetPotato', amount: 190, amountText: '190g', summaryText: '红薯（生）190g' },
               { foodKey: 'potato', amount: 190, amountText: '190g', summaryText: '土豆（生）190g' },
-              { foodKey: 'oysterBladeSteak', amount: 106, amountText: '切块（106g）', summaryText: '板腱牛排（生）切块（106g）', highlight: true },
+              { foodKey: 'chickenThighRaw', amount: 106, amountText: '1份（106g）', summaryText: '去皮鸡腿（生）106g', highlight: true },
               { foodKey: 'whey', amount: 31, amountText: '1勺（约31g）', summaryText: '蛋白粉 1勺（约31g）' },
               { foodKey: 'cucumber', amount: 150, amountText: '150g', summaryText: '黄瓜条 150g' },
             ],
@@ -680,7 +680,7 @@ document.addEventListener('alpine:init', () => {
           {
             type: 'dinner', name: '🌙 晚餐（练后）',
             items: [
-              { foodKey: 'oysterBladeSteak', amount: 65, amountText: '切块（65g）', summaryText: '板腱牛排（生）切块（65g）', highlight: true },
+              { foodKey: 'chickenThighRaw', amount: 65, amountText: '1份（65g）', summaryText: '去皮鸡腿（生）65g', highlight: true },
               { foodKey: 'whey', amount: 31, amountText: '1勺（约31g）', summaryText: '蛋白粉 1勺（约31g）' },
               { foodKey: 'almonds', amount: 20, amountText: '约14粒', summaryText: '巴旦木 约14粒（20g）' },
               { foodKey: 'sweetPotato', amount: 275, amountText: '275g', summaryText: '红薯（生）275g' },
@@ -709,7 +709,7 @@ document.addEventListener('alpine:init', () => {
             items: [
               { foodKey: 'sweetPotato', amount: 150, amountText: '150g', summaryText: '红薯（生）150g' },
               { foodKey: 'potato', amount: 150, amountText: '150g', summaryText: '土豆（生）150g' },
-              { foodKey: 'oysterBladeSteak', amount: 130, amountText: '切块（130g）', summaryText: '板腱牛排（生）切块（130g）', highlight: true },
+              { foodKey: 'chickenThighRaw', amount: 130, amountText: '1份（130g）', summaryText: '去皮鸡腿（生）130g', highlight: true },
               { foodKey: 'whey', amount: 31, amountText: '1勺（约31g）', summaryText: '蛋白粉 1勺（约31g）' },
               { foodKey: 'cucumber', amount: 150, amountText: '150g', summaryText: '黄瓜条 150g' },
             ],
@@ -723,7 +723,7 @@ document.addEventListener('alpine:init', () => {
           {
             type: 'dinner', name: '🌙 晚餐（练后）',
             items: [
-              { foodKey: 'oysterBladeSteak', amount: 95, amountText: '切块（95g）', summaryText: '板腱牛排（生）切块（95g）', highlight: true },
+              { foodKey: 'chickenThighRaw', amount: 95, amountText: '1份（95g）', summaryText: '去皮鸡腿（生）95g', highlight: true },
               { foodKey: 'whey', amount: 31, amountText: '1勺（约31g）', summaryText: '蛋白粉 1勺（约31g）' },
               { foodKey: 'almonds', amount: 20, amountText: '约14粒', summaryText: '巴旦木 约14粒（20g）' },
               { foodKey: 'sweetPotato', amount: 240, amountText: '240g', summaryText: '红薯（生）240g' },
@@ -752,7 +752,7 @@ document.addEventListener('alpine:init', () => {
             items: [
               { foodKey: 'sweetPotato', amount: 150, amountText: '150g', summaryText: '红薯（生）150g' },
               { foodKey: 'potato', amount: 150, amountText: '150g', summaryText: '土豆（生）150g' },
-              { foodKey: 'oysterBladeSteak', amount: 138, amountText: '1块（138g）', summaryText: '板腱牛排（生）1块（138g）', highlight: true },
+              { foodKey: 'chickenThighRaw', amount: 138, amountText: '1份（138g）', summaryText: '去皮鸡腿（生）138g', highlight: true },
               { foodKey: 'whey', amount: 31, amountText: '1勺（约31g）', summaryText: '蛋白粉 1勺（约31g）' },
               { foodKey: 'cucumber', amount: 150, amountText: '150g', summaryText: '黄瓜条 150g' },
             ],
@@ -760,7 +760,7 @@ document.addEventListener('alpine:init', () => {
           {
             type: 'dinner', name: '🌙 晚餐',
             items: [
-              { foodKey: 'oysterBladeSteak', amount: 65, amountText: '切块（65g）', summaryText: '板腱牛排（生）切块（65g）', highlight: true },
+              { foodKey: 'chickenThighRaw', amount: 65, amountText: '1份（65g）', summaryText: '去皮鸡腿（生）65g', highlight: true },
               { foodKey: 'whey', amount: 31, amountText: '1勺（约31g）', summaryText: '蛋白粉 1勺（约31g）' },
               { foodKey: 'almonds', amount: 20, amountText: '约14粒', summaryText: '巴旦木 约14粒（20g）' },
               { foodKey: 'sweetPotato', amount: 240, amountText: '240g', summaryText: '红薯（生）240g' },
@@ -832,7 +832,7 @@ document.addEventListener('alpine:init', () => {
             items: [
               { foodKey: 'sweetPotato', amount: 125, amountText: '125g', summaryText: '红薯（生）125g' },
               { foodKey: 'potato', amount: 125, amountText: '125g', summaryText: '土豆（生）125g' },
-              { foodKey: 'oysterBladeSteak', amount: 105, amountText: '切块（105g）', summaryText: '板腱牛排（生）切块（105g）', highlight: true },
+              { foodKey: 'chickenThighRaw', amount: 105, amountText: '1份（105g）', summaryText: '去皮鸡腿（生）105g', highlight: true },
               { foodKey: 'whey', amount: 31, amountText: '1勺（约31g）', summaryText: '蛋白粉 1勺（约31g）' },
               { foodKey: 'cucumber', amount: 150, amountText: '150g', summaryText: '黄瓜条 150g' },
             ],
@@ -840,7 +840,7 @@ document.addEventListener('alpine:init', () => {
           {
             type: 'dinner', name: '🌙 晚餐',
             items: [
-              { foodKey: 'oysterBladeSteak', amount: 65, amountText: '切块（65g）', summaryText: '板腱牛排（生）切块（65g）', highlight: true },
+              { foodKey: 'chickenThighRaw', amount: 65, amountText: '1份（65g）', summaryText: '去皮鸡腿（生）65g', highlight: true },
               { foodKey: 'whey', amount: 31, amountText: '1勺（约31g）', summaryText: '蛋白粉 1勺（约31g）' },
               { foodKey: 'almonds', amount: 20, amountText: '约14粒', summaryText: '巴旦木 约14粒（20g）' },
               { foodKey: 'sweetPotato', amount: 190, amountText: '190g', summaryText: '红薯（生）190g' },
