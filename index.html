@@ -307,7 +307,7 @@
   <!-- 档案切换 -->
   <div class="profile-toggle">
     <button class="profile-btn" :class="{ active: activeProfile === 'user' }" @click="switchProfile('user')">💪 我的减脂</button>
-    <button class="profile-btn" :class="{ active: activeProfile === 'sister' }" @click="switchProfile('sister')">🌸 妹妹增肌</button>
+    <button class="profile-btn" :class="{ active: activeProfile === 'sister' }" @click="switchProfile('sister')">🌸 妹妹增重</button>
   </div>
 
   <!-- 统计卡片 -->
@@ -425,9 +425,9 @@ document.addEventListener('alpine:init', () => {
         maintenanceCalories: 2195,
       },
       sister: {
-        label: '妹妹 · 女 · 156cm · 39kg · 目标：增肌增重',
+        label: '妹妹 · 女 · 20岁 · 156cm · 39kg · 目标：健康增重（不运动）',
         bodyWeightKg: 39,
-        maintenanceCalories: 1550,
+        maintenanceCalories: 1310,
       },
     },
 
@@ -912,11 +912,11 @@ document.addEventListener('alpine:init', () => {
       },
     ],
 
-    // ---- 妹妹增肌餐（每天固定模板） ----
+    // ---- 妹妹增重餐（不运动版，每天固定模板） ----
     sisterDays: Array.from({ length: 7 }, (_, i) => ({
       shortName: ['周一', '周二', '周三', '周四', '周五', '周六', '周日'][i],
-      title: `增肌餐 · ${['周一', '周二', '周三', '周四', '周五', '周六', '周日'][i]}`,
-      tag: '📈 增肌·高热量',
+      title: `增重餐 · ${['周一', '周二', '周三', '周四', '周五', '周六', '周日'][i]}`,
+      tag: '📈 健康增重',
       tagClass: 'tag-high',
       meals: [
         {
@@ -924,15 +924,15 @@ document.addEventListener('alpine:init', () => {
           items: [
             { foodKey: 'corn', amount: 333, amountText: '1根（带芯约333g）', summaryText: '玉米 1根（带芯约333g）' },
             { foodKey: 'wholeEgg', amount: 2, amountText: '2个', summaryText: '全蛋 2个' },
-            { foodKey: 'pasteurizedWholeMilk', amount: 300, amountText: '300ml', summaryText: '鲜牛奶（全脂）300ml' },
+            { foodKey: 'pasteurizedWholeMilk', amount: 250, amountText: '250ml', summaryText: '鲜牛奶（全脂）250ml' },
           ],
         },
         {
           type: 'lunch', name: '🍱 午餐',
           items: [
-            { foodKey: 'chickenThighRaw', amount: 120, amountText: '1份（120g）', summaryText: '去皮鸡腿（生）120g', highlight: true },
-            { foodKey: 'sweetPotato', amount: 250, amountText: '250g', summaryText: '红薯（生）250g' },
-            { foodKey: 'potato', amount: 100, amountText: '100g', summaryText: '土豆（生）100g' },
+            { foodKey: 'chickenThighRaw', amount: 100, amountText: '100g', summaryText: '去皮鸡腿（生）100g', highlight: true },
+            { foodKey: 'sweetPotato', amount: 200, amountText: '200g', summaryText: '红薯（生）200g' },
+            { foodKey: 'potato', amount: 80, amountText: '80g', summaryText: '土豆（生）80g' },
           ],
         },
         {
@@ -945,10 +945,9 @@ document.addEventListener('alpine:init', () => {
         {
           type: 'dinner', name: '🌙 晚餐',
           items: [
-            { foodKey: 'chickenThighRaw', amount: 120, amountText: '1份（120g）', summaryText: '去皮鸡腿（生）120g', highlight: true },
-            { foodKey: 'sweetPotato', amount: 250, amountText: '250g', summaryText: '红薯（生）250g' },
-            { foodKey: 'potato', amount: 100, amountText: '100g', summaryText: '土豆（生）100g' },
-            { foodKey: 'almonds', amount: 10, amountText: '约7粒', summaryText: '巴旦木 约7粒（10g）' },
+            { foodKey: 'chickenThighRaw', amount: 100, amountText: '100g', summaryText: '去皮鸡腿（生）100g', highlight: true },
+            { foodKey: 'sweetPotato', amount: 200, amountText: '200g', summaryText: '红薯（生）200g' },
+            { foodKey: 'potato', amount: 80, amountText: '80g', summaryText: '土豆（生）80g' },
           ],
         },
       ],
