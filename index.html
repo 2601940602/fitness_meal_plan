@@ -461,8 +461,9 @@ document.addEventListener('alpine:init', () => {
       oysterBladeSteak: { name: '板腱牛排（生）', basis: '每100g', baseAmount: 100, unit: 'g', kcal: 140, protein: 20.5, carbs: 0, fat: 5.5 },
       chickenBreastRaw: { name: '鸡胸肉（生）', basis: '每100g', baseAmount: 100, unit: 'g', kcal: 120, protein: 23, carbs: 0, fat: 2.6 },
       chickenThighRaw: { name: '去皮鸡腿（生）', basis: '每100g', baseAmount: 100, unit: 'g', kcal: 145, protein: 19, carbs: 0, fat: 8 },
-      sweetPotato: { name: '红薯（生）', basis: '每100g', baseAmount: 100, unit: 'g', kcal: 86, protein: 1.6, carbs: 20.1, fat: 0.1 },
-      potato: { name: '土豆（生）', basis: '每100g', baseAmount: 100, unit: 'g', kcal: 77, protein: 2.0, carbs: 17.2, fat: 0.1 },
+      // 红薯/土豆 cookedRatio：熟重 = 生重 × 0.912（实测生 2620g 蒸熟放凉后 2390g，失重约 8.8%）
+      sweetPotato: { name: '红薯（生）', basis: '每100g', baseAmount: 100, unit: 'g', kcal: 86, protein: 1.6, carbs: 20.1, fat: 0.1, cookedRatio: 0.912 },
+      potato: { name: '土豆（生）', basis: '每100g', baseAmount: 100, unit: 'g', kcal: 77, protein: 2.0, carbs: 17.2, fat: 0.1, cookedRatio: 0.912 },
       cucumber: { name: '黄瓜条', basis: '每100g', baseAmount: 100, unit: 'g', kcal: 15, protein: 0.8, carbs: 2.9, fat: 0.2 },
       whiteMushroom: { name: '白蘑菇（生）', basis: '每100g', baseAmount: 100, unit: 'g', kcal: 22, protein: 3.1, carbs: 3.3, fat: 0.3 },
       banana: { name: '香蕉（可食部）', basis: '每100g', baseAmount: 100, unit: 'g', kcal: 89, protein: 1.1, carbs: 22.8, fat: 0.3 },
@@ -587,11 +588,15 @@ document.addEventListener('alpine:init', () => {
         highProteinMilk: { icon: '🥛', label: '高蛋白奶' },
         pasteurizedWholeMilk: { icon: '🥛', label: '鲜牛奶（全脂）' },
       };
-      return Object.entries(totals).map(([key, amount]) => ({
-        icon: labels[key].icon,
-        label: labels[key].label,
-        value: key === 'wholeEgg' ? amount + '个' : (key === 'highProteinMilk' || key === 'pasteurizedWholeMilk') ? amount + 'ml' : amount + 'g',
-      }));
+      return Object.entries(totals).map(([key, amount]) => {
+        const ratio = this.foodBases[key].cookedRatio;
+        const unit = key === 'wholeEgg' ? '个' : (key === 'highProteinMilk' || key === 'pasteurizedWholeMilk') ? 'ml' : 'g';
+        return {
+          icon: labels[key].icon,
+          label: labels[key].label,
+          value: amount + unit + (ratio ? `（熟重约${Math.round(amount * ratio)}g）` : ''),
+        };
+      });
     },
 
     formatKcal(value) {
@@ -603,16 +608,22 @@ document.addEventListener('alpine:init', () => {
       return Number.isInteger(rounded) ? String(rounded) : rounded.toFixed(1);
     },
 
+    cookedText(item) {
+      const base = this.foodBases[item.foodKey];
+      if (!base || !base.cookedRatio) return '';
+      return `（熟重约${Math.round(item.amount * base.cookedRatio)}g）`;
+    },
+
     mealSummaryText(meal) {
       if (meal.note) return meal.note;
-      return meal.items.map(item => item.summaryText).join('｜');
+      return meal.items.map(item => item.summaryText + this.cookedText(item)).join('｜');
     },
 
     mealDetailRows(meal) {
       return (meal.items || []).map(item => {
         const base = this.foodBases[item.foodKey];
         const values = this.calcFood(item);
-        const displayName = `${base.name} ${item.amountText || `${item.amount}${base.unit}`}`;
+        const displayName = `${base.name} ${item.amountText || `${item.amount}${base.unit}`}${this.cookedText(item)}`;
         const name = item.highlight
           ? `<span class="highlight-protein">${displayName}</span>`
           : displayName;
