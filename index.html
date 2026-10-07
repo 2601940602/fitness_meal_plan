@@ -603,16 +603,22 @@ document.addEventListener('alpine:init', () => {
       return Number.isInteger(rounded) ? String(rounded) : rounded.toFixed(1);
     },
 
+    // 土豆/红薯：页面展示熟重（煮/蒸后约生重的1.1倍，营养仍按生重计算）
+    cookedWeightText(item) {
+      if (item.foodKey !== 'sweetPotato' && item.foodKey !== 'potato') return '';
+      return `（熟约${Math.round(item.amount * 1.1)}g）`;
+    },
+
     mealSummaryText(meal) {
       if (meal.note) return meal.note;
-      return meal.items.map(item => item.summaryText).join('｜');
+      return meal.items.map(item => `${item.summaryText}${this.cookedWeightText(item)}`).join('｜');
     },
 
     mealDetailRows(meal) {
       return (meal.items || []).map(item => {
         const base = this.foodBases[item.foodKey];
         const values = this.calcFood(item);
-        const displayName = `${base.name} ${item.amountText || `${item.amount}${base.unit}`}`;
+        const displayName = `${base.name} ${item.amountText || `${item.amount}${base.unit}`}${this.cookedWeightText(item)}`;
         const name = item.highlight
           ? `<span class="highlight-protein">${displayName}</span>`
           : displayName;
