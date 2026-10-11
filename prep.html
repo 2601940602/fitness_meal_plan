@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🧮 备料计算 - 健身腹肌餐计划</title>
+<script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  [x-cloak] { display: none !important; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", sans-serif;
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+    min-height: 100vh;
+    color: #e8e8e8;
+    padding-bottom: 100px;
+  }
+  .header {
+    padding: 24px 20px 16px;
+    text-align: center;
+    background: rgba(255,255,255,0.03);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .header h1 {
+    font-size: 22px;
+    font-weight: 700;
+    background: linear-gradient(90deg, #00d4aa, #00a8e8);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 4px;
+  }
+  .header .sub { font-size: 12px; color: #8892b0; }
+  .content { padding: 16px; max-width: 720px; margin: 0 auto; }
+
+  .card {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 18px;
+    padding: 18px 16px;
+    margin-bottom: 14px;
+  }
+  .card h3 {
+    font-size: 15px;
+    font-weight: 700;
+    color: #00d4aa;
+    margin-bottom: 12px;
+  }
+  .hint { font-size: 12px; color: #8892b0; line-height: 1.7; }
+  .hl { color: #00d4aa; font-weight: 600; }
+
+  /* 选择模式 */
+  .mode-toggle { display: flex; gap: 8px; margin-bottom: 14px; }
+  .mode-btn {
+    flex: 1;
+    padding: 10px 8px;
+    font-size: 13px;
+    text-align: center;
+    border-radius: 12px;
+    border: 1px solid rgba(255,255,255,0.1);
+    background: rgba(255,255,255,0.04);
+    color: #8892b0;
+    cursor: pointer;
+    transition: all 0.2s;
+    user-select: none;
+  }
+  .mode-btn.active {
+    color: #00d4aa;
+    background: rgba(0,212,170,0.12);
+    border-color: rgba(0,212,170,0.4);
+    font-weight: 600;
+  }
+
+  /* 日期复选 */
+  .day-grid { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+  .day-pill {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 12px;
+    border-radius: 12px;
+    border: 1px solid rgba(255,255,255,0.1);
+    background: rgba(255,255,255,0.04);
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.2s;
+    user-select: none;
+  }
+  .day-pill input { width: 16px; height: 16px; accent-color: #00d4aa; flex-shrink: 0; }
+  .day-pill.on {
+    background: rgba(0,212,170,0.15);
+    border-color: rgba(0,212,170,0.5);
+    color: #00d4aa;
+    font-weight: 600;
+  }
+
+  .quick-row { display: flex; gap: 8px; flex-wrap: wrap; }
+  .mini-btn {
+    padding: 7px 14px;
+    font-size: 12px;
+    border-radius: 10px;
+    border: 1px solid rgba(255,255,255,0.12);
+    background: rgba(255,255,255,0.05);
+    color: #b8c0d9;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .mini-btn:active { transform: scale(0.96); }
+
+  /* 连续区间 */
+  .range-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 12px; }
+  select, input[type="number"], input[type="text"] {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.12);
+    color: #e8e8e8;
+    border-radius: 10px;
+    padding: 9px 10px;
+    font-size: 14px;
+    outline: none;
+    min-width: 0;
+    width: 100%;
+  }
+  select:focus, input:focus { border-color: #00d4aa; }
+  ::placeholder { color: #5a6480; }
+
+  /* 食材配置行 */
+  .ing-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+  }
+  .ing-row:first-child { padding-top: 0; }
+  .ing-check { width: 18px; height: 18px; accent-color: #00d4aa; flex-shrink: 0; }
+  .f-name { flex: 1 1 130px; }
+  .f-num { flex: 0 1 88px; }
+  .f-unit { flex: 0 0 64px; padding: 9px 6px; }
+  .f-meals { flex: 0 1 76px; }
+  .del-btn {
+    flex: 0 0 34px;
+    width: 34px;
+    height: 34px;
+    border-radius: 10px;
+    border: 1px solid rgba(255,107,107,0.3);
+    background: rgba(255,107,107,0.1);
+    color: #ff6b6b;
+    cursor: pointer;
+    font-size: 13px;
+    transition: all 0.2s;
+  }
+  .del-btn:active { transform: scale(0.92); }
+  .add-btn { margin-top: 12px; width: 100%; padding: 10px; }
+
+  /* 计算按钮 */
+  .calc-btn {
+    width: 100%;
+    padding: 14px;
+    font-size: 16px;
+    font-weight: 700;
+    color: #062b26;
+    border: none;
+    border-radius: 14px;
+    background: linear-gradient(90deg, #00d4aa, #00a8e8);
+    cursor: pointer;
+    transition: transform 0.15s;
+    margin-bottom: 10px;
+  }
+  .calc-btn:active { transform: scale(0.98); }
+  .error-msg { color: #ff6b6b; font-size: 13px; margin-bottom: 10px; min-height: 18px; }
+
+  /* 结果 */
+  .summary-line { font-size: 13px; color: #b8c0d9; line-height: 1.8; }
+  .table-wrap {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    border-radius: 12px;
+    border: 1px solid rgba(255,255,255,0.08);
+    margin-top: 10px;
+  }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; min-width: 460px; }
+  th, td {
+    padding: 10px 8px;
+    text-align: right;
+    white-space: nowrap;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+  th:first-child, td:first-child { text-align: left; }
+  th { background: rgba(255,255,255,0.05); color: #8892b0; font-weight: 600; font-size: 12px; }
+  tbody tr:last-child td { border-bottom: none; }
+  td.total { color: #00d4aa; font-weight: 700; }
+  .export-row { display: flex; gap: 10px; margin-top: 14px; }
+  .export-row .mini-btn { flex: 1; padding: 10px; font-size: 13px; }
+
+  /* 底部导航 */
+  .bottom-bar {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    background: rgba(26,26,46,0.95);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-top: 1px solid rgba(255,255,255,0.08);
+    padding: 12px 16px;
+    display: flex;
+    justify-content: space-around;
+    z-index: 100;
+  }
+  .bottom-btn {
+    font-size: 12px;
+    color: #8892b0;
+    text-align: center;
+    cursor: pointer;
+    padding: 4px 12px;
+    border-radius: 10px;
+    transition: all 0.2s;
+    user-select: none;
+    text-decoration: none;
+  }
+  .bottom-btn.active {
+    color: #00d4aa;
+    background: rgba(0,212,170,0.1);
+  }
+
+  /* 打印：仅输出结果 */
+  @media print {
+    body { background: #fff !important; color: #000 !important; padding: 0 !important; }
+    .no-print { display: none !important; }
+    .header { position: static; background: none; border: none; padding: 0 0 12px; }
+    .header h1 { background: none; -webkit-text-fill-color: #000; color: #000; }
+    .header .sub { color: #555; }
+    .content { padding: 0; max-width: none; }
+    .card { background: #fff !important; border: 1px solid #ccc !important; color: #000 !important; page-break-inside: avoid; }
+    .card h3 { color: #000 !important; }
+    .summary-line, .hint { color: #333 !important; }
+    .hl { color: #000 !important; }
+    .table-wrap { border-color: #ccc !important; overflow: visible !important; }
+    table { min-width: 0 !important; }
+    th { background: #f2f2f2 !important; color: #333 !important; }
+    th, td { border-color: #ccc !important; color: #000 !important; }
+    td.total { color: #000 !important; font-weight: 700; }
+  }
+</style>
+</head>
+<body>
+
+<div x-data="prepPage" x-cloak>
+
+  <div class="header">
+    <h1>🧮 餐饮备料计算</h1>
+    <div class="sub">选日期 · 配用量 · 一键汇总总需求量</div>
+  </div>
+
+  <div class="content">
+
+    <!-- 日期选择 -->
+    <div class="card no-print">
+      <h3>📅 选择日期</h3>
+      <div class="mode-toggle">
+        <button type="button" class="mode-btn" :class="{active: selMode === 'single'}" @click="toggleMode('single')">独立多选</button>
+        <button type="button" class="mode-btn" :class="{active: selMode === 'range'}" @click="toggleMode('range')">连续区间</button>
+      </div>
+
+      <template x-if="selMode === 'single'">
+        <div>
+          <div class="day-grid">
+            <template x-for="(d, i) in days" :key="d.label">
+              <label class="day-pill" :class="{on: d.checked}">
+                <input type="checkbox" x-model="d.checked" @change="result = null">
+                <span x-text="d.label"></span>
+              </label>
+            </template>
+          </div>
+          <div class="quick-row">
+            <button type="button" class="mini-btn" @click="setAllDays(true)">全选</button>
+            <button type="button" class="mini-btn" @click="setAllDays(false)">清空</button>
+            <button type="button" class="mini-btn" @click="days.forEach((d, i) => d.checked = i < 5); result = null">工作日</button>
+          </div>
+        </div>
+      </template>
+
+      <template x-if="selMode === 'range'">
+        <div>
+          <div class="range-row">
+            <select x-model.number="rangeStart" @change="result = null" aria-label="开始日">
+              <template x-for="(d, i) in days" :key="'s' + i">
+                <option :value="i" x-text="d.label"></option>
+              </template>
+            </select>
+            <span class="hint">至</span>
+            <select x-model.number="rangeEnd" @change="result = null" aria-label="结束日">
+              <template x-for="(d, i) in days" :key="'e' + i">
+                <option :value="i" x-text="d.label"></option>
+              </template>
+            </select>
+          </div>
+          <div class="hint">已覆盖：<span class="hl" x-text="rangePreview"></span>；开始日晚于结束日时按跨周连续区间计算</div>
+        </div>
+      </template>
+    </div>
+
+    <!-- 食材配置 -->
+    <div class="card no-print">
+      <h3>🥘 食材配置（每餐基础用量可自定义）</h3>
+      <template x-for="g in ingredients" :key="g.id">
+        <div class="ing-row">
+          <input type="checkbox" class="ing-check" x-model="g.selected" :aria-label="'选择' + (g.name || '食材')">
+          <input type="text" class="f-name" x-model="g.name" placeholder="食材名称" aria-label="食材名称">
+          <input type="number" class="f-num" x-model.number="g.perMeal" min="0" step="0.1" placeholder="每餐用量" aria-label="每餐基础用量">
+          <select class="f-unit" x-model="g.unit" aria-label="单位">
+            <option>g</option>
+            <option>ml</option>
+            <option>个</option>
+            <option>袋</option>
+            <option>根</option>
+            <option>片</option>
+          </select>
+          <input type="number" class="f-num f-meals" x-model.number="g.mealsPerDay" min="1" step="1" placeholder="餐/天" aria-label="每日餐数">
+          <button type="button" class="del-btn" @click="removeIngredient(g.id)" aria-label="删除食材">✕</button>
+        </div>
+      </template>
+      <button type="button" class="mini-btn add-btn" @click="addIngredient()">＋ 添加食材</button>
+      <div class="hint" style="margin-top: 10px">总需求量 = 每餐基础用量 × 每日餐数 × 选中天数</div>
+    </div>
+
+    <button type="button" class="calc-btn no-print" @click="calculate()">🧮 计算总需求量</button>
+    <div class="error-msg no-print" x-show="errorMsg" x-text="errorMsg"></div>
+
+    <!-- 结果 -->
+    <div class="card result-card" x-show="result" x-transition.opacity>
+      <h3>📊 备料汇总结果</h3>
+      <div class="summary-line">📅 日期区间：<strong class="hl" x-text="result && result.label"></strong>（<span x-text="result ? result.dayIndexes.length : 0"></span> 天）</div>
+      <div class="summary-line">🥘 统计食材：<span x-text="result ? result.rows.length : 0"></span> 种</div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>食材</th>
+              <th>每餐基础用量</th>
+              <th>每日餐数</th>
+              <th>每日小计</th>
+              <th>天数</th>
+              <th>总需求量</th>
+            </tr>
+          </thead>
+          <tbody>
+            <template x-for="row in (result ? result.rows : [])" :key="row.id">
+              <tr>
+                <td x-text="row.name"></td>
+                <td x-text="row.perMealText"></td>
+                <td x-text="row.mealsPerDay + ' 餐'"></td>
+                <td x-text="row.perDayText"></td>
+                <td x-text="(result ? result.dayIndexes.length : 0) + ' 天'"></td>
+                <td class="total" x-text="row.totalText"></td>
+              </tr>
+            </template>
+          </tbody>
+        </table>
+      </div>
+      <div class="summary-line" style="margin-top: 10px">合计：<span class="hl" x-text="result && result.unitSummary"></span></div>
+      <div class="export-row no-print">
+        <button type="button" class="mini-btn" @click="exportCsv()">📥 导出 CSV</button>
+        <button type="button" class="mini-btn" @click="printResult()">🖨 打印</button>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="bottom-bar no-print">
+    <a class="bottom-btn" href="index.html">📋 餐单</a>
+    <a class="bottom-btn" href="shop.html">🛒 采购</a>
+    <a class="bottom-btn active" href="prep.html">🧮 备料</a>
+    <a class="bottom-btn" href="tips.html">💡 贴士</a>
+  </div>
+
+</div>
+
+<script>
+/* 纯计算库：整数毫单位（0.001）累加，保证无浮点精度误差 */
+window.PrepCalc = (function () {
+  const DAYS = ['周一', '周二', '周三', '周四', '周五', '周六', '周日'];
+
+  function clampDay(v) {
+    const n = Math.round(Number(v));
+    return Math.min(6, Math.max(0, isNaN(n) ? 0 : n));
+  }
+
+  /* mode: 'single' 独立多选 / 'range' 连续区间（支持跨周：开始日晚于结束日时顺延到下周） */
+  function resolveSelectedDays(mode, dayFlags, rangeStart, rangeEnd) {
+    if (mode === 'range') {
+      const s = clampDay(rangeStart);
+      const e = clampDay(rangeEnd);
+      const idx = [];
+      if (s <= e) {
+        for (let i = s; i <= e; i++) idx.push(i);
+      } else {
+        for (let i = s; i <= 6; i++) idx.push(i);
+        for (let i = 0; i <= e; i++) idx.push(i);
+      }
+      return idx;
+    }
+    return (dayFlags || []).map((on, i) => (on ? i : -1)).filter(i => i >= 0);
+  }
+
+  function toMilli(v) {
+    return Math.round((Number(v) || 0) * 1000);
+  }
+
+  /* milli 为 0.001 单位的整数，直接除以 1000 展示 */
+  function formatQty(milli, unit) {
+    return String(milli / 1000) + (unit || '');
+  }
+
+  function computeTotals(dayIndexes, ingredients) {
+    const days = (dayIndexes || []).length;
+    return (ingredients || [])
+      .filter(g => g.selected)
+      .map(g => {
+        const perMealM = toMilli(g.perMeal);
+        const meals = Math.max(0, Math.round(Number(g.mealsPerDay) || 0));
+        const perDayM = perMealM * meals;
+        return {
+          id: g.id,
+          name: String(g.name || '').trim() || '未命名',
+          unit: g.unit || 'g',
+          mealsPerDay: meals,
+          perMealText: formatQty(perMealM, g.unit),
+          perDayText: formatQty(perDayM, g.unit),
+          totalMilli: perDayM * days,
+          totalText: formatQty(perDayM * days, g.unit),
+        };
+      });
+  }
+
+  /* 日期区间文案：连续（含跨周）显示 x至y，零散显示 顿号连接 */
+  function rangeLabel(mode, dayIndexes) {
+    const n = (dayIndexes || []).length;
+    if (!n) return '';
+    if (n === 1) return DAYS[dayIndexes[0]];
+    let contiguous = true;
+    for (let i = 0; i < n - 1; i++) {
+      if ((dayIndexes[i + 1] - dayIndexes[i] + 7) % 7 !== 1) { contiguous = false; break; }
+    }
+    if (contiguous) {
+      const wrap = dayIndexes[n - 1] < dayIndexes[0];
+      return DAYS[dayIndexes[0]] + '至' + DAYS[dayIndexes[n - 1]] + (wrap ? '（跨周）' : '');
+    }
+    return dayIndexes.map(i => DAYS[i]).join('、');
+  }
+
+  function unitSummary(rows) {
+    const byUnit = {};
+    rows.forEach(r => { byUnit[r.unit || 'g'] = (byUnit[r.unit || 'g'] || 0) + r.totalMilli; });
+    return Object.keys(byUnit).map(u => formatQty(byUnit[u], u)).join(' · ');
+  }
+
+  function toCsv(result) {
+    const esc = v => {
+      const s = String(v == null ? '' : v);
+      return /[",\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
+    };
+    const lines = [];
+    lines.push(['备料计算清单'].map(esc).join(','));
+    lines.push(['日期区间', result.label + '（' + result.dayIndexes.length + ' 天）'].map(esc).join(','));
+    lines.push('');
+    lines.push(['食材', '每餐基础用量', '每日餐数', '每日小计', '天数', '总需求量'].map(esc).join(','));
+    result.rows.forEach(r => {
+      lines.push([r.name, r.perMealText, r.mealsPerDay + ' 餐', r.perDayText, result.dayIndexes.length + ' 天', r.totalText].map(esc).join(','));
+    });
+    lines.push(['合计', '', '', '', '', result.unitSummary].map(esc).join(','));
+    return lines.join('\r\n');
+  }
+
+  return { DAYS, resolveSelectedDays, toMilli, formatQty, computeTotals, rangeLabel, unitSummary, toCsv };
+})();
+
+document.addEventListener('alpine:init', () => {
+  Alpine.data('prepPage', () => ({
+    selMode: 'single',
+    days: window.PrepCalc.DAYS.map((label, i) => ({ label, checked: i < 5 })),
+    rangeStart: 0,
+    rangeEnd: 4,
+    ingredients: [
+      { id: 1, selected: true, name: '红薯（生重）', unit: 'g', perMeal: 190, mealsPerDay: 2 },
+      { id: 2, selected: true, name: '土豆（生重）', unit: 'g', perMeal: 190, mealsPerDay: 2 },
+      { id: 3, selected: true, name: '鸡排（100g/袋）', unit: '袋', perMeal: 2, mealsPerDay: 2 },
+      { id: 4, selected: false, name: '鸡胸肉（生）', unit: 'g', perMeal: 200, mealsPerDay: 2 },
+      { id: 5, selected: false, name: '鸡蛋', unit: '个', perMeal: 1, mealsPerDay: 1 },
+      { id: 6, selected: false, name: '香蕉', unit: '根', perMeal: 1, mealsPerDay: 1 },
+      { id: 7, selected: false, name: '黄瓜', unit: 'g', perMeal: 150, mealsPerDay: 1 },
+      { id: 8, selected: false, name: '高蛋白低脂奶', unit: 'ml', perMeal: 250, mealsPerDay: 1 },
+      { id: 9, selected: false, name: '蛋白粉', unit: 'g', perMeal: 31, mealsPerDay: 1 },
+      { id: 10, selected: false, name: '巴旦木', unit: 'g', perMeal: 20, mealsPerDay: 1 },
+    ],
+    nextId: 11,
+    result: null,
+    errorMsg: '',
+
+    toggleMode(m) {
+      if (this.selMode !== m) {
+        this.selMode = m;
+        this.result = null;
+        this.errorMsg = '';
+      }
+    },
+    setAllDays(v) {
+      this.days.forEach(d => { d.checked = v; });
+      this.result = null;
+    },
+    resolveDays() {
+      return window.PrepCalc.resolveSelectedDays(
+        this.selMode,
+        this.days.map(d => d.checked),
+        this.rangeStart,
+        this.rangeEnd
+      );
+    },
+    get rangePreview() {
+      const idx = this.selMode === 'range' ? this.resolveDays() : [];
+      return idx.length ? idx.map(i => window.PrepCalc.DAYS[i]).join('、') + '（' + idx.length + ' 天）' : '';
+    },
+    addIngredient() {
+      this.ingredients.push({ id: this.nextId++, selected: true, name: '', unit: 'g', perMeal: 100, mealsPerDay: 1 });
+    },
+    removeIngredient(id) {
+      this.ingredients = this.ingredients.filter(g => g.id !== id);
+      this.result = null;
+    },
+    calculate() {
+      const dayIndexes = this.resolveDays();
+      if (!dayIndexes.length) {
+        this.result = null;
+        this.errorMsg = '请至少选择一天';
+        return;
+      }
+      const rows = window.PrepCalc.computeTotals(dayIndexes, this.ingredients);
+      if (!rows.length) {
+        this.result = null;
+        this.errorMsg = '请至少勾选一种食材';
+        return;
+      }
+      this.errorMsg = '';
+      this.result = {
+        dayIndexes,
+        label: window.PrepCalc.rangeLabel(this.selMode, dayIndexes),
+        rows,
+        unitSummary: window.PrepCalc.unitSummary(rows),
+      };
+    },
+    exportCsv() {
+      if (!this.result) return;
+      const csv = window.PrepCalc.toCsv(this.result);
+      const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = '备料清单_' + this.result.label.replace(/[^\u4e00-\u9fa5a-zA-Z0-9]+/g, '') + '.csv';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+    },
+    printResult() {
+      window.print();
+    },
+  }));
+});
+</script>
+</body>
+</html>
