@@ -413,7 +413,7 @@
 </div>
 
 <script>
-// 28岁 · 男 · 165cm · 62kg · 目标：六块腹肌 目前卧推单边 15kg 做组，引体拉 8 个，周一练胸，周二背，周三腿，周四练肩
+// 28岁 · 男 · 165cm · 60kg · 目标：六块腹肌 目前卧推单边 15kg 做组，引体拉 8 个，周一练胸，周二背，周三腿，周四肩，周五腹，周六日修复
 document.addEventListener('alpine:init', () => {
   Alpine.data('mealPlan', () => ({
     activeProfile: 'user',
@@ -422,8 +422,8 @@ document.addEventListener('alpine:init', () => {
 
     profileInfo: {
       user: {
-        label: '28岁 · 男 · 165cm · 62kg · 目标：六块腹肌 · 极速执行版',
-        bodyWeightKg: 62,
+        label: '28岁 · 男 · 165cm · 60kg · 目标：六块腹肌 · 极速执行版',
+        bodyWeightKg: 60,
         maintenanceCalories: 2195,
       },
       sister: {
@@ -461,6 +461,8 @@ document.addEventListener('alpine:init', () => {
       oysterBladeSteak: { name: '板腱牛排（生）', basis: '每100g', baseAmount: 100, unit: 'g', kcal: 140, protein: 20.5, carbs: 0, fat: 5.5 },
       chickenBreastRaw: { name: '鸡胸肉（生）', basis: '每100g', baseAmount: 100, unit: 'g', kcal: 120, protein: 23, carbs: 0, fat: 2.6 },
       chickenThighRaw: { name: '去皮鸡腿（生）', basis: '每100g', baseAmount: 100, unit: 'g', kcal: 145, protein: 19, carbs: 0, fat: 8 },
+      // 鸡排：能量 365kJ ≈ 87kcal（1kcal = 4.184kJ），钠 435mg/100g
+      chickenSteak: { name: '鸡排', basis: '每100g', baseAmount: 100, unit: 'g', kcal: 87, protein: 14.3, carbs: 4.8, fat: 1.1, sodiumMg: 435 },
       // 红薯/土豆 cookedRatio：熟重 = 生重 × 0.912（实测生 2620g 蒸熟放凉后 2390g，失重约 8.8%）
       sweetPotato: { name: '红薯（生）', basis: '每100g', baseAmount: 100, unit: 'g', kcal: 86, protein: 1.6, carbs: 20.1, fat: 0.1, cookedRatio: 0.912 },
       potato: { name: '土豆（生）', basis: '每100g', baseAmount: 100, unit: 'g', kcal: 77, protein: 2.0, carbs: 17.2, fat: 0.1, cookedRatio: 0.912 },
@@ -568,7 +570,7 @@ document.addEventListener('alpine:init', () => {
     },
 
     dayPrep(day) {
-      const prepKeys = ['sweetPotato', 'potato', 'corn', 'banana', 'chickenThighRaw', 'wholeEgg', 'highProteinMilk', 'pasteurizedWholeMilk'];
+      const prepKeys = ['sweetPotato', 'potato', 'corn', 'banana', 'chickenSteak', 'wholeEgg', 'highProteinMilk', 'pasteurizedWholeMilk'];
       const totals = {};
       (day.meals || []).forEach(meal => {
         (meal.items || []).forEach(item => {
@@ -583,7 +585,7 @@ document.addEventListener('alpine:init', () => {
         corn: { icon: '🌽', label: '玉米' },
         banana: { icon: '🍌', label: '香蕉' },
         oysterBladeSteak: { icon: '🥩', label: '板腱牛排' },
-        chickenThighRaw: { icon: '🍗', label: '去皮鸡腿' },
+        chickenSteak: { icon: '🍗', label: '鸡排' },
         wholeEgg: { icon: '🥚', label: '鸡蛋' },
         highProteinMilk: { icon: '🥛', label: '高蛋白奶' },
         pasteurizedWholeMilk: { icon: '🥛', label: '鲜牛奶（全脂）' },
@@ -594,7 +596,7 @@ document.addEventListener('alpine:init', () => {
         return {
           icon: labels[key].icon,
           label: labels[key].label,
-          value: amount + unit + (ratio ? `（熟重约${Math.round(amount * ratio)}g）` : ''),
+          value: amount + unit + (key === 'chickenSteak' ? `（${amount / 100}袋）` : '') + (ratio ? `（熟重约${Math.round(amount * ratio)}g）` : ''),
         };
       });
     },
@@ -657,7 +659,7 @@ document.addEventListener('alpine:init', () => {
           {
             type: 'lunch', name: '🍱 午餐',
             items: [
-              { foodKey: 'chickenThighRaw', amount: 170, amountText: '1份（170g）', summaryText: '去皮鸡腿（生）170g', highlight: true },
+              { foodKey: 'chickenSteak', amount: 200, amountText: '2袋（200g）', summaryText: '鸡排 2袋（200g）', highlight: true },
               { foodKey: 'sweetPotato', amount: 150, amountText: '150g', summaryText: '红薯（生）150g' },
               { foodKey: 'potato', amount: 150, amountText: '150g', summaryText: '土豆（生）150g' },
               { foodKey: 'cucumber', amount: 150, amountText: '150g', summaryText: '黄瓜条 150g' },
@@ -672,7 +674,7 @@ document.addEventListener('alpine:init', () => {
           {
             type: 'dinner', name: '🌙 晚餐（练后）',
             items: [
-              { foodKey: 'chickenThighRaw', amount: 170, amountText: '1份（170g）', summaryText: '去皮鸡腿（生）170g', highlight: true },
+              { foodKey: 'chickenSteak', amount: 200, amountText: '2袋（200g）', summaryText: '鸡排 2袋（200g）', highlight: true },
               { foodKey: 'whey', amount: 31, amountText: '1勺（约31g）', summaryText: '蛋白粉 1勺（约31g）' },
               { foodKey: 'almonds', amount: 20, amountText: '约14粒', summaryText: '巴旦木 约14粒（20g）' },
               { foodKey: 'sweetPotato', amount: 275, amountText: '275g', summaryText: '红薯（生）275g' },
@@ -699,7 +701,7 @@ document.addEventListener('alpine:init', () => {
           {
             type: 'lunch', name: '🍱 午餐',
             items: [
-              { foodKey: 'chickenThighRaw', amount: 170, amountText: '1份（170g）', summaryText: '去皮鸡腿（生）170g', highlight: true },
+              { foodKey: 'chickenSteak', amount: 200, amountText: '2袋（200g）', summaryText: '鸡排 2袋（200g）', highlight: true },
               { foodKey: 'sweetPotato', amount: 150, amountText: '150g', summaryText: '红薯（生）150g' },
               { foodKey: 'potato', amount: 150, amountText: '150g', summaryText: '土豆（生）150g' },
               { foodKey: 'cucumber', amount: 150, amountText: '150g', summaryText: '黄瓜条 150g' },
@@ -714,7 +716,7 @@ document.addEventListener('alpine:init', () => {
           {
             type: 'dinner', name: '🌙 晚餐（练后）',
             items: [
-              { foodKey: 'chickenThighRaw', amount: 170, amountText: '1份（170g）', summaryText: '去皮鸡腿（生）170g', highlight: true },
+              { foodKey: 'chickenSteak', amount: 200, amountText: '2袋（200g）', summaryText: '鸡排 2袋（200g）', highlight: true },
               { foodKey: 'whey', amount: 31, amountText: '1勺（约31g）', summaryText: '蛋白粉 1勺（约31g）' },
               { foodKey: 'almonds', amount: 20, amountText: '约14粒', summaryText: '巴旦木 约14粒（20g）' },
               { foodKey: 'sweetPotato', amount: 275, amountText: '275g', summaryText: '红薯（生）275g' },
@@ -724,128 +726,8 @@ document.addEventListener('alpine:init', () => {
         ],
       },
       {
-        shortName: '周三 休息',
-        title: '周三 · 休息日（不锻炼）',
-        tag: '� 休息·中低碳',
-        tagClass: 'tag-low',
-        meals: [
-          {
-            type: 'breakfast', name: '🌅 早餐',
-            items: [
-              { foodKey: 'corn', amount: 333, amountText: '1根（带芯约333g）', summaryText: '玉米 1根（带芯约333g）' },
-              { foodKey: 'wholeEgg', amount: 2, amountText: '2个', summaryText: '全蛋 2个' },
-              { foodKey: 'highProteinMilk', amount: 200, amountText: '200ml', summaryText: '高蛋白低脂奶 200ml' },
-
-            ],
-          },
-          {
-            type: 'lunch', name: '🍱 午餐',
-            items: [
-              { foodKey: 'chickenThighRaw', amount: 170, amountText: '1份（170g）', summaryText: '去皮鸡腿（生）170g', highlight: true },
-              { foodKey: 'sweetPotato', amount: 125, amountText: '125g', summaryText: '红薯（生）125g' },
-              { foodKey: 'potato', amount: 125, amountText: '125g', summaryText: '土豆（生）125g' },
-              { foodKey: 'cucumber', amount: 150, amountText: '150g', summaryText: '黄瓜条 150g' },
-            ],
-          },
-          {
-            type: 'dinner', name: '🌙 晚餐',
-            items: [
-              { foodKey: 'chickenThighRaw', amount: 170, amountText: '1份（170g）', summaryText: '去皮鸡腿（生）170g', highlight: true },
-              { foodKey: 'whey', amount: 31, amountText: '1勺（约31g）', summaryText: '蛋白粉 1勺（约31g）' },
-              { foodKey: 'almonds', amount: 20, amountText: '约14粒', summaryText: '巴旦木 约14粒（20g）' },
-              { foodKey: 'sweetPotato', amount: 190, amountText: '190g', summaryText: '红薯（生）190g' },
-              { foodKey: 'potato', amount: 190, amountText: '190g', summaryText: '土豆（生）190g' },
-            ],
-          },
-        ],
-      },
-      {
-        shortName: '周四 胸',
-        title: '周四 · 练胸日',
-        tag: '💪 训练·高碳',
-        tagClass: 'tag-high',
-        meals: [
-          {
-            type: 'breakfast', name: '🌅 早餐',
-            items: [
-              { foodKey: 'corn', amount: 333, amountText: '1根（带芯约333g）', summaryText: '玉米 1根（带芯约333g）' },
-              { foodKey: 'wholeEgg', amount: 2, amountText: '2个', summaryText: '全蛋 2个' },
-              { foodKey: 'highProteinMilk', amount: 250, amountText: '250ml', summaryText: '高蛋白低脂奶 250ml' },
-
-            ],
-          },
-          {
-            type: 'lunch', name: '🍱 午餐',
-            items: [
-              { foodKey: 'chickenThighRaw', amount: 170, amountText: '1份（170g）', summaryText: '去皮鸡腿（生）170g', highlight: true },
-              { foodKey: 'sweetPotato', amount: 150, amountText: '150g', summaryText: '红薯（生）150g' },
-              { foodKey: 'potato', amount: 150, amountText: '150g', summaryText: '土豆（生）150g' },
-              { foodKey: 'cucumber', amount: 150, amountText: '150g', summaryText: '黄瓜条 150g' },
-            ],
-          },
-          {
-            type: 'pre', name: '⚡ 练前 60min',
-            items: [
-              { foodKey: 'banana', amount: 120, amountText: '120g（约1根）', summaryText: '香蕉 1根（可食部约120g）' },
-            ],
-          },
-          {
-            type: 'dinner', name: '🌙 晚餐（练后）',
-            items: [
-              { foodKey: 'chickenThighRaw', amount: 170, amountText: '1份（170g）', summaryText: '去皮鸡腿（生）170g', highlight: true },
-              { foodKey: 'whey', amount: 31, amountText: '1勺（约31g）', summaryText: '蛋白粉 1勺（约31g）' },
-              { foodKey: 'almonds', amount: 20, amountText: '约14粒', summaryText: '巴旦木 约14粒（20g）' },
-              { foodKey: 'sweetPotato', amount: 275, amountText: '275g', summaryText: '红薯（生）275g' },
-              { foodKey: 'potato', amount: 275, amountText: '275g', summaryText: '土豆（生）275g' },
-            ],
-          },
-        ],
-      },
-      {
-        shortName: '周五 背',
-        title: '周五 · 练背日',
-        tag: '� 训练·高碳',
-        tagClass: 'tag-high',
-        meals: [
-          {
-            type: 'breakfast', name: '🌅 早餐',
-            items: [
-              { foodKey: 'corn', amount: 333, amountText: '1根（带芯约333g）', summaryText: '玉米 1根（带芯约333g）' },
-              { foodKey: 'wholeEgg', amount: 2, amountText: '2个', summaryText: '全蛋 2个' },
-              { foodKey: 'highProteinMilk', amount: 250, amountText: '250ml', summaryText: '高蛋白低脂奶 250ml' },
-
-            ],
-          },
-          {
-            type: 'lunch', name: '🍱 午餐',
-            items: [
-              { foodKey: 'chickenThighRaw', amount: 170, amountText: '1份（170g）', summaryText: '去皮鸡腿（生）170g', highlight: true },
-              { foodKey: 'sweetPotato', amount: 150, amountText: '150g', summaryText: '红薯（生）150g' },
-              { foodKey: 'potato', amount: 150, amountText: '150g', summaryText: '土豆（生）150g' },
-              { foodKey: 'cucumber', amount: 150, amountText: '150g', summaryText: '黄瓜条 150g' },
-            ],
-          },
-          {
-            type: 'pre', name: '⚡ 练前 60min',
-            items: [
-              { foodKey: 'banana', amount: 120, amountText: '120g（约1根）', summaryText: '香蕉 1根（可食部约120g）' },
-            ],
-          },
-          {
-            type: 'dinner', name: '🌙 晚餐（练后）',
-            items: [
-              { foodKey: 'chickenThighRaw', amount: 170, amountText: '1份（170g）', summaryText: '去皮鸡腿（生）170g', highlight: true },
-              { foodKey: 'whey', amount: 31, amountText: '1勺（约31g）', summaryText: '蛋白粉 1勺（约31g）' },
-              { foodKey: 'almonds', amount: 20, amountText: '约14粒', summaryText: '巴旦木 约14粒（20g）' },
-              { foodKey: 'sweetPotato', amount: 275, amountText: '275g', summaryText: '红薯（生）275g' },
-              { foodKey: 'potato', amount: 275, amountText: '275g', summaryText: '土豆（生）275g' },
-            ],
-          },
-        ],
-      },
-      {
-        shortName: '周六 腿',
-        title: '周六 · 练腿日（上班日）',
+        shortName: '周三 腿',
+        title: '周三 · 练腿日',
         tag: '💪 训练·最高碳',
         tagClass: 'tag-high',
         meals: [
@@ -861,7 +743,7 @@ document.addEventListener('alpine:init', () => {
           {
             type: 'lunch', name: '🍱 午餐',
             items: [
-              { foodKey: 'chickenThighRaw', amount: 170, amountText: '1份（170g）', summaryText: '去皮鸡腿（生）170g', highlight: true },
+              { foodKey: 'chickenSteak', amount: 200, amountText: '2袋（200g）', summaryText: '鸡排 2袋（200g）', highlight: true },
               { foodKey: 'sweetPotato', amount: 190, amountText: '190g', summaryText: '红薯（生）190g' },
               { foodKey: 'potato', amount: 190, amountText: '190g', summaryText: '土豆（生）190g' },
               { foodKey: 'cucumber', amount: 150, amountText: '150g', summaryText: '黄瓜条 150g' },
@@ -876,7 +758,7 @@ document.addEventListener('alpine:init', () => {
           {
             type: 'dinner', name: '🌙 晚餐（练后）',
             items: [
-              { foodKey: 'chickenThighRaw', amount: 170, amountText: '1份（170g）', summaryText: '去皮鸡腿（生）170g', highlight: true },
+              { foodKey: 'chickenSteak', amount: 200, amountText: '2袋（200g）', summaryText: '鸡排 2袋（200g）', highlight: true },
               { foodKey: 'whey', amount: 31, amountText: '1勺（约31g）', summaryText: '蛋白粉 1勺（约31g）' },
               { foodKey: 'almonds', amount: 20, amountText: '约14粒', summaryText: '巴旦木 约14粒（20g）' },
               { foodKey: 'sweetPotato', amount: 275, amountText: '275g', summaryText: '红薯（生）275g' },
@@ -886,9 +768,93 @@ document.addEventListener('alpine:init', () => {
         ],
       },
       {
-        shortName: '周日 休息',
-        title: '周日 · 休息日',
-        tag: '😴 休息·中低碳',
+        shortName: '周四 肩',
+        title: '周四 · 练肩日',
+        tag: '💪 训练·中碳',
+        tagClass: 'tag-mid',
+        meals: [
+          {
+            type: 'breakfast', name: '🌅 早餐',
+            items: [
+              { foodKey: 'corn', amount: 333, amountText: '1根（带芯约333g）', summaryText: '玉米 1根（带芯约333g）' },
+              { foodKey: 'wholeEgg', amount: 2, amountText: '2个', summaryText: '全蛋 2个' },
+              { foodKey: 'highProteinMilk', amount: 250, amountText: '250ml', summaryText: '高蛋白低脂奶 250ml' },
+
+            ],
+          },
+          {
+            type: 'lunch', name: '🍱 午餐',
+            items: [
+              { foodKey: 'chickenSteak', amount: 200, amountText: '2袋（200g）', summaryText: '鸡排 2袋（200g）', highlight: true },
+              { foodKey: 'sweetPotato', amount: 150, amountText: '150g', summaryText: '红薯（生）150g' },
+              { foodKey: 'potato', amount: 150, amountText: '150g', summaryText: '土豆（生）150g' },
+              { foodKey: 'cucumber', amount: 150, amountText: '150g', summaryText: '黄瓜条 150g' },
+            ],
+          },
+          {
+            type: 'pre', name: '⚡ 练前 60min',
+            items: [
+              { foodKey: 'banana', amount: 120, amountText: '120g（约1根）', summaryText: '香蕉 1根（可食部约120g）' },
+            ],
+          },
+          {
+            type: 'dinner', name: '🌙 晚餐（练后）',
+            items: [
+              { foodKey: 'chickenSteak', amount: 200, amountText: '2袋（200g）', summaryText: '鸡排 2袋（200g）', highlight: true },
+              { foodKey: 'whey', amount: 31, amountText: '1勺（约31g）', summaryText: '蛋白粉 1勺（约31g）' },
+              { foodKey: 'almonds', amount: 20, amountText: '约14粒', summaryText: '巴旦木 约14粒（20g）' },
+              { foodKey: 'sweetPotato', amount: 240, amountText: '240g', summaryText: '红薯（生）240g' },
+              { foodKey: 'potato', amount: 240, amountText: '240g', summaryText: '土豆（生）240g' },
+            ],
+          },
+        ],
+      },
+      {
+        shortName: '周五 腹',
+        title: '周五 · 练腹日',
+        tag: '💪 训练·中碳',
+        tagClass: 'tag-mid',
+        meals: [
+          {
+            type: 'breakfast', name: '🌅 早餐',
+            items: [
+              { foodKey: 'corn', amount: 333, amountText: '1根（带芯约333g）', summaryText: '玉米 1根（带芯约333g）' },
+              { foodKey: 'wholeEgg', amount: 2, amountText: '2个', summaryText: '全蛋 2个' },
+              { foodKey: 'highProteinMilk', amount: 250, amountText: '250ml', summaryText: '高蛋白低脂奶 250ml' },
+
+            ],
+          },
+          {
+            type: 'lunch', name: '🍱 午餐',
+            items: [
+              { foodKey: 'chickenSteak', amount: 200, amountText: '2袋（200g）', summaryText: '鸡排 2袋（200g）', highlight: true },
+              { foodKey: 'sweetPotato', amount: 150, amountText: '150g', summaryText: '红薯（生）150g' },
+              { foodKey: 'potato', amount: 150, amountText: '150g', summaryText: '土豆（生）150g' },
+              { foodKey: 'cucumber', amount: 150, amountText: '150g', summaryText: '黄瓜条 150g' },
+            ],
+          },
+          {
+            type: 'pre', name: '⚡ 练前 60min',
+            items: [
+              { foodKey: 'banana', amount: 120, amountText: '120g（约1根）', summaryText: '香蕉 1根（可食部约120g）' },
+            ],
+          },
+          {
+            type: 'dinner', name: '🌙 晚餐（练后）',
+            items: [
+              { foodKey: 'chickenSteak', amount: 200, amountText: '2袋（200g）', summaryText: '鸡排 2袋（200g）', highlight: true },
+              { foodKey: 'whey', amount: 31, amountText: '1勺（约31g）', summaryText: '蛋白粉 1勺（约31g）' },
+              { foodKey: 'almonds', amount: 20, amountText: '约14粒', summaryText: '巴旦木 约14粒（20g）' },
+              { foodKey: 'sweetPotato', amount: 240, amountText: '240g', summaryText: '红薯（生）240g' },
+              { foodKey: 'potato', amount: 240, amountText: '240g', summaryText: '土豆（生）240g' },
+            ],
+          },
+        ],
+      },
+      {
+        shortName: '周六 修复',
+        title: '周六 · 修复日',
+        tag: '🛌 修复·中低碳',
         tagClass: 'tag-low',
         meals: [
           {
@@ -903,7 +869,7 @@ document.addEventListener('alpine:init', () => {
           {
             type: 'lunch', name: '🍱 午餐',
             items: [
-              { foodKey: 'chickenThighRaw', amount: 170, amountText: '1份（170g）', summaryText: '去皮鸡腿（生）170g', highlight: true },
+              { foodKey: 'chickenSteak', amount: 200, amountText: '2袋（200g）', summaryText: '鸡排 2袋（200g）', highlight: true },
               { foodKey: 'sweetPotato', amount: 125, amountText: '125g', summaryText: '红薯（生）125g' },
               { foodKey: 'potato', amount: 125, amountText: '125g', summaryText: '土豆（生）125g' },
               { foodKey: 'cucumber', amount: 150, amountText: '150g', summaryText: '黄瓜条 150g' },
@@ -912,7 +878,47 @@ document.addEventListener('alpine:init', () => {
           {
             type: 'dinner', name: '🌙 晚餐',
             items: [
-              { foodKey: 'chickenThighRaw', amount: 170, amountText: '1份（170g）', summaryText: '去皮鸡腿（生）170g', highlight: true },
+              { foodKey: 'chickenSteak', amount: 200, amountText: '2袋（200g）', summaryText: '鸡排 2袋（200g）', highlight: true },
+              { foodKey: 'whey', amount: 31, amountText: '1勺（约31g）', summaryText: '蛋白粉 1勺（约31g）' },
+              { foodKey: 'almonds', amount: 20, amountText: '约14粒', summaryText: '巴旦木 约14粒（20g）' },
+              { foodKey: 'sweetPotato', amount: 215, amountText: '215g', summaryText: '红薯（生）215g' },
+              { foodKey: 'potato', amount: 215, amountText: '215g', summaryText: '土豆（生）215g' },
+            ],
+          },
+          {
+            type: 'pre', name: '🚶 运动',
+            note: '快走 40 分钟 或 完全休息（二选一）',
+          },
+        ],
+      },
+      {
+        shortName: '周日 修复',
+        title: '周日 · 修复日',
+        tag: '🛌 修复·中低碳',
+        tagClass: 'tag-low',
+        meals: [
+          {
+            type: 'breakfast', name: '🌅 早餐',
+            items: [
+              { foodKey: 'corn', amount: 333, amountText: '1根（带芯约333g）', summaryText: '玉米 1根（带芯约333g）' },
+              { foodKey: 'wholeEgg', amount: 2, amountText: '2个', summaryText: '全蛋 2个' },
+              { foodKey: 'highProteinMilk', amount: 200, amountText: '200ml', summaryText: '高蛋白低脂奶 200ml' },
+
+            ],
+          },
+          {
+            type: 'lunch', name: '🍱 午餐',
+            items: [
+              { foodKey: 'chickenSteak', amount: 200, amountText: '2袋（200g）', summaryText: '鸡排 2袋（200g）', highlight: true },
+              { foodKey: 'sweetPotato', amount: 125, amountText: '125g', summaryText: '红薯（生）125g' },
+              { foodKey: 'potato', amount: 125, amountText: '125g', summaryText: '土豆（生）125g' },
+              { foodKey: 'cucumber', amount: 150, amountText: '150g', summaryText: '黄瓜条 150g' },
+            ],
+          },
+          {
+            type: 'dinner', name: '🌙 晚餐',
+            items: [
+              { foodKey: 'chickenSteak', amount: 200, amountText: '2袋（200g）', summaryText: '鸡排 2袋（200g）', highlight: true },
               { foodKey: 'whey', amount: 31, amountText: '1勺（约31g）', summaryText: '蛋白粉 1勺（约31g）' },
               { foodKey: 'almonds', amount: 20, amountText: '约14粒', summaryText: '巴旦木 约14粒（20g）' },
               { foodKey: 'sweetPotato', amount: 190, amountText: '190g', summaryText: '红薯（生）190g' },
@@ -941,7 +947,7 @@ document.addEventListener('alpine:init', () => {
         {
           type: 'lunch', name: '🍱 午餐',
           items: [
-            { foodKey: 'chickenThighRaw', amount: 100, amountText: '100g', summaryText: '去皮鸡腿（生）100g', highlight: true },
+            { foodKey: 'chickenSteak', amount: 100, amountText: '1袋（100g）', summaryText: '鸡排 1袋（100g）', highlight: true },
             { foodKey: 'sweetPotato', amount: 200, amountText: '200g', summaryText: '红薯（生）200g' },
             { foodKey: 'potato', amount: 80, amountText: '80g', summaryText: '土豆（生）80g' },
           ],
@@ -956,7 +962,7 @@ document.addEventListener('alpine:init', () => {
         {
           type: 'dinner', name: '🌙 晚餐',
           items: [
-            { foodKey: 'chickenThighRaw', amount: 100, amountText: '100g', summaryText: '去皮鸡腿（生）100g', highlight: true },
+            { foodKey: 'chickenSteak', amount: 100, amountText: '1袋（100g）', summaryText: '鸡排 1袋（100g）', highlight: true },
             { foodKey: 'sweetPotato', amount: 200, amountText: '200g', summaryText: '红薯（生）200g' },
             { foodKey: 'potato', amount: 80, amountText: '80g', summaryText: '土豆（生）80g' },
           ],
@@ -1002,9 +1008,9 @@ document.addEventListener('alpine:init', () => {
       const avg = this.averageDayTotals();
       const avgC = avg.kcal, avgP = avg.protein, avgCb = avg.carbs, avgF = avg.fat;
 
-      // 训练日 (周一/二/四/五/六) vs 休息日 (周三/日)（本周调整：周三休息，周四胸、周五背、周六腿）
-      const trainIdx = [0, 1, 3, 4, 5];
-      const restIdx = [2, 6];
+      // 训练日 (周一/二/三/四/五) vs 休息日 (周六/日)
+      const trainIdx = [0, 1, 2, 3, 4];
+      const restIdx = [5, 6];
       const trainCals = trainIdx.reduce((s, i) => s + dayTotals[i].kcal, 0) / trainIdx.length;
       const restCals = restIdx.reduce((s, i) => s + dayTotals[i].kcal, 0) / restIdx.length;
       const trainPros = trainIdx.reduce((s, i) => s + dayTotals[i].protein, 0) / trainIdx.length;
@@ -1068,8 +1074,8 @@ document.addEventListener('alpine:init', () => {
 
       // 1. 热量分布
       console.log(`%c\n1. 热量分布`, 'color: #f39c12; font-weight: bold;');
-      console.log(`   训练日（周一/二/四/五/六）平均：${f1(a.training.avgCals)} kcal`);
-      console.log(`   休息日（周三/日）平均：${f1(a.rest.avgCals)} kcal`);
+      console.log(`   训练日（周一/二/三/四/五）平均：${f1(a.training.avgCals)} kcal`);
+      console.log(`   休息日（周六/日）平均：${f1(a.rest.avgCals)} kcal`);
       console.log(`   训练日 vs 休息日差异：     +${f1(a.training.avgCals - a.rest.avgCals)} kcal`);
       console.log(`   七日范围：                 ${f1(Math.min(...a.dayRows.map(r => r.kcal)))} ~ ${f1(Math.max(...a.dayRows.map(r => r.kcal)))} kcal`);
 
