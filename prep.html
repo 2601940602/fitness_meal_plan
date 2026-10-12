@@ -58,7 +58,7 @@
 
   /* 连续区间 */
   .range-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 12px; }
-  select, input[type="number"], input[type="text"] {
+  input[type="number"], input[type="text"] {
     background: rgba(255,255,255,0.06);
     border: 1px solid rgba(255,255,255,0.12);
     color: #e8e8e8;
@@ -69,21 +69,65 @@
     min-width: 0;
     width: 100%;
   }
-  select:focus, input:focus { border-color: #00d4aa; }
+  input:focus { border-color: #00d4aa; }
   ::placeholder { color: #5a6480; }
-  /* 下拉弹层：显式深色配色（系统默认白底会与浅色文字冲突） */
-  select option {
-    background: #16213e;
+
+  /* 自绘下拉：弹层宽度严格跟随触发器，永不超出屏幕 */
+  .dd { position: relative; flex: 1; min-width: 0; }
+  .dd-btn {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    width: 100%;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.12);
     color: #e8e8e8;
+    border-radius: 10px;
+    padding: 9px 10px;
+    font-size: 14px;
+    cursor: pointer;
+    text-align: left;
   }
-  select option:checked {
-    background: rgba(0,212,170,0.25);
-    color: #ffffff;
-  }
-  select option:disabled {
+  .dd-btn:disabled { opacity: 0.5; cursor: default; }
+  .dd-btn .dd-label { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .dd-btn .dd-label.placeholder { color: #5a6480; }
+  .dd-arrow { flex-shrink: 0; color: #8892b0; font-size: 10px; transition: transform 0.2s; }
+  .dd.open .dd-arrow { transform: rotate(180deg); }
+  .dd-menu {
+    position: absolute;
+    top: calc(100% + 6px);
+    left: 0;
+    right: 0;
+    max-height: 300px;
+    overflow-y: auto;
     background: #16213e;
-    color: #5a6480;
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 12px;
+    padding: 6px;
+    z-index: 200;
+    box-shadow: 0 12px 30px rgba(0,0,0,0.45);
   }
+  .dd-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    padding: 9px 10px;
+    border: none;
+    border-radius: 8px;
+    background: transparent;
+    color: #e8e8e8;
+    font-size: 14px;
+    text-align: left;
+    cursor: pointer;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .dd-item:hover, .dd-item:focus { background: rgba(0,212,170,0.15); outline: none; }
+  .dd-item.active { background: rgba(0,212,170,0.25); color: #ffffff; }
+  .dd-empty { padding: 10px; font-size: 13px; color: #5a6480; text-align: center; }
 
   .quick-row { display: flex; gap: 8px; flex-wrap: wrap; }
   .mini-btn {
@@ -115,9 +159,7 @@
   .ing-row.on .ing-name { color: #00d4aa; font-weight: 600; }
   .ing-row.on .ing-hint { color: #b8c0d9; }
   .add-row { display: flex; gap: 8px; margin-bottom: 12px; }
-  .add-row select { flex: 1; }
-  .add-row .mini-btn { flex-shrink: 0; }
-  .cell-note { font-size: 11px; color: #8892b0; font-weight: 400; margin-top: 2px; }
+  .cell-note { font-size: 11px; color: #8892b0; font-weight: 400; margin-top: 2px; white-space: normal; }
 
   .error-msg { color: #ff6b6b; font-size: 13px; margin-bottom: 10px; min-height: 18px; }
 
@@ -130,13 +172,14 @@
     border: 1px solid rgba(255,255,255,0.08);
     margin-top: 10px;
   }
-  table { width: 100%; border-collapse: collapse; font-size: 13px; min-width: 460px; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
   th, td {
     padding: 10px 8px;
     text-align: right;
-    white-space: nowrap;
     border-bottom: 1px solid rgba(255,255,255,0.06);
   }
+  th { white-space: normal; }
+  td { white-space: nowrap; }
   th:first-child, td:first-child { text-align: left; }
   th { background: rgba(255,255,255,0.05); color: #8892b0; font-weight: 600; font-size: 12px; }
   tbody tr:last-child td { border-bottom: none; }
@@ -201,7 +244,7 @@
 
   <div class="header">
     <h1>🧮 餐饮备料计算</h1>
-    <div class="sub">选时间范围 · 勾选食材 · 直接汇总餐单重量</div>
+    <div class="sub">选时间范围 · 添加食材 · 直接汇总餐单重量</div>
   </div>
 
   <div class="content">
@@ -210,17 +253,29 @@
     <div class="card no-print">
       <h3>📅 选择时间范围</h3>
       <div class="range-row">
-        <select x-model.number="rangeStart" aria-label="开始日">
-          <template x-for="(d, i) in dayNames" :key="'s' + i">
-            <option :value="i" x-text="d"></option>
-          </template>
-        </select>
+        <div class="dd" x-data="{ open: false }" :class="{ open: open }" @click.outside="open = false" @keydown.escape.window="open = false">
+          <button type="button" class="dd-btn" @click="open = !open" :aria-expanded="open" aria-label="开始日">
+            <span class="dd-label" x-text="dayNames[rangeStart]"></span>
+            <span class="dd-arrow">▼</span>
+          </button>
+          <div class="dd-menu" x-show="open">
+            <template x-for="(d, i) in dayNames" :key="'s' + i">
+              <button type="button" class="dd-item" :class="{ active: rangeStart === i }" @click="rangeStart = i; open = false" x-text="d"></button>
+            </template>
+          </div>
+        </div>
         <span class="hint">至</span>
-        <select x-model.number="rangeEnd" aria-label="结束日">
-          <template x-for="(d, i) in dayNames" :key="'e' + i">
-            <option :value="i" x-text="d"></option>
-          </template>
-        </select>
+        <div class="dd" x-data="{ open: false }" :class="{ open: open }" @click.outside="open = false" @keydown.escape.window="open = false">
+          <button type="button" class="dd-btn" @click="open = !open" :aria-expanded="open" aria-label="结束日">
+            <span class="dd-label" x-text="dayNames[rangeEnd]"></span>
+            <span class="dd-arrow">▼</span>
+          </button>
+          <div class="dd-menu" x-show="open">
+            <template x-for="(d, i) in dayNames" :key="'e' + i">
+              <button type="button" class="dd-item" :class="{ active: rangeEnd === i }" @click="rangeEnd = i; open = false" x-text="d"></button>
+            </template>
+          </div>
+        </div>
       </div>
       <div class="quick-row">
         <button type="button" class="mini-btn" @click="setRange(0, 4)">工作日</button>
@@ -234,13 +289,20 @@
     <div class="card no-print">
       <h3>🥘 选择要计算的食材</h3>
       <div class="add-row">
-        <select x-model="addKey" @change="addIngredient()" aria-label="添加食材">
-          <option value="" disabled>选择食材添加…</option>
-          <template x-for="g in availableIngredients" :key="g.key">
-            <option :value="g.key" x-text="g.name"></option>
-          </template>
-        </select>
-        <button type="button" class="mini-btn" @click="addIngredient()">＋ 添加</button>
+        <div class="dd" x-data="{ open: false }" :class="{ open: open }" @click.outside="open = false" @keydown.escape.window="open = false">
+          <button type="button" class="dd-btn" @click="open = !open" :aria-expanded="open" aria-label="添加食材" :disabled="!availableIngredients.length">
+            <span class="dd-label placeholder">选择食材添加…</span>
+            <span class="dd-arrow">▼</span>
+          </button>
+          <div class="dd-menu" x-show="open">
+            <template x-for="g in availableIngredients" :key="g.key">
+              <button type="button" class="dd-item" @click="addIngredient(g.key); open = false">
+                <span x-text="g.icon"></span><span x-text="g.name"></span>
+              </button>
+            </template>
+            <div class="dd-empty" x-show="!availableIngredients.length">已添加全部食材</div>
+          </div>
+        </div>
       </div>
       <template x-for="g in selected" :key="g.key">
         <div class="ing-row on">
@@ -255,8 +317,8 @@
 
     <div class="error-msg no-print" x-show="errorMsg" x-text="errorMsg"></div>
 
-    <!-- 结果 -->
-    <div class="card result-card" x-show="result" x-transition.opacity>
+      <!-- 结果 -->
+      <div class="card result-card" x-show="result">
       <div class="summary-line">📅 日期区间：<strong class="hl" x-text="result && result.label"></strong>（<span x-text="result ? result.dayIndexes.length : 0"></span> 天）· 🥘 统计食材：<span x-text="result ? result.rows.length : 0"></span> 种</div>
       <div class="table-wrap">
         <table>
@@ -292,10 +354,10 @@
         </table>
       </div>
       <div class="hint">中午＝午餐、晚上＝晚餐；早餐等其他餐次（如练前香蕉）不拆分，仅计入合计</div>
-      <div class="export-row no-print">
+      <!-- <div class="export-row no-print">
         <button type="button" class="mini-btn" @click="exportCsv()">📥 导出 CSV</button>
         <button type="button" class="mini-btn" @click="printResult()">🖨 打印</button>
-      </div>
+      </div> -->
     </div>
 
   </div>
@@ -493,7 +555,6 @@ document.addEventListener('alpine:init', () => {
     dayNames: window.PrepCalc.DAYS,
     rangeStart: 0,
     rangeEnd: 4,
-    addKey: '',
     selected: [],   /* 已添加的食材（按添加顺序） */
 
     init() {
@@ -563,14 +624,10 @@ document.addEventListener('alpine:init', () => {
       this.rangeEnd = e;
     },
 
-    addIngredient() {
-      const key = this.addKey;
-      if (!key) return;
-      if (!this.selected.some(g => g.key === key)) {
-        const g = window.PrepCalc.ingredientList().find(x => x.key === key);
-        if (g) this.selected.push(g);
-      }
-      this.addKey = '';
+    addIngredient(key) {
+      if (!key || this.selected.some(g => g.key === key)) return;
+      const g = window.PrepCalc.ingredientList().find(x => x.key === key);
+      if (g) this.selected.push(g);
     },
 
     removeIngredient(key) {
