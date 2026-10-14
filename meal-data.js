@@ -16,12 +16,16 @@ window.MealData = (function () {
       chickenThighRaw: { name: '去皮鸡腿（生）', basis: '每100g', baseAmount: 100, unit: 'g', kcal: 145, protein: 19, carbs: 0, fat: 8 },
       // 鸡排：能量 365kJ ≈ 87kcal（1kcal = 4.184kJ），钠 435mg/100g
       chickenSteak: { name: '鸡排', basis: '每100g', baseAmount: 100, unit: 'g', kcal: 87, protein: 14.3, carbs: 4.8, fat: 1.1, sodiumMg: 435 },
+      // 青花鱼排（挪威鲭鱼，生）：Omega-3（EPA+DHA）约 2.6g/100g，补足脂肪与 Omega-3
+      mackerel: { name: '青花鱼排（生）', basis: '每100g', baseAmount: 100, unit: 'g', kcal: 205, protein: 19, carbs: 0, fat: 14 },
       // 红薯/土豆 cookedRatio：熟重 = 生重 × 0.912（实测生 2620g 蒸熟放凉后 2390g，失重约 8.8%）
       sweetPotato: { name: '红薯（生）', basis: '每100g', baseAmount: 100, unit: 'g', kcal: 86, protein: 1.6, carbs: 20.1, fat: 0.1, cookedRatio: 0.912 },
       potato: { name: '土豆（生）', basis: '每100g', baseAmount: 100, unit: 'g', kcal: 77, protein: 2.0, carbs: 17.2, fat: 0.1, cookedRatio: 0.912 },
       cucumber: { name: '黄瓜条', basis: '每100g', baseAmount: 100, unit: 'g', kcal: 15, protein: 0.8, carbs: 2.9, fat: 0.2 },
       whiteMushroom: { name: '白蘑菇（生）', basis: '每100g', baseAmount: 100, unit: 'g', kcal: 22, protein: 3.1, carbs: 3.3, fat: 0.3 },
       banana: { name: '香蕉（可食部）', basis: '每100g', baseAmount: 100, unit: 'g', kcal: 89, protein: 1.1, carbs: 22.8, fat: 0.3 },
+      kiwi: { name: '猕猴桃（可食部）', basis: '每100g', baseAmount: 100, unit: 'g', kcal: 61, protein: 1.1, carbs: 14.5, fat: 0.5 },
+      oats: { name: '即食燕麦片', basis: '每25g', baseAmount: 25, unit: 'g', kcal: 95, protein: 3.3, carbs: 16, fat: 1.8 },
       whey: { name: '蛋白粉', basis: '每31g（约1勺）', baseAmount: 31, unit: 'g', kcal: 121, protein: 23.6, carbs: 3.8, fat: 1.1 },
       almonds: { name: '巴旦木（杏仁）', basis: '每10g', baseAmount: 10, unit: 'g', kcal: 58, protein: 2.1, carbs: 2.0, fat: 5.0 },
       camelliaOil: { name: '山茶油（烹饪）', basis: '每5ml（1茶匙）', baseAmount: 5, unit: 'ml', kcal: 45, protein: 0, carbs: 0, fat: 5 },
@@ -39,9 +43,11 @@ window.MealData = (function () {
           {
             type: 'breakfast', name: '🌅 早餐',
             items: [
-              { foodKey: 'corn', amount: 333, amountText: '1根（带芯约333g）', summaryText: '玉米 1根（带芯约333g）' },
+              { foodKey: 'corn', amount: 200, amountText: '200g（约2/3根）', summaryText: '玉米 200g（约2/3根）' },
               { foodKey: 'wholeEgg', amount: 2, amountText: '2个', summaryText: '全蛋 2个' },
               { foodKey: 'highProteinMilk', amount: 250, amountText: '250ml', summaryText: '高蛋白低脂奶 250ml' },
+              { foodKey: 'oats', amount: 25, amountText: '25g（约3勺，泡进奶里）', summaryText: '即食燕麦片 25g（拌进奶里）' },
+              { foodKey: 'kiwi', amount: 100, amountText: '1个（可食部约100g）', summaryText: '猕猴桃 1个' },
 
             ],
           },
@@ -65,7 +71,7 @@ window.MealData = (function () {
             items: [
               { foodKey: 'chickenSteak', amount: 200, amountText: '2袋（200g）', summaryText: '鸡排 2袋（200g）', highlight: true },
               { foodKey: 'whey', amount: 31, amountText: '1勺（约31g）', summaryText: '蛋白粉 1勺（约31g）' },
-              { foodKey: 'almonds', amount: 20, amountText: '约14粒', summaryText: '巴旦木 约14粒（20g）' },
+              { foodKey: 'almonds', amount: 30, amountText: '约21粒', summaryText: '巴旦木 约21粒（30g）' },
               { foodKey: 'sweetPotato', amount: 275, amountText: '275g', summaryText: '红薯（生）275g' },
               { foodKey: 'potato', amount: 275, amountText: '275g', summaryText: '土豆（生）275g' },
             ],
@@ -81,9 +87,11 @@ window.MealData = (function () {
           {
             type: 'breakfast', name: '🌅 早餐',
             items: [
-              { foodKey: 'corn', amount: 333, amountText: '1根（带芯约333g）', summaryText: '玉米 1根（带芯约333g）' },
+              { foodKey: 'corn', amount: 200, amountText: '200g（约2/3根）', summaryText: '玉米 200g（约2/3根）' },
               { foodKey: 'wholeEgg', amount: 2, amountText: '2个', summaryText: '全蛋 2个' },
               { foodKey: 'highProteinMilk', amount: 250, amountText: '250ml', summaryText: '高蛋白低脂奶 250ml' },
+              { foodKey: 'oats', amount: 25, amountText: '25g（约3勺，泡进奶里）', summaryText: '即食燕麦片 25g（拌进奶里）' },
+              { foodKey: 'kiwi', amount: 100, amountText: '1个（可食部约100g）', summaryText: '猕猴桃 1个' },
 
             ],
           },
@@ -107,7 +115,7 @@ window.MealData = (function () {
             items: [
               { foodKey: 'chickenSteak', amount: 200, amountText: '2袋（200g）', summaryText: '鸡排 2袋（200g）', highlight: true },
               { foodKey: 'whey', amount: 31, amountText: '1勺（约31g）', summaryText: '蛋白粉 1勺（约31g）' },
-              { foodKey: 'almonds', amount: 20, amountText: '约14粒', summaryText: '巴旦木 约14粒（20g）' },
+              { foodKey: 'almonds', amount: 30, amountText: '约21粒', summaryText: '巴旦木 约21粒（30g）' },
               { foodKey: 'sweetPotato', amount: 275, amountText: '275g', summaryText: '红薯（生）275g' },
               { foodKey: 'potato', amount: 275, amountText: '275g', summaryText: '土豆（生）275g' },
             ],
@@ -123,9 +131,11 @@ window.MealData = (function () {
           {
             type: 'breakfast', name: '🌅 早餐',
             items: [
-              { foodKey: 'corn', amount: 333, amountText: '1根（带芯约333g）', summaryText: '玉米 1根（带芯约333g）' },
+              { foodKey: 'corn', amount: 200, amountText: '200g（约2/3根）', summaryText: '玉米 200g（约2/3根）' },
               { foodKey: 'wholeEgg', amount: 2, amountText: '2个', summaryText: '全蛋 2个' },
               { foodKey: 'highProteinMilk', amount: 250, amountText: '250ml', summaryText: '高蛋白低脂奶 250ml' },
+              { foodKey: 'oats', amount: 25, amountText: '25g（约3勺，泡进奶里）', summaryText: '即食燕麦片 25g（拌进奶里）' },
+              { foodKey: 'kiwi', amount: 100, amountText: '1个（可食部约100g）', summaryText: '猕猴桃 1个' },
 
             ],
           },
@@ -147,9 +157,9 @@ window.MealData = (function () {
           {
             type: 'dinner', name: '🌙 晚餐（练后）',
             items: [
-              { foodKey: 'chickenSteak', amount: 200, amountText: '2袋（200g）', summaryText: '鸡排 2袋（200g）', highlight: true },
+              { foodKey: 'mackerel', amount: 200, amountText: '1块（200g）', summaryText: '青花鱼排 1块（200g）', highlight: true },
               { foodKey: 'whey', amount: 31, amountText: '1勺（约31g）', summaryText: '蛋白粉 1勺（约31g）' },
-              { foodKey: 'almonds', amount: 20, amountText: '约14粒', summaryText: '巴旦木 约14粒（20g）' },
+              { foodKey: 'almonds', amount: 30, amountText: '约21粒', summaryText: '巴旦木 约21粒（30g）' },
               { foodKey: 'sweetPotato', amount: 275, amountText: '275g', summaryText: '红薯（生）275g' },
               { foodKey: 'potato', amount: 275, amountText: '275g', summaryText: '土豆（生）275g' },
             ],
@@ -165,9 +175,11 @@ window.MealData = (function () {
           {
             type: 'breakfast', name: '🌅 早餐',
             items: [
-              { foodKey: 'corn', amount: 333, amountText: '1根（带芯约333g）', summaryText: '玉米 1根（带芯约333g）' },
+              { foodKey: 'corn', amount: 200, amountText: '200g（约2/3根）', summaryText: '玉米 200g（约2/3根）' },
               { foodKey: 'wholeEgg', amount: 2, amountText: '2个', summaryText: '全蛋 2个' },
               { foodKey: 'highProteinMilk', amount: 250, amountText: '250ml', summaryText: '高蛋白低脂奶 250ml' },
+              { foodKey: 'oats', amount: 25, amountText: '25g（约3勺，泡进奶里）', summaryText: '即食燕麦片 25g（拌进奶里）' },
+              { foodKey: 'kiwi', amount: 100, amountText: '1个（可食部约100g）', summaryText: '猕猴桃 1个' },
 
             ],
           },
@@ -191,7 +203,7 @@ window.MealData = (function () {
             items: [
               { foodKey: 'chickenSteak', amount: 200, amountText: '2袋（200g）', summaryText: '鸡排 2袋（200g）', highlight: true },
               { foodKey: 'whey', amount: 31, amountText: '1勺（约31g）', summaryText: '蛋白粉 1勺（约31g）' },
-              { foodKey: 'almonds', amount: 20, amountText: '约14粒', summaryText: '巴旦木 约14粒（20g）' },
+              { foodKey: 'almonds', amount: 30, amountText: '约21粒', summaryText: '巴旦木 约21粒（30g）' },
               { foodKey: 'sweetPotato', amount: 240, amountText: '240g', summaryText: '红薯（生）240g' },
               { foodKey: 'potato', amount: 240, amountText: '240g', summaryText: '土豆（生）240g' },
             ],
@@ -207,9 +219,11 @@ window.MealData = (function () {
           {
             type: 'breakfast', name: '🌅 早餐',
             items: [
-              { foodKey: 'corn', amount: 333, amountText: '1根（带芯约333g）', summaryText: '玉米 1根（带芯约333g）' },
+              { foodKey: 'corn', amount: 200, amountText: '200g（约2/3根）', summaryText: '玉米 200g（约2/3根）' },
               { foodKey: 'wholeEgg', amount: 2, amountText: '2个', summaryText: '全蛋 2个' },
               { foodKey: 'highProteinMilk', amount: 250, amountText: '250ml', summaryText: '高蛋白低脂奶 250ml' },
+              { foodKey: 'oats', amount: 25, amountText: '25g（约3勺，泡进奶里）', summaryText: '即食燕麦片 25g（拌进奶里）' },
+              { foodKey: 'kiwi', amount: 100, amountText: '1个（可食部约100g）', summaryText: '猕猴桃 1个' },
 
             ],
           },
@@ -231,9 +245,9 @@ window.MealData = (function () {
           {
             type: 'dinner', name: '🌙 晚餐（练后）',
             items: [
-              { foodKey: 'chickenSteak', amount: 200, amountText: '2袋（200g）', summaryText: '鸡排 2袋（200g）', highlight: true },
+              { foodKey: 'mackerel', amount: 200, amountText: '1块（200g）', summaryText: '青花鱼排 1块（200g）', highlight: true },
               { foodKey: 'whey', amount: 31, amountText: '1勺（约31g）', summaryText: '蛋白粉 1勺（约31g）' },
-              { foodKey: 'almonds', amount: 20, amountText: '约14粒', summaryText: '巴旦木 约14粒（20g）' },
+              { foodKey: 'almonds', amount: 30, amountText: '约21粒', summaryText: '巴旦木 约21粒（30g）' },
               { foodKey: 'sweetPotato', amount: 240, amountText: '240g', summaryText: '红薯（生）240g' },
               { foodKey: 'potato', amount: 240, amountText: '240g', summaryText: '土豆（生）240g' },
             ],
@@ -249,9 +263,11 @@ window.MealData = (function () {
           {
             type: 'breakfast', name: '🌅 早餐',
             items: [
-              { foodKey: 'corn', amount: 333, amountText: '1根（带芯约333g）', summaryText: '玉米 1根（带芯约333g）' },
+              { foodKey: 'corn', amount: 200, amountText: '200g（约2/3根）', summaryText: '玉米 200g（约2/3根）' },
               { foodKey: 'wholeEgg', amount: 2, amountText: '2个', summaryText: '全蛋 2个' },
               { foodKey: 'highProteinMilk', amount: 200, amountText: '200ml', summaryText: '高蛋白低脂奶 200ml' },
+              { foodKey: 'oats', amount: 25, amountText: '25g（约3勺，泡进奶里）', summaryText: '即食燕麦片 25g（拌进奶里）' },
+              { foodKey: 'kiwi', amount: 100, amountText: '1个（可食部约100g）', summaryText: '猕猴桃 1个' },
 
             ],
           },
@@ -269,7 +285,7 @@ window.MealData = (function () {
             items: [
               { foodKey: 'chickenSteak', amount: 200, amountText: '2袋（200g）', summaryText: '鸡排 2袋（200g）', highlight: true },
               { foodKey: 'whey', amount: 31, amountText: '1勺（约31g）', summaryText: '蛋白粉 1勺（约31g）' },
-              { foodKey: 'almonds', amount: 20, amountText: '约14粒', summaryText: '巴旦木 约14粒（20g）' },
+              { foodKey: 'almonds', amount: 30, amountText: '约21粒', summaryText: '巴旦木 约21粒（30g）' },
               { foodKey: 'sweetPotato', amount: 215, amountText: '215g', summaryText: '红薯（生）215g' },
               { foodKey: 'potato', amount: 215, amountText: '215g', summaryText: '土豆（生）215g' },
             ],
@@ -289,9 +305,11 @@ window.MealData = (function () {
           {
             type: 'breakfast', name: '🌅 早餐',
             items: [
-              { foodKey: 'corn', amount: 333, amountText: '1根（带芯约333g）', summaryText: '玉米 1根（带芯约333g）' },
+              { foodKey: 'corn', amount: 200, amountText: '200g（约2/3根）', summaryText: '玉米 200g（约2/3根）' },
               { foodKey: 'wholeEgg', amount: 2, amountText: '2个', summaryText: '全蛋 2个' },
               { foodKey: 'highProteinMilk', amount: 200, amountText: '200ml', summaryText: '高蛋白低脂奶 200ml' },
+              { foodKey: 'oats', amount: 25, amountText: '25g（约3勺，泡进奶里）', summaryText: '即食燕麦片 25g（拌进奶里）' },
+              { foodKey: 'kiwi', amount: 100, amountText: '1个（可食部约100g）', summaryText: '猕猴桃 1个' },
 
             ],
           },
@@ -309,7 +327,7 @@ window.MealData = (function () {
             items: [
               { foodKey: 'chickenSteak', amount: 200, amountText: '2袋（200g）', summaryText: '鸡排 2袋（200g）', highlight: true },
               { foodKey: 'whey', amount: 31, amountText: '1勺（约31g）', summaryText: '蛋白粉 1勺（约31g）' },
-              { foodKey: 'almonds', amount: 20, amountText: '约14粒', summaryText: '巴旦木 约14粒（20g）' },
+              { foodKey: 'almonds', amount: 30, amountText: '约21粒', summaryText: '巴旦木 约21粒（30g）' },
               { foodKey: 'sweetPotato', amount: 190, amountText: '190g', summaryText: '红薯（生）190g' },
               { foodKey: 'potato', amount: 190, amountText: '190g', summaryText: '土豆（生）190g' },
             ],
