@@ -574,7 +574,7 @@ document.addEventListener('alpine:init', () => {
         highProteinMilk: { icon: '🥛', label: '高蛋白奶' },
         pasteurizedWholeMilk: { icon: '🥛', label: '鲜牛奶（全脂）' },
       };
-      return Object.entries(totals).map(([key, amount]) => {
+      const rows = Object.entries(totals).map(([key, amount]) => {
         const ratio = this.foodBases[key].cookedRatio;
         const unit = key === 'wholeEgg' ? '个' : (key === 'highProteinMilk' || key === 'pasteurizedWholeMilk') ? 'ml' : 'g';
         return {
@@ -583,6 +583,10 @@ document.addEventListener('alpine:init', () => {
           value: amount + unit + (key === 'chickenSteak' ? `（${amount / 100}袋）` : '') + (ratio ? `（熟重约${Math.round(amount * ratio)}g）` : ''),
         };
       });
+      // 红薯+土豆总重量
+      const tuberTotal = (totals.sweetPotato || 0) + (totals.potato || 0);
+      if (tuberTotal) rows.push({ icon: '🍠🥔', label: '红薯+土豆合计', value: tuberTotal + 'g' });
+      return rows;
     },
 
     formatKcal(value) {
@@ -633,8 +637,12 @@ document.addEventListener('alpine:init', () => {
     // ---- 执行贴士已移至 tips.html ----
 
     init() {
-      const dayOfWeek = new Date().getDay();
-      this.activeDay = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
+      const now = new Date();
+      const dayOfWeek = now.getDay();
+      let dayIndex = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
+      // 超过当天 19:00 自动切换到下一天的餐单（周日顺延到周一）
+      if (now.getHours() >= 19) dayIndex = (dayIndex + 1) % 7;
+      this.activeDay = dayIndex;
 
       // 暴露到全局，方便控制台调用
       window.mealPlan = this;
@@ -675,10 +683,11 @@ document.addEventListener('alpine:init', () => {
       const trainPros = trainIdx.reduce((s, i) => s + dayTotals[i].protein, 0) / trainIdx.length;
       const restPros = restIdx.reduce((s, i) => s + dayTotals[i].protein, 0) / restIdx.length;
 
-      // 蛋白质评估
+      // 蛋白质评估（理想范围 g/kg，判断与展示共用同一常量，避免口径不一致）
+      const P_MIN_PER_KG = 1.6, P_MAX_PER_KG = 2.4;
       const pRange = dayTotals.map(t => t.protein);
       const pPerKgRange = pRange.map(p => p / w);
-      const inRange = dayTotals.every(t => t.protein / w >= 1.6 && t.protein / w <= 2.4);
+      const inRange = dayTotals.every(t => t.protein / w >= P_MIN_PER_KG && t.protein / w <= P_MAX_PER_KG);
 
       // 脂肪范围
       const fRange = dayTotals.map(t => t.fat);
