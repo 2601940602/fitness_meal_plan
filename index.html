@@ -551,7 +551,7 @@ document.addEventListener('alpine:init', () => {
     },
 
     dayPrep(day) {
-      const prepKeys = ['sweetPotato', 'potato', 'corn', 'oats', 'banana', 'kiwi', 'chickenSteak', 'mackerel', 'wholeEgg', 'highProteinMilk', 'pasteurizedWholeMilk'];
+      const prepKeys = ['sweetPotato', 'potato', 'corn', 'oats', 'banana', 'kiwi', 'chickenSteak', 'mackerel', 'wholeEgg', 'highProteinMilk', 'pasteurizedWholeMilk', 'spinach', 'whiteMushroom'];
       const totals = {};
       (day.meals || []).forEach(meal => {
         (meal.items || []).forEach(item => {
@@ -573,6 +573,8 @@ document.addEventListener('alpine:init', () => {
         wholeEgg: { icon: '🥚', label: '鸡蛋' },
         highProteinMilk: { icon: '🥛', label: '高蛋白奶' },
         pasteurizedWholeMilk: { icon: '🥛', label: '鲜牛奶（全脂）' },
+        spinach: { icon: '🥬', label: '菠菜' },
+        whiteMushroom: { icon: '🍄', label: '口蘑' },
       };
       const rows = Object.entries(totals).map(([key, amount]) => {
         const ratio = this.foodBases[key].cookedRatio;
