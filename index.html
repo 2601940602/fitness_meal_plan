@@ -551,7 +551,7 @@ document.addEventListener('alpine:init', () => {
     },
 
     dayPrep(day) {
-      const prepKeys = ['sweetPotato', 'potato', 'corn', 'oats', 'banana', 'kiwi', 'chickenSteak', 'mackerel', 'wholeEgg', 'highProteinMilk', 'pasteurizedWholeMilk', 'spinach', 'whiteMushroom'];
+      const prepKeys = ['sweetPotato', 'potato', 'wholeWheatNoodles', 'corn', 'oats', 'banana', 'kiwi', 'chickenSteak', 'mackerel', 'wholeEgg', 'highProteinMilk', 'pasteurizedWholeMilk', 'spinach', 'whiteMushroom'];
       const totals = {};
       (day.meals || []).forEach(meal => {
         (meal.items || []).forEach(item => {
@@ -563,6 +563,7 @@ document.addEventListener('alpine:init', () => {
       const labels = {
         sweetPotato: { icon: '🍠', label: '红薯（生）' },
         potato: { icon: '🥔', label: '土豆（生）' },
+        wholeWheatNoodles: { icon: '🍜', label: '全麦面（干重）' },
         corn: { icon: '🌽', label: '玉米' },
         oats: { icon: '🥣', label: '即食燕麦片' },
         banana: { icon: '🍌', label: '香蕉' },

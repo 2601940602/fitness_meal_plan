@@ -312,7 +312,7 @@
           <button type="button" class="del-btn" @click="removeIngredient(g.key)" :aria-label="'移除' + g.name">✕</button>
         </div>
       </template>
-      <div class="hint" style="margin-top: 10px">用量直接来自餐单页（index.html）「当日备料」的食材重量；默认红薯＋土豆，下拉可继续添加</div>
+      <div class="hint" style="margin-top: 10px">用量直接来自餐单页（index.html）「当日备料」的食材重量；默认红薯、土豆和全麦面，下拉可继续添加</div>
     </div>
 
     <div class="error-msg no-print" x-show="errorMsg" x-text="errorMsg"></div>
@@ -379,15 +379,15 @@ window.PrepCalc = (function () {
 
   /* 食材展示图标 */
   const ICONS = {
-    sweetPotato: '🍠', potato: '🥔', corn: '🌽', oats: '🥣', banana: '🍌', kiwi: '🥝', cucumber: '🥒', spinach: '🥬',
+    sweetPotato: '🍠', potato: '🥔', wholeWheatNoodles: '🍜', corn: '🌽', oats: '🥣', banana: '🍌', kiwi: '🥝', cucumber: '🥒', spinach: '🥬',
     whiteMushroom: '🍄', chickenSteak: '🍗', chickenBreastRaw: '🍗', chickenThighRaw: '🍗', mackerel: '🐟',
     wholeEgg: '🥚', highProteinMilk: '🥛', pasteurizedWholeMilk: '🥛',
     filetSteakRaw: '🥩', oysterBladeSteak: '🥩', whey: '🥤', almonds: '🌰',
     camelliaOil: '🫒', butter: '🧈',
   };
 
-  /* 默认食材：红薯＋土豆 */
-  const DEFAULT_KEYS = ['sweetPotato', 'potato'];
+  /* 默认食材：红薯、土豆和全麦面 */
+  const DEFAULT_KEYS = ['sweetPotato', 'potato', 'wholeWheatNoodles'];
 
   function clampDay(v) {
     const n = Math.round(Number(v));
