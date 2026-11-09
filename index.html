@@ -609,7 +609,9 @@ document.addEventListener('alpine:init', () => {
 
     mealSummaryText(meal) {
       if (meal.note) return meal.note;
-      return meal.items.map(item => item.summaryText + this.cookedText(item)).join('｜');
+      const items = meal.items.map(item => item.summaryText + this.cookedText(item)).join('｜');
+      const alternatives = (meal.alternatives || []).join('｜');
+      return alternatives ? items + '｜可替换：' + alternatives : items;
     },
 
     mealDetailRows(meal) {

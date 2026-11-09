@@ -14,12 +14,13 @@ window.MealData = (function () {
       oysterBladeSteak: { name: '板腱牛排（生）', basis: '每100g', baseAmount: 100, unit: 'g', kcal: 140, protein: 20.5, carbs: 0, fat: 5.5 },
       chickenBreastRaw: { name: '鸡胸肉（生）', basis: '每100g', baseAmount: 100, unit: 'g', kcal: 120, protein: 23, carbs: 0, fat: 2.6 },
       chickenThighRaw: { name: '去皮鸡腿（生）', basis: '每100g', baseAmount: 100, unit: 'g', kcal: 145, protein: 19, carbs: 0, fat: 8 },
-      // 鸡排：能量 365kJ ≈ 87kcal（1kcal = 4.184kJ），钠 435mg/100g
-      chickenSteak: { name: '鸡排', basis: '每100g', baseAmount: 100, unit: 'g', kcal: 87, protein: 14.3, carbs: 4.8, fat: 1.1, sodiumMg: 435 },
+      // 鸡排：能量 365kJ ≈ 87kcal（1kcal = 4.184kJ）
+      chickenSteak: { name: '鸡排', basis: '每100g', baseAmount: 100, unit: 'g', kcal: 87, protein: 14.3, carbs: 4.8, fat: 1.1, sodiumMg: 325 },
       // 青花鱼排（挪威鲭鱼，生）：Omega-3（EPA+DHA）约 2.6g/100g，补足脂肪与 Omega-3
       mackerel: { name: '青花鱼排（生）', basis: '每100g', baseAmount: 100, unit: 'g', kcal: 205, protein: 19, carbs: 0, fat: 14 },
       sweetPotato: { name: '红薯（生）', basis: '每100g', baseAmount: 100, unit: 'g', kcal: 86, protein: 1.6, carbs: 20.1, fat: 0.1 },
       potato: { name: '土豆（生）', basis: '每100g', baseAmount: 100, unit: 'g', kcal: 77, protein: 2.0, carbs: 17.2, fat: 0.1 },
+      kabochaPumpkin: { name: '贝贝南瓜（可食部）', basis: '每100g', baseAmount: 100, unit: 'g', kcal: 91, protein: 1.5, carbs: 20, fat: 0.2 },
       cucumber: { name: '黄瓜条', basis: '每100g', baseAmount: 100, unit: 'g', kcal: 15, protein: 0.8, carbs: 2.9, fat: 0.2 },
       spinach: { name: '菠菜', basis: '每100g', baseAmount: 100, unit: 'g', kcal: 23, protein: 2.6, carbs: 2.8, fat: 0.3 },
       whiteMushroom: { name: '口蘑（白蘑菇，生）', basis: '每100g', baseAmount: 100, unit: 'g', kcal: 22, protein: 3.1, carbs: 3.3, fat: 0.3 },
@@ -33,11 +34,23 @@ window.MealData = (function () {
         packageSizeG: 200, packageCount: 2,
         ingredients: '黑全麦粉、荞麦粉（30%）、饮用水、食用盐',
       },
+      haitianSoySauce: { name: '海天零添加酱油', basis: '每15ml', baseAmount: 15, unit: 'ml', energyKj: 70, kcal: 70 / 4.184, protein: 1.8, carbs: 2.3, fat: 0, sodiumMg: 938 },
+      choppedChili: { name: '精制剁辣椒', basis: '每100g', baseAmount: 100, unit: 'g', energyKj: 136, kcal: 136 / 4.184, protein: 1.3, carbs: 6.7, fat: 0, sodiumMg: 3200 },
+      wujiangPickledMustard: { name: '乌江榨菜', basis: '每50g', baseAmount: 50, unit: 'g', energyKj: 308, kcal: 308 / 4.184, protein: 0.6, carbs: 0.5, fat: 7.5, sodiumMg: 1000 },
+      lard: { name: '猪油（无盐）', basis: '每100g', baseAmount: 100, unit: 'g', kcal: 902, protein: 0, carbs: 0, fat: 100, sodiumMg: 0 },
       whey: { name: '蛋白粉', basis: '每31g（约1勺）', baseAmount: 31, unit: 'g', kcal: 121, protein: 23.6, carbs: 3.8, fat: 1.1 },
       almonds: { name: '巴旦木（杏仁）', basis: '每10g', baseAmount: 10, unit: 'g', kcal: 58, protein: 2.1, carbs: 2.0, fat: 5.0 },
       camelliaOil: { name: '山茶油（烹饪）', basis: '每5ml（1茶匙）', baseAmount: 5, unit: 'ml', kcal: 45, protein: 0, carbs: 0, fat: 5 },
       butter: { name: '黄油（烹饪）', basis: '每10g', baseAmount: 10, unit: 'g', kcal: 72, protein: 0.1, carbs: 0, fat: 8.1 },
     };
+
+  /* 每碗 100g 干全麦面的拌面调料 */
+  const noodleSeasonings = [
+    { foodKey: 'haitianSoySauce', amount: 2, amountText: '2ml（约2–2.5g）', summaryText: '海天酱油 2ml（约2–2.5g）' },
+    { foodKey: 'choppedChili', amount: 2, summaryText: '精制剁辣椒 2g' },
+    { foodKey: 'wujiangPickledMustard', amount: 4, summaryText: '乌江榨菜 4g' },
+    { foodKey: 'lard', amount: 3, summaryText: '无盐猪油 3g' },
+  ];
 
   /* 每日餐单：每周 7 天（周一至周日） */
   const userDays = [
@@ -53,12 +66,12 @@ window.MealData = (function () {
               { foodKey: 'corn', amount: 200, amountText: '200g（约2/3根）', summaryText: '玉米 200g（约2/3根）' },
               { foodKey: 'wholeEgg', amount: 2, amountText: '2个', summaryText: '全蛋 2个' },
               { foodKey: 'highProteinMilk', amount: 250, amountText: '250ml', summaryText: '高蛋白低脂奶 250ml' },
-              { foodKey: 'oats', amount: 25, amountText: '25g（约3勺，泡进奶里）', summaryText: '即食燕麦片 25g（拌进奶里）' },
 
             ],
           },
           {
             type: 'lunch', name: '🍱 午餐',
+            alternatives: ['贝贝南瓜（可食部约350g）可替换红薯和土豆'],
             items: [
               { foodKey: 'chickenSteak', amount: 200, amountText: '2袋（200g）', summaryText: '鸡排 2袋（200g）', highlight: true },
               { foodKey: 'sweetPotato', amount: 195, amountText: '195g', summaryText: '红薯（生）195g' },
@@ -79,7 +92,8 @@ window.MealData = (function () {
               { foodKey: 'whey', amount: 15, amountText: '半勺（约15g）', summaryText: '蛋白粉 半勺（约15g）' },
               { foodKey: 'almonds', amount: 30, amountText: '约21粒', summaryText: '巴旦木 约21粒（30g）' },
               { foodKey: 'wholeWheatNoodles', amount: 100, amountText: '100g（干重）', summaryText: '全麦面（干重）100g' },
-              { foodKey: 'spinach', amount: 300, amountText: '300g', summaryText: '菠菜 300g（焯水）' },
+              ...noodleSeasonings,
+              { foodKey: 'spinach', amount: 100, amountText: '100g', summaryText: '菠菜 100g（焯水）' },
               { foodKey: 'kiwi', amount: 100, amountText: '1个（可食部约100g）', summaryText: '猕猴桃 1个' },
             ],
           },
@@ -97,12 +111,12 @@ window.MealData = (function () {
               { foodKey: 'corn', amount: 200, amountText: '200g（约2/3根）', summaryText: '玉米 200g（约2/3根）' },
               { foodKey: 'wholeEgg', amount: 2, amountText: '2个', summaryText: '全蛋 2个' },
               { foodKey: 'highProteinMilk', amount: 250, amountText: '250ml', summaryText: '高蛋白低脂奶 250ml' },
-              { foodKey: 'oats', amount: 25, amountText: '25g（约3勺，泡进奶里）', summaryText: '即食燕麦片 25g（拌进奶里）' },
 
             ],
           },
           {
             type: 'lunch', name: '🍱 午餐',
+            alternatives: ['贝贝南瓜（可食部约350g）可替换红薯和土豆'],
             items: [
               { foodKey: 'chickenSteak', amount: 200, amountText: '2袋（200g）', summaryText: '鸡排 2袋（200g）', highlight: true },
               { foodKey: 'sweetPotato', amount: 195, amountText: '195g', summaryText: '红薯（生）195g' },
@@ -123,6 +137,7 @@ window.MealData = (function () {
               { foodKey: 'whey', amount: 15, amountText: '半勺（约15g）', summaryText: '蛋白粉 半勺（约15g）' },
               { foodKey: 'almonds', amount: 30, amountText: '约21粒', summaryText: '巴旦木 约21粒（30g）' },
               { foodKey: 'wholeWheatNoodles', amount: 100, amountText: '100g（干重）', summaryText: '全麦面（干重）100g' },
+              ...noodleSeasonings,
               { foodKey: 'whiteMushroom', amount: 300, amountText: '300g', summaryText: '口蘑 300g' },
               { foodKey: 'kiwi', amount: 100, amountText: '1个（可食部约100g）', summaryText: '猕猴桃 1个' },
             ],
@@ -141,12 +156,12 @@ window.MealData = (function () {
               { foodKey: 'corn', amount: 200, amountText: '200g（约2/3根）', summaryText: '玉米 200g（约2/3根）' },
               { foodKey: 'wholeEgg', amount: 2, amountText: '2个', summaryText: '全蛋 2个' },
               { foodKey: 'highProteinMilk', amount: 250, amountText: '250ml', summaryText: '高蛋白低脂奶 250ml' },
-              { foodKey: 'oats', amount: 25, amountText: '25g（约3勺，泡进奶里）', summaryText: '即食燕麦片 25g（拌进奶里）' },
 
             ],
           },
           {
             type: 'lunch', name: '🍱 午餐',
+            alternatives: ['贝贝南瓜（可食部约385g）可替换红薯和土豆'],
             items: [
               { foodKey: 'chickenSteak', amount: 200, amountText: '2袋（200g）', summaryText: '鸡排 2袋（200g）', highlight: true },
               { foodKey: 'sweetPotato', amount: 215, amountText: '215g', summaryText: '红薯（生）215g' },
@@ -167,7 +182,8 @@ window.MealData = (function () {
               { foodKey: 'whey', amount: 15, amountText: '半勺（约15g）', summaryText: '蛋白粉 半勺（约15g）' },
               { foodKey: 'almonds', amount: 30, amountText: '约21粒', summaryText: '巴旦木 约21粒（30g）' },
               { foodKey: 'wholeWheatNoodles', amount: 100, amountText: '100g（干重）', summaryText: '全麦面（干重）100g' },
-              { foodKey: 'spinach', amount: 300, amountText: '300g', summaryText: '菠菜 300g（焯水）' },
+              ...noodleSeasonings,
+              { foodKey: 'spinach', amount: 100, amountText: '100g', summaryText: '菠菜 100g（焯水）' },
               { foodKey: 'kiwi', amount: 100, amountText: '1个（可食部约100g）', summaryText: '猕猴桃 1个' },
             ],
           },
@@ -185,12 +201,12 @@ window.MealData = (function () {
               { foodKey: 'corn', amount: 200, amountText: '200g（约2/3根）', summaryText: '玉米 200g（约2/3根）' },
               { foodKey: 'wholeEgg', amount: 2, amountText: '2个', summaryText: '全蛋 2个' },
               { foodKey: 'highProteinMilk', amount: 250, amountText: '250ml', summaryText: '高蛋白低脂奶 250ml' },
-              { foodKey: 'oats', amount: 25, amountText: '25g（约3勺，泡进奶里）', summaryText: '即食燕麦片 25g（拌进奶里）' },
 
             ],
           },
           {
             type: 'lunch', name: '🍱 午餐',
+            alternatives: ['贝贝南瓜（可食部约315g）可替换红薯和土豆'],
             items: [
               { foodKey: 'chickenSteak', amount: 200, amountText: '2袋（200g）', summaryText: '鸡排 2袋（200g）', highlight: true },
               { foodKey: 'sweetPotato', amount: 175, amountText: '175g', summaryText: '红薯（生）175g' },
@@ -211,6 +227,7 @@ window.MealData = (function () {
               { foodKey: 'whey', amount: 15, amountText: '半勺（约15g）', summaryText: '蛋白粉 半勺（约15g）' },
               { foodKey: 'almonds', amount: 30, amountText: '约21粒', summaryText: '巴旦木 约21粒（30g）' },
               { foodKey: 'wholeWheatNoodles', amount: 100, amountText: '100g（干重）', summaryText: '全麦面（干重）100g' },
+              ...noodleSeasonings,
               { foodKey: 'whiteMushroom', amount: 300, amountText: '300g', summaryText: '口蘑 300g' },
               { foodKey: 'kiwi', amount: 100, amountText: '1个（可食部约100g）', summaryText: '猕猴桃 1个' },
             ],
@@ -229,12 +246,12 @@ window.MealData = (function () {
               { foodKey: 'corn', amount: 200, amountText: '200g（约2/3根）', summaryText: '玉米 200g（约2/3根）' },
               { foodKey: 'wholeEgg', amount: 2, amountText: '2个', summaryText: '全蛋 2个' },
               { foodKey: 'highProteinMilk', amount: 250, amountText: '250ml', summaryText: '高蛋白低脂奶 250ml' },
-              { foodKey: 'oats', amount: 25, amountText: '25g（约3勺，泡进奶里）', summaryText: '即食燕麦片 25g（拌进奶里）' },
 
             ],
           },
           {
             type: 'lunch', name: '🍱 午餐',
+            alternatives: ['贝贝南瓜（可食部约315g）可替换红薯和土豆'],
             items: [
               { foodKey: 'chickenSteak', amount: 200, amountText: '2袋（200g）', summaryText: '鸡排 2袋（200g）', highlight: true },
               { foodKey: 'sweetPotato', amount: 175, amountText: '175g', summaryText: '红薯（生）175g' },
@@ -255,7 +272,8 @@ window.MealData = (function () {
               { foodKey: 'whey', amount: 15, amountText: '半勺（约15g）', summaryText: '蛋白粉 半勺（约15g）' },
               { foodKey: 'almonds', amount: 30, amountText: '约21粒', summaryText: '巴旦木 约21粒（30g）' },
               { foodKey: 'wholeWheatNoodles', amount: 100, amountText: '100g（干重）', summaryText: '全麦面（干重）100g' },
-              { foodKey: 'spinach', amount: 300, amountText: '300g', summaryText: '菠菜 300g（焯水）' },
+              ...noodleSeasonings,
+              { foodKey: 'spinach', amount: 100, amountText: '100g', summaryText: '菠菜 100g（焯水）' },
               { foodKey: 'kiwi', amount: 100, amountText: '1个（可食部约100g）', summaryText: '猕猴桃 1个' },
             ],
           },
@@ -273,12 +291,12 @@ window.MealData = (function () {
               { foodKey: 'corn', amount: 200, amountText: '200g（约2/3根）', summaryText: '玉米 200g（约2/3根）' },
               { foodKey: 'wholeEgg', amount: 2, amountText: '2个', summaryText: '全蛋 2个' },
               { foodKey: 'highProteinMilk', amount: 200, amountText: '200ml', summaryText: '高蛋白低脂奶 200ml' },
-              { foodKey: 'oats', amount: 25, amountText: '25g（约3勺，泡进奶里）', summaryText: '即食燕麦片 25g（拌进奶里）' },
 
             ],
           },
           {
             type: 'lunch', name: '🍱 午餐',
+            alternatives: ['贝贝南瓜（可食部约270g）可替换红薯和土豆'],
             items: [
               { foodKey: 'chickenSteak', amount: 200, amountText: '2袋（200g）', summaryText: '鸡排 2袋（200g）', highlight: true },
               { foodKey: 'sweetPotato', amount: 150, amountText: '150g', summaryText: '红薯（生）150g' },
@@ -293,6 +311,7 @@ window.MealData = (function () {
               { foodKey: 'whey', amount: 15, amountText: '半勺（约15g）', summaryText: '蛋白粉 半勺（约15g）' },
               { foodKey: 'almonds', amount: 30, amountText: '约21粒', summaryText: '巴旦木 约21粒（30g）' },
               { foodKey: 'wholeWheatNoodles', amount: 100, amountText: '100g（干重）', summaryText: '全麦面（干重）100g' },
+              ...noodleSeasonings,
               { foodKey: 'whiteMushroom', amount: 300, amountText: '300g', summaryText: '口蘑 300g' },
               { foodKey: 'kiwi', amount: 100, amountText: '1个（可食部约100g）', summaryText: '猕猴桃 1个' },
             ],
@@ -315,12 +334,12 @@ window.MealData = (function () {
               { foodKey: 'corn', amount: 200, amountText: '200g（约2/3根）', summaryText: '玉米 200g（约2/3根）' },
               { foodKey: 'wholeEgg', amount: 2, amountText: '2个', summaryText: '全蛋 2个' },
               { foodKey: 'highProteinMilk', amount: 200, amountText: '200ml', summaryText: '高蛋白低脂奶 200ml' },
-              { foodKey: 'oats', amount: 25, amountText: '25g（约3勺，泡进奶里）', summaryText: '即食燕麦片 25g（拌进奶里）' },
 
             ],
           },
           {
             type: 'lunch', name: '🍱 午餐',
+          alternatives: ['贝贝南瓜（可食部约250g）可替换红薯和土豆'],
             items: [
               { foodKey: 'chickenSteak', amount: 200, amountText: '2袋（200g）', summaryText: '鸡排 2袋（200g）', highlight: true },
               { foodKey: 'sweetPotato', amount: 140, amountText: '140g', summaryText: '红薯（生）140g' },
@@ -335,7 +354,8 @@ window.MealData = (function () {
               { foodKey: 'whey', amount: 15, amountText: '半勺（约15g）', summaryText: '蛋白粉 半勺（约15g）' },
               { foodKey: 'almonds', amount: 30, amountText: '约21粒', summaryText: '巴旦木 约21粒（30g）' },
               { foodKey: 'wholeWheatNoodles', amount: 100, amountText: '100g（干重）', summaryText: '全麦面（干重）100g' },
-              { foodKey: 'spinach', amount: 300, amountText: '300g', summaryText: '菠菜 300g（焯水）' },
+              ...noodleSeasonings,
+              { foodKey: 'spinach', amount: 100, amountText: '100g', summaryText: '菠菜 100g（焯水）' },
               { foodKey: 'kiwi', amount: 100, amountText: '1个（可食部约100g）', summaryText: '猕猴桃 1个' },
             ],
           },
