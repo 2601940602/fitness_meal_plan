@@ -20,7 +20,7 @@ window.MealData = (function () {
       mackerel: { name: '青花鱼排（生）', basis: '每100g', baseAmount: 100, unit: 'g', kcal: 205, protein: 19, carbs: 0, fat: 14 },
       sweetPotato: { name: '红薯（生）', basis: '每100g', baseAmount: 100, unit: 'g', kcal: 86, protein: 1.6, carbs: 20.1, fat: 0.1 },
       potato: { name: '土豆（生）', basis: '每100g', baseAmount: 100, unit: 'g', kcal: 77, protein: 2.0, carbs: 17.2, fat: 0.1 },
-      kabochaPumpkin: { name: '贝贝南瓜（可食部）', basis: '每100g', baseAmount: 100, unit:', kcal: 91, protein: 1.5, carbs: 20, fat: 0.2 },
+      kabochaPumpkin: { name: '贝贝南瓜（可食部）', basis: '每100g', baseAmount: 100, unit: 'g', kcal: 91, protein: 1.5, carbs: 20, fat: 0.2 },
       cucumber: { name: '黄瓜条', basis: '每100g', baseAmount: 100, unit: 'g', kcal: 15, protein: 0.8, carbs: 2.9, fat: 0.2 },
       bellPepper: { name: '彩椒（生）', basis: '每100g', baseAmount: 100, unit: 'g', kcal: 31, protein: 1.0, carbs: 6.0, fat: 0.3 },
       banana: { name: '香蕉（可食部）', basis: '每100g', baseAmount: 100, unit: 'g', kcal: 89, protein: 1.1, carbs: 22.8, fat: 0.3 },
