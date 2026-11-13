@@ -420,12 +420,6 @@ document.addEventListener('alpine:init', () => {
     activeDay: 0,
     openMeals: {},
 
-    init() {
-      const type = new URLSearchParams(window.location.search).get('type');
-      if (type === '2') this.activeProfile = 'sister';
-      if (type === '1') this.activeProfile = 'user';
-    },
-
     profileInfo: {
       user: {
         label: '28岁 · 男 · 165cm · 60kg · 目标：六块腹肌 · 极速执行版',
@@ -650,6 +644,10 @@ document.addEventListener('alpine:init', () => {
     // ---- 执行贴士已移至 tips.html ----
 
     init() {
+      const type = new URLSearchParams(window.location.search).get('type');
+      if (type === '2') this.activeProfile = 'sister';
+      if (type === '1') this.activeProfile = 'user';
+
       const now = new Date();
       const dayOfWeek = now.getDay();
       let dayIndex = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
