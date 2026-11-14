@@ -10,9 +10,11 @@ window.MealData = (function () {
       wholeEgg: { name: '全蛋', basis: '每1个', baseAmount: 1, unit: '个', kcal: 72, protein: 6.3, carbs: 0.6, fat: 5 },
       highProteinMilk: { name: '高蛋白低脂奶', basis: '每100ml', baseAmount: 100, unit: 'ml', kcal: 36, protein: 4.2, carbs: 2.8, fat: 0.8 },
       pasteurizedWholeMilk: { name: '鲜牛奶（巴氏全脂）', basis: '每100ml', baseAmount: 100, unit: 'ml', kcal: 67, protein: 3.3, carbs: 4.8, fat: 3.9 },
+      mengniuPureMilk: { name: '蒙牛纯牛奶', basis: '每100ml', baseAmount: 100, unit: 'ml', kcal: 276 / 4.184, protein: 3.0, carbs: 5.2, fat: 3.7, saturatedFatG: 2.2, sodiumMg: 50, calciumMg: 100 },
       filetSteakRaw: { name: '菲力牛排（生）', basis: '每100g', baseAmount: 100, unit: 'g', kcal: 130, protein: 21, carbs: 0, fat: 5 },
       oysterBladeSteak: { name: '板腱牛排（生）', basis: '每100g', baseAmount: 100, unit: 'g', kcal: 140, protein: 20.5, carbs: 0, fat: 5.5 },
       chickenBreastRaw: { name: '鸡胸肉（生）', basis: '每100g', baseAmount: 100, unit: 'g', kcal: 120, protein: 23, carbs: 0, fat: 2.6 },
+      boiledChickenBreast: { name: '原味水煮鸡胸肉', basis: '每100g', baseAmount: 100, unit: 'g', kcal: 626 / 4.184, protein: 33.1, carbs: 0, fat: 1.7, saturatedFatG: 0.4, sodiumMg: 21 },
       chickenThighRaw: { name: '去皮鸡腿（生）', basis: '每100g', baseAmount: 100, unit: 'g', kcal: 145, protein: 19, carbs: 0, fat: 8 },
       // 鸡排：能量 365kJ ≈ 87kcal（1kcal = 4.184kJ）
       chickenSteak: { name: '鸡排', basis: '每100g', baseAmount: 100, unit: 'g', kcal: 87, protein: 14.3, carbs: 4.8, fat: 1.1, sodiumMg: 325 },
@@ -21,6 +23,13 @@ window.MealData = (function () {
       sweetPotato: { name: '红薯（生）', basis: '每100g', baseAmount: 100, unit: 'g', kcal: 86, protein: 1.6, carbs: 20.1, fat: 0.1 },
       potato: { name: '土豆（生）', basis: '每100g', baseAmount: 100, unit: 'g', kcal: 77, protein: 2.0, carbs: 17.2, fat: 0.1 },
       kabochaPumpkin: { name: '贝贝南瓜（可食部）', basis: '每100g', baseAmount: 100, unit: 'g', kcal: 91, protein: 1.5, carbs: 20, fat: 0.2 },
+      glutinousBabyPotatoes: { name: '糯糯妆然小土豆', basis: '每100g', baseAmount: 100, unit: 'g', energyKj: 386, kcal: 386 / 4.184, protein: 1.8, carbs: 20.9, fat: 0, sodiumMg: 444 },
+      readyBabyPumpkin: {
+        name: '大希地即食贝贝南瓜', basis: '每100g', baseAmount: 100, unit: 'g',
+        energyKj: 508, kcal: 508 / 4.184, protein: 0.6, carbs: 28.7, fat: 0,
+        sugarsG: 4.8, fiberG: 1.2, sodiumMg: 31.5, packageSizeG: 750,
+        sodiumNote: '按用户确认暂以31.5mg/100g估算，图片中钠含量与NRV%不一致，待实物核实',
+      },
       cucumber: { name: '黄瓜条', basis: '每100g', baseAmount: 100, unit: 'g', kcal: 15, protein: 0.8, carbs: 2.9, fat: 0.2 },
       bellPepper: { name: '彩椒（生）', basis: '每100g', baseAmount: 100, unit: 'g', kcal: 31, protein: 1.0, carbs: 6.0, fat: 0.3 },
       banana: { name: '香蕉（可食部）', basis: '每100g', baseAmount: 100, unit: 'g', kcal: 89, protein: 1.1, carbs: 22.8, fat: 0.3 },
@@ -39,6 +48,7 @@ window.MealData = (function () {
       lard: { name: '猪油（无盐）', basis: '每100g', baseAmount: 100, unit: 'g', kcal: 902, protein: 0, carbs: 0, fat: 100, sodiumMg: 0 },
       whey: { name: '蛋白粉', basis: '每31g（约1勺）', baseAmount: 31, unit: 'g', kcal: 121, protein: 23.6, carbs: 3.8, fat: 1.1 },
       almonds: { name: '巴旦木（杏仁）', basis: '每10g', baseAmount: 10, unit: 'g', kcal: 58, protein: 2.1, carbs: 2.0, fat: 5.0 },
+      walnuts: { name: '原味核桃仁', basis: '每100g（通用估算）', baseAmount: 100, unit: 'g', kcal: 654, protein: 15.2, carbs: 13.7, fat: 65.2 },
       camelliaOil: { name: '山茶油（烹饪）', basis: '每5ml（1茶匙）', baseAmount: 5, unit: 'ml', kcal: 45, protein: 0, carbs: 0, fat: 5 },
       butter: { name: '黄油（烹饪）', basis: '每10g', baseAmount: 10, unit: 'g', kcal: 72, protein: 0.1, carbs: 0, fat: 8.1 },
     };
@@ -365,32 +375,28 @@ window.MealData = (function () {
         {
           type: 'breakfast', name: '🌅 早餐',
           items: [
-            { foodKey: 'corn', amount: 333, amountText: '1根（带芯约333g）', summaryText: '玉米 1根（带芯约333g）' },
-            { foodKey: 'wholeEgg', amount: 2, amountText: '2个', summaryText: '全蛋 2个' },
-            { foodKey: 'pasteurizedWholeMilk', amount: 250, amountText: '250ml', summaryText: '鲜牛奶（全脂）250ml' },
+            { foodKey: 'corn', amount: 200, amountText: '200g', summaryText: '玉米 200g' },
+            { foodKey: 'wholeEgg', amount: 1, amountText: '1个', summaryText: '全蛋 1个' },
+            { foodKey: 'mengniuPureMilk', amount: 240, amountText: '1盒（240ml）', summaryText: '蒙牛纯牛奶 1盒（240ml）' },
+            { foodKey: 'readyBabyPumpkin', amount: 200, amountText: '200g', summaryText: '大希地即食贝贝南瓜 200g' },
+            { foodKey: 'walnuts', amount: 15, amountText: '15g（去壳后）', summaryText: '原味核桃仁 15g' },
           ],
         },
         {
           type: 'lunch', name: '🍱 午餐',
           items: [
-            { foodKey: 'chickenSteak', amount: 100, amountText: '1袋（100g）', summaryText: '鸡排 1袋（100g）', highlight: true },
-            { foodKey: 'sweetPotato', amount: 200, amountText: '200g', summaryText: '红薯（生）200g' },
-            { foodKey: 'potato', amount: 80, amountText: '80g', summaryText: '土豆（生）80g' },
-          ],
-        },
-        {
-          type: 'snack', name: '🥜 下午加餐',
-          items: [
-            { foodKey: 'banana', amount: 120, amountText: '120g（约1根）', summaryText: '香蕉 1根（可食部约120g）' },
-            { foodKey: 'almonds', amount: 20, amountText: '约14粒', summaryText: '巴旦木 约14粒（20g）' },
+            { foodKey: 'boiledChickenBreast', amount: 75, amountText: '75g', summaryText: '原味水煮鸡胸肉 75g', highlight: true },
+            { foodKey: 'glutinousBabyPotatoes', amount: 250, amountText: '1包（250g）', summaryText: '糯糯妆然小土豆 1包（250g）' },
+            { foodKey: 'bellPepper', amount: 150, amountText: '150g（去蒂去籽后生重）', summaryText: '彩椒 150g' },
           ],
         },
         {
           type: 'dinner', name: '🌙 晚餐',
           items: [
-            { foodKey: 'chickenSteak', amount: 100, amountText: '1袋（100g）', summaryText: '鸡排 1袋（100g）', highlight: true },
-            { foodKey: 'sweetPotato', amount: 200, amountText: '200g', summaryText: '红薯（生）200g' },
-            { foodKey: 'potato', amount: 80, amountText: '80g', summaryText: '土豆（生）80g' },
+            { foodKey: 'boiledChickenBreast', amount: 75, amountText: '75g', summaryText: '原味水煮鸡胸肉 75g', highlight: true },
+            { foodKey: 'readyBabyPumpkin', amount: 300, amountText: '300g', summaryText: '大希地即食贝贝南瓜 300g' },
+            { foodKey: 'bellPepper', amount: 150, amountText: '150g（去蒂去籽后生重）', summaryText: '彩椒 150g' },
+            { foodKey: 'walnuts', amount: 15, amountText: '15g（去壳后）', summaryText: '原味核桃仁 15g' },
           ],
         },
       ],

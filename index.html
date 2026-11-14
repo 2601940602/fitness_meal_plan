@@ -554,7 +554,7 @@ document.addEventListener('alpine:init', () => {
     },
 
     dayPrep(day) {
-      const prepKeys = ['sweetPotato', 'potato', 'wholeWheatNoodles', 'corn', 'oats', 'banana', 'kiwi', 'chickenSteak', 'mackerel', 'wholeEgg', 'highProteinMilk', 'pasteurizedWholeMilk', 'bellPepper'];
+      const prepKeys = ['sweetPotato', 'potato', 'wholeWheatNoodles', 'corn', 'oats', 'banana', 'kiwi', 'chickenSteak', 'mackerel', 'wholeEgg', 'highProteinMilk', 'pasteurizedWholeMilk', 'bellPepper', 'mengniuPureMilk', 'boiledChickenBreast', 'glutinousBabyPotatoes', 'readyBabyPumpkin', 'camelliaOil'];
       const totals = {};
       (day.meals || []).forEach(meal => {
         (meal.items || []).forEach(item => {
@@ -578,10 +578,15 @@ document.addEventListener('alpine:init', () => {
         highProteinMilk: { icon: '🥛', label: '高蛋白奶' },
         pasteurizedWholeMilk: { icon: '🥛', label: '鲜牛奶（全脂）' },
         bellPepper: { icon: '🫑', label: '彩椒' },
+        mengniuPureMilk: { icon: '🥛', label: '蒙牛纯牛奶' },
+        boiledChickenBreast: { icon: '🍗', label: '水煮鸡胸肉' },
+        glutinousBabyPotatoes: { icon: '🥔', label: '即食小土豆' },
+        readyBabyPumpkin: { icon: '🎃', label: '即食贝贝南瓜' },
+        camelliaOil: { icon: '🫒', label: '山茶油' },
       };
       const rows = Object.entries(totals).map(([key, amount]) => {
         const ratio = this.foodBases[key].cookedRatio;
-        const unit = key === 'wholeEgg' ? '个' : (key === 'highProteinMilk' || key === 'pasteurizedWholeMilk') ? 'ml' : 'g';
+        const unit = this.foodBases[key].unit;
         return {
           icon: labels[key].icon,
           label: labels[key].label,
@@ -658,7 +663,8 @@ document.addEventListener('alpine:init', () => {
       // 暴露到全局，方便控制台调用
       window.mealPlan = this;
       // 页面加载后自动输出营养分析到控制台
-      this.logAnalysis();
+      this.logAnalysis('user');
+      this.logAnalysis('sister');
     },
 
     // ---- 营养分析（对应 calc_nutrition.py L123-153） ----
@@ -726,7 +732,9 @@ document.addEventListener('alpine:init', () => {
       };
     },
 
-    logAnalysis() {
+    logAnalysis(profile = this.activeProfile) {
+      const previousProfile = this.activeProfile;
+      this.activeProfile = profile;
       const a = this.generateAnalysis();
       const w = this.bodyWeightKg;
       const maintain = this.maintenanceCalories;
@@ -736,8 +744,10 @@ document.addEventListener('alpine:init', () => {
       const f1 = (v, d = 1) => v.toFixed(d);
       const f2 = (v) => v.toFixed(2);
 
+      const profileName = profile === 'sister' ? '妹妹' : '我的';
+      console.log(`%c  📊 ${profileName}的七日餐单营养分析报告`, 'color: #00d4aa; font-size: 14px; font-weight: bold;');
       console.log(`%c${hr}`, 'color: #00d4aa; font-weight: bold;');
-      console.log(`%c  📊 七日餐单营养分析报告`, 'color: #00d4aa; font-size: 14px; font-weight: bold;');
+      console.log(`%c${hr}`, 'color: #00d4aa; font-weight: bold;');
       console.log(`%c${hr}`, 'color: #00d4aa; font-weight: bold;');
 
       // 每日明细
@@ -786,6 +796,7 @@ document.addEventListener('alpine:init', () => {
       console.log(`%c${hr}`, 'color: #00d4aa; font-weight: bold;');
       console.log(`%c  💡 在控制台调用 mealPlan.generateAnalysis() 可获取原始分析数据`, 'color: #8892b0;');
       console.log(`%c${hr}`, 'color: #00d4aa; font-weight: bold;');
+      this.activeProfile = previousProfile;
     },
   }));
 });
